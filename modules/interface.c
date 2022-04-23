@@ -7,6 +7,9 @@
 // Assets
 Texture tab_img;
 
+Texture heart_img;
+Texture empty_heart_img;
+
 Texture jet_neutral_img;
 Texture jet_left_img;
 Texture jet_right_img;
@@ -30,6 +33,14 @@ void interface_init() {
 	// Load assets
 	tab_img = LoadTextureFromImage(
 		LoadImage("assets/tab.png")
+	);
+
+	heart_img = LoadTextureFromImage(
+		LoadImage("assets/heart.png")
+	);
+
+	empty_heart_img = LoadTextureFromImage(
+		LoadImage("assets/empty_heart.png")
 	);
 
 
@@ -99,7 +110,48 @@ void interface_draw_frame(State state, KeyState keys) {
 			WHITE
 	);
 
-	// TEXT TEST
+	Texture heart;
+	
+	//Draw 1st heart
+	if (info->hearts != 0)
+		heart = heart_img;
+	else
+		heart = empty_heart_img;
+
+	DrawTexture(
+			heart,
+			SCREEN_W_R + (270 * 0.25) - 30,
+			GetScreenHeight() / 2 + 150,
+			WHITE
+	);
+
+	// Draw 2nd heart
+	if (info->hearts >= 2)
+		heart = heart_img;
+	else
+		heart = empty_heart_img;
+
+	DrawTexture(
+			heart,
+			SCREEN_W_R + (270 * 0.5) - 30,
+			GetScreenHeight() / 2 + 150,
+			WHITE
+	);
+
+	// Draw 3rd heart
+	if (info->hearts == 3)
+		heart = heart_img;
+	else
+		heart = empty_heart_img;
+
+	DrawTexture(
+			heart,
+			SCREEN_W_R + (270 * 0.75) - 30,
+			GetScreenHeight() / 2 + 150,
+			WHITE
+	);
+
+	// TEXT & EMOTE TEST
 	if (keys->up) {
 		DrawText(
 			"SPEED: FAST",
