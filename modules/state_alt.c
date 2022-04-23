@@ -143,6 +143,7 @@ State state_create() {
 	state->info.playing = true;				// Το παιχνίδι ξεκινάει αμέσως
 	state->info.paused = false;				// Χωρίς να είναι paused.
 	state->info.score = 0;					// Αρχικό σκορ 0
+	state->info.hearts = 3;
 	state->info.missile = NULL;				// Αρχικά δεν υπάρχει πύραυλος
 	state->speed_factor = 1;				// Κανονική ταχύτητα
 
@@ -218,6 +219,7 @@ void restart_game(State state) {
 	state->info.playing = true;
 	state->info.paused = false;
 	state->info.score = 0;
+	state->info.hearts = 3;
 	state->info.missile = NULL;
 	state->speed_factor = 1;
 
@@ -493,7 +495,11 @@ void state_update(State state, KeyState keys) {
 	jet_movement(state->info.jet, state->speed_factor, keys);
 
 	if (jet_collision(state, state->info.jet->rect)) {	// If the jet collides with 
-		state->info.playing = false;					// an object, stop the game
+		state->info.hearts--;							// an object, stop the game
+	}
+
+	if (!state->info.hearts) {
+		state->info.playing = false;
 		return;
 	}
 

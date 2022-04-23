@@ -27,6 +27,7 @@ typedef struct state_info {
 	bool playing;					// true αν το παιχνίδι είναι ενεργό (false μετά από game over)
 	bool paused;					// true αν το παιχνίδι είναι paused
 	int score;						// το τρέχον σκορ
+	int hearts;
 }* StateInfo;
 
 // Πληροφορίες για το ποια πλήκτρα είναι πατημένα

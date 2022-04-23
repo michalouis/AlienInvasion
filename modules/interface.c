@@ -5,14 +5,21 @@
 #include "interface.h"
 
 // Assets
+Texture tab_img;
+
 Texture jet_neutral_img;
 Texture jet_left_img;
 Texture jet_right_img;
+
+Texture emote_fast_img;
+Texture emote_neutral_img;
+Texture emote_slow_img;
+
 Texture helicopter_img;
 Texture helicopter_reversed_img;
 Texture warship_img;
 Texture warship_reversed_img;
-Texture tab_img;
+
 
 
 void interface_init() {
@@ -21,6 +28,24 @@ void interface_init() {
 	SetTargetFPS(60);
 
 	// Load assets
+	tab_img = LoadTextureFromImage(
+		LoadImage("assets/tab.png")
+	);
+
+
+	emote_fast_img = LoadTextureFromImage(
+		LoadImage("assets/emote_fast.png")
+	);
+
+	emote_neutral_img = LoadTextureFromImage(
+		LoadImage("assets/emote_neutral.png")
+	);
+
+	emote_slow_img = LoadTextureFromImage(
+		LoadImage("assets/emote_slow.png")
+	);
+	
+	
 	jet_neutral_img = LoadTextureFromImage(
 		LoadImage("assets/jet_neutral.png")
 	);
@@ -32,6 +57,7 @@ void interface_init() {
 	jet_right_img = LoadTextureFromImage(
 		LoadImage("assets/jet_right.png")
 	);
+
 
 	helicopter_img = LoadTextureFromImage(
 		LoadImage("assets/helicopter.png")
@@ -47,10 +73,6 @@ void interface_init() {
 
 	warship_reversed_img = LoadTextureFromImage(
 		LoadImage("assets/warship_reversed.png")
-	);
-
-	tab_img = LoadTextureFromImage(
-		LoadImage("assets/tab.png")
 	);
 }
 
@@ -82,7 +104,14 @@ void interface_draw_frame(State state, KeyState keys) {
 		DrawText(
 			"SPEED: FAST",
 			SCREEN_W_R + (270 / 2) - MeasureText("SPEED: FAST", 30) / 2,
-			 GetScreenHeight() / 2 - 50, 30, DARKGREEN
+			GetScreenHeight() / 2 - 50, 30, DARKGREEN
+		);
+
+		DrawTexture(
+				emote_fast_img,
+				SCREEN_W_R + (270 / 2) - 53,
+				GetScreenHeight() / 2,
+				WHITE
 		);
 	} else if (keys->down) {
 		DrawText(
@@ -90,11 +119,25 @@ void interface_draw_frame(State state, KeyState keys) {
 			SCREEN_W_R + (270 / 2) - MeasureText("SPEED: SLOW", 30) / 2,
 			 GetScreenHeight() / 2 - 50, 30, RED
 		);
+
+		DrawTexture(
+				emote_slow_img,
+				SCREEN_W_R + (270 / 2) - 53,
+				GetScreenHeight() / 2,
+				WHITE
+		);
 	} else {
 		DrawText(
 			"SPEED: NORMAL",
 			SCREEN_W_R + (270 / 2) - MeasureText("SPEED: NORMAL", 30) / 2,
 			 GetScreenHeight() / 2 - 50, 30, LIGHTGRAY
+		);
+
+		DrawTexture(
+				emote_neutral_img,
+				SCREEN_W_R + (270 / 2) - 53,
+				GetScreenHeight() / 2,
+				WHITE
 		);
 	}
 
