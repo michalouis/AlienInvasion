@@ -1,7 +1,7 @@
 # paths
-LIB = ../../lib
-INCLUDE = ../../include
-MODULES = ../../modules
+LIB = ../lib
+INCLUDE = ../include
+MODULES = ../modules
 
 # compiler
 CC = gcc
