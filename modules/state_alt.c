@@ -147,6 +147,9 @@ State state_create() {
 	state->info.missile = NULL;				// Αρχικά δεν υπάρχει πύραυλος
 	state->speed_factor = 1;				// Κανονική ταχύτητα
 
+	state->info.camera_x = SCREEN_W_R / 2;
+	state->info.camera_y = -(SCREEN_HEIGHT / 2);
+
 	// Δημιουργία του αεροσκάφους, κεντραρισμένο οριζόντια και με y = 0
 	state->info.jet = create_object(JET, (SCREEN_W_R - 35)/2,  0, 35, 40);
 
@@ -225,6 +228,9 @@ void restart_game(State state) {
 
 	state->info.jet->rect.x = (SCREEN_W_R/2 - 35)/2;
 	state->info.jet->rect.y = 0;
+
+	state->info.camera_x = SCREEN_W_R / 2;
+	state->info.camera_y = -(SCREEN_HEIGHT / 2);
 
 	// Destroy and create new set for objects
 	set_destroy(state->objects);
@@ -322,9 +328,9 @@ void missile_destroy(StateInfo info) {
 
 void jet_movement(Object jet, float speed, KeyState keys) {
 	if (keys->up)
-		jet->rect.y -= 6 * speed;	// 6 pixels upwards multiplied by game's speed
+		jet->rect.y -= 7 * speed;	// 6 pixels upwards multiplied by game's speed
 	else if (keys->down)
-		jet->rect.y -= 2 * speed;	// 2 pixels upwards multiplied by game's speed
+		jet->rect.y += 1.5 * speed;	// 2 pixels upwards multiplied by game's speed
 	else
 		jet->rect.y -= 3 * speed;	// 3 pixels upwards multiplied by game's speed
 
@@ -471,6 +477,8 @@ void state_update(State state, KeyState keys) {
 	if (state->info.paused && !keys->n)
 		return;
 
+	
+	state->info.camera_y -= 3;
 
 
 	//////// MISSILE ////////

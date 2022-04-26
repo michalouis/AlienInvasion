@@ -28,6 +28,8 @@ typedef struct state_info {
 	bool paused;					// true αν το παιχνίδι είναι paused
 	int score;						// το τρέχον σκορ
 	int hearts;
+	float camera_x;
+	float camera_y;
 }* StateInfo;
 
 // Πληροφορίες για το ποια πλήκτρα είναι πατημένα

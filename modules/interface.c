@@ -100,7 +100,7 @@ void interface_draw_frame(State state, KeyState keys) {
 
 	StateInfo info = state_info(state);
 
-	int y_offset = info->jet->rect.y - 600;
+	int y_offset = info->camera_y;
 
 	// Draw Tab
 	DrawTexture(
