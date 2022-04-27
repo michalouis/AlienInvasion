@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include "ADTList.h"
+#include "ADTSet.h"
 
 #define BRIDGE_NUM 100		// πόσες γέφυρες δημιουργούνται στην πίστα
 #define SPACING 200			// απόσταση ανάμεσα στα αντικείμενα της πίστας
@@ -44,9 +45,31 @@ typedef struct key_state {
 	bool p;
 }* KeyState;
 
+// Οι ολοκληρωμένες πληροφορίες της κατάστασης του παιχνιδιού.
+// Ο τύπος State είναι pointer σε αυτό το struct, αλλά το ίδιο το struct
+// δεν είναι ορατό στον χρήστη.
+
+struct state {
+	Set objects;			// περιέχει στοιχεία Object (Εδαφος / Ελικόπτερα / Πλοία/ Γέφυρες)
+	struct state_info info;	// Γενικές πληροφορίες για την κατάσταση του παιχνιδιού
+	float speed_factor;		// Πολλαπλασιαστής ταχύτητς (1 = κανονική ταχύτητα, 2 = διπλάσια, κλπ)
+};
+
 // Η κατάσταση του παιχνιδιού (handle)
 typedef struct state* State;
 
+
+// Δημιουργεί και επιστρέφει ένα αντικείμενο
+Object create_object(ObjectType, float, float, float, float);
+
+// Προσθέτει αντικείμενα στην πίστα (η οποία μπορεί να περιέχει ήδη αντικείμενα).
+// Τα αντικείμενα ξεκινάνε από y = start_y, και επεκτείνονται προς τα πάνω.
+
+void add_objects(State, float);
+
+// CompareFunc comparing objects (used for set)
+
+int compare_objects(Pointer, Pointer);
 
 // Δημιουργεί και επιστρέφει την αρχική κατάσταση του παιχνιδιού
 
