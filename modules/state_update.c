@@ -14,11 +14,14 @@ void restart_game(State state) {
 	state->info.missile = NULL;
 	state->speed_factor = 1;
 
-	state->info.jet->rect.x = (SCREEN_W_R/2 - 35)/2;
+	state->info.jet->rect.x = SCREEN_W_R/2 - (35/2);
 	state->info.jet->rect.y = 0;
 
 	state->info.camera_x = SCREEN_W_R / 2;
 	state->info.camera_y = -(SCREEN_HEIGHT / 2);
+
+	state->info.hit = false;
+	state->info.invis_t_start = 0;
 
 	// Destroy and create new set for objects
 	set_destroy(state->objects);

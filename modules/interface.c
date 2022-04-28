@@ -1,18 +1,32 @@
 #include "raylib.h"
 #include <stdio.h>
 
+#include <stdlib.h>
+#include <time.h>
+
 #include "state.h"
 #include "interface.h"
+
+#define STARS 200
+#define SCROLL_SPEED 2
+
+typedef struct {
+    float x,    //The stars coordinates
+          y,    //on the screen
+          z;    //The stars depth or distance from camera
+}Star;
 
 // Assets
 Texture tab_img;
 
+Texture background_img;
+
 Texture heart_img;
 Texture empty_heart_img;
 
-Texture jet_neutral_img;
-Texture jet_left_img;
-Texture jet_right_img;
+Texture jet_img;
+// Texture jet_left_img;
+// Texture jet_right_img;
 
 Texture emote_fast_img;
 Texture emote_neutral_img;
@@ -23,6 +37,14 @@ Texture helicopter_reversed_img;
 Texture warship_img;
 Texture warship_reversed_img;
 
+Texture stardust;
+
+Star stars[STARS];
+
+
+float randf() {
+    return (rand() % 1000) / 1000.0f;
+}
 
 
 void interface_init() {
@@ -33,6 +55,10 @@ void interface_init() {
 	// Load assets
 	tab_img = LoadTextureFromImage(
 		LoadImage("assets/tab.png")
+	);
+
+	background_img = LoadTextureFromImage(
+		LoadImage("assets/space_tile.png")
 	);
 
 	heart_img = LoadTextureFromImage(
@@ -57,17 +83,17 @@ void interface_init() {
 	);
 	
 	
-	jet_neutral_img = LoadTextureFromImage(
-		LoadImage("assets/jet_neutral.png")
+	jet_img = LoadTextureFromImage(
+		LoadImage("assets/jet_sprite_2.png")
 	);
 
-	jet_left_img = LoadTextureFromImage(
-		LoadImage("assets/jet_left.png")
-	);
+	// jet_left_img = LoadTextureFromImage(
+	// 	LoadImage("assets/jet_left.png")
+	// );
 
-	jet_right_img = LoadTextureFromImage(
-		LoadImage("assets/jet_right.png")
-	);
+	// jet_right_img = LoadTextureFromImage(
+	// 	LoadImage("assets/jet_right.png")
+	// );
 
 
 	helicopter_img = LoadTextureFromImage(
@@ -85,6 +111,18 @@ void interface_init() {
 	warship_reversed_img = LoadTextureFromImage(
 		LoadImage("assets/warship_reversed.png")
 	);
+
+	stardust = LoadTextureFromImage(
+		LoadImage("assets/YellowStars1.png")
+	);
+
+	srand(time(0));
+    //-----RANDOMISE THE STARS POSITIONS-----//
+    for (int i = 0; i < STARS; i++) { 
+        stars[i].x = GetRandomValue(0, SCREEN_W_R);
+        stars[i].y = GetRandomValue(0, SCREEN_HEIGHT);
+        stars[i].z = randf();
+    }
 }
 
 void interface_close() {
@@ -95,8 +133,52 @@ void interface_close() {
 void interface_draw_frame(State state, KeyState keys) {
 	BeginDrawing();
 
-	// Cleaning, draw everything from the start
-	ClearBackground(SKYBLUE);
+	// BACKGROUND
+	// -------------------------------------------------------------------------------------
+
+	// // Cleaning, draw everything from the start
+	// ClearBackground(DARKBLUE);
+
+	// const Rectangle background_rect = {0, 0, 128, 128};
+	float scale = 1.0f, rotation = 0.0f;
+	
+	// // Draw Background
+	// DrawTextureTiled(
+    //     background_img,
+    //     background_rect,
+    //     (Rectangle){
+    //         0.0,
+    //         0.0,
+    //         SCREEN_W_R,
+    //         SCREEN_HEIGHT
+    //     },
+    //     (Vector2){0.0f, 0.0f},
+    //     rotation,
+    //     scale,
+    //     WHITE
+    // );
+
+
+	ClearBackground((Color){0, 0, 0, 255});
+	//-----SCROLL THE STARS-----//
+        for (int i = 0; i < STARS; i++) {
+            stars[i].y += SCROLL_SPEED * (stars[i].z / 1);
+ 
+            if (stars[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
+                stars[i].y -= SCREEN_HEIGHT;
+                stars[i].x = GetRandomValue(0, SCREEN_W_R);
+            }
+        }
+        
+        //-----DRAW THE STARS-----//
+        for (int i = 0; i < STARS; i++) {
+            float x = stars[i].x;
+            float y = stars[i].y;
+                
+            DrawPixel(x, y, WHITE);
+        }
+
+	// -------------------------------------------------------------------------------------
 
 	StateInfo info = state_info(state);
 
@@ -151,6 +233,15 @@ void interface_draw_frame(State state, KeyState keys) {
 			WHITE
 	);
 
+	// Camera position TEST
+	DrawRectangle(
+			info->camera_x,
+			info->camera_y - y_offset,
+			10,
+			10,
+			BLACK
+		);
+
 	// TEXT & EMOTE TEST
 	if (keys->up) {
 		DrawText(
@@ -194,26 +285,58 @@ void interface_draw_frame(State state, KeyState keys) {
 	}
 
 	// Draw jet and missile
+	Color color;
+
+	if (info->hit) {
+		color = RED;
+	} else {
+		color = WHITE;
+	}
+
 	if (keys->left) {
-		DrawTexture(
-			jet_left_img,
-			info->jet->rect.x,
-			info->jet->rect.y - y_offset,
-			WHITE
+		DrawTextureRec(
+			jet_img,
+			(Rectangle){
+				5,
+				0,
+				35,
+				43
+			},
+			(Vector2){
+				info->jet->rect.x,
+				info->jet->rect.y - y_offset
+			},
+			color
 		);
 	} else if (keys->right) {
-		DrawTexture(
-			jet_right_img,
-			info->jet->rect.x,
-			info->jet->rect.y - y_offset,
-			WHITE
+		DrawTextureRec(
+			jet_img,
+			(Rectangle){
+				83,
+				0,
+				35,
+				43
+			},
+			(Vector2){
+				info->jet->rect.x,
+				info->jet->rect.y - y_offset
+			},
+			color
 		);
 	} else {
-		DrawTexture(
-			jet_neutral_img,
-			info->jet->rect.x,
-			info->jet->rect.y - y_offset,
-			WHITE
+		DrawTextureRec(
+			jet_img,
+			(Rectangle){
+				42,
+				0,
+				39,
+				43
+			},
+			(Vector2){
+				info->jet->rect.x,
+				info->jet->rect.y - y_offset
+			},
+			color
 		);
 	}
 
@@ -223,15 +346,15 @@ void interface_draw_frame(State state, KeyState keys) {
 			info->missile->rect.y - y_offset,
 			info->missile->rect.width,
 			info->missile->rect.height,
-			BLACK
+			WHITE
 		);
 
 	// Create list of character that are on screen
-	Rectangle jet_rect = info->jet->rect;
+	// Rectangle jet_rect = info->jet->rect;
 	List list = state_objects(
 		state,
-		jet_rect.y + SCREEN_HEIGHT,
-		jet_rect.y - 2 * SCREEN_HEIGHT
+		state->info.camera_y + SCREEN_HEIGHT,
+		state->info.camera_y - SCREEN_HEIGHT
 	);
 
 	// Draw objects from list
@@ -242,12 +365,31 @@ void interface_draw_frame(State state, KeyState keys) {
 		Object obj = list_node_value(list, node);
 
 		if (obj->type == TERAIN) {
-			DrawRectangle(
-				obj->rect.x,
-				obj->rect.y - y_offset,
-				obj->rect.width,
-				obj->rect.height,
-				GREEN
+			// DrawRectangle(
+			// 	obj->rect.x,
+			// 	obj->rect.y - y_offset,
+			// 	obj->rect.width,
+			// 	obj->rect.height,
+			// 	GREEN
+			// );
+			DrawTextureTiled(
+				stardust,
+				(Rectangle){
+					0,
+					0,
+					64,
+					64
+				},
+				(Rectangle){
+					obj->rect.x,
+					obj->rect.y - y_offset,
+					obj->rect.width,
+					obj->rect.height
+				},
+				(Vector2){0.0f, 0.0f},
+				rotation,
+				scale,
+				WHITE
 			);
 		} else if (obj->type == HELICOPTER && obj->forward) {
 			DrawTexture(

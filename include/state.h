@@ -4,6 +4,8 @@
 #include "ADTList.h"
 #include "ADTSet.h"
 
+#include <time.h>
+
 #define BRIDGE_NUM 100		// πόσες γέφυρες δημιουργούνται στην πίστα
 #define SPACING 200			// απόσταση ανάμεσα στα αντικείμενα της πίστας
 #define SCREEN_WIDTH 900	// Πλάτος της οθόνης
@@ -29,6 +31,8 @@ typedef struct state_info {
 	bool paused;					// true αν το παιχνίδι είναι paused
 	int score;						// το τρέχον σκορ
 	int hearts;
+	bool hit;
+	time_t invis_t_start;
 	float camera_x;
 	float camera_y;
 }* StateInfo;
