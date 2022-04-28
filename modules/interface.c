@@ -19,14 +19,10 @@ typedef struct {
 // Assets
 Texture tab_img;
 
-Texture background_img;
-
 Texture heart_img;
 Texture empty_heart_img;
 
 Texture jet_img;
-// Texture jet_left_img;
-// Texture jet_right_img;
 
 Texture emote_fast_img;
 Texture emote_neutral_img;
@@ -46,7 +42,8 @@ float randf() {
     return (rand() % 1000) / 1000.0f;
 }
 
-
+// LOAD TEXTURES
+// ---------------------------------------------------------------------
 void interface_init() {
 	// Initialize window
 	InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "game");
@@ -54,12 +51,12 @@ void interface_init() {
 
 	// Load assets
 	tab_img = LoadTextureFromImage(
-		LoadImage("assets/tab.png")
+		LoadImage("assets/scifi_box.png")
 	);
 
-	background_img = LoadTextureFromImage(
-		LoadImage("assets/space_tile.png")
-	);
+	// background_img = LoadTextureFromImage(
+	// 	LoadImage("assets/space_tile.png")
+	// );
 
 	heart_img = LoadTextureFromImage(
 		LoadImage("assets/heart.png")
@@ -124,6 +121,7 @@ void interface_init() {
         stars[i].z = randf();
     }
 }
+// ---------------------------------------------------------------------
 
 void interface_close() {
 	CloseWindow();
@@ -133,6 +131,8 @@ void interface_close() {
 void interface_draw_frame(State state, KeyState keys) {
 	BeginDrawing();
 
+	float scale = 1.0f, rotation = 0.0f;
+	
 	// BACKGROUND
 	// -------------------------------------------------------------------------------------
 
@@ -140,7 +140,6 @@ void interface_draw_frame(State state, KeyState keys) {
 	// ClearBackground(DARKBLUE);
 
 	// const Rectangle background_rect = {0, 0, 128, 128};
-	float scale = 1.0f, rotation = 0.0f;
 	
 	// // Draw Background
 	// DrawTextureTiled(
@@ -184,6 +183,8 @@ void interface_draw_frame(State state, KeyState keys) {
 
 	int y_offset = info->camera_y;
 
+	// STATUS SCREEN
+	// -----------------------------------------------------------------------------------------
 	// Draw Tab
 	DrawTexture(
 			tab_img,
@@ -233,15 +234,6 @@ void interface_draw_frame(State state, KeyState keys) {
 			WHITE
 	);
 
-	// Camera position TEST
-	DrawRectangle(
-			info->camera_x,
-			info->camera_y - y_offset,
-			10,
-			10,
-			BLACK
-		);
-
 	// TEXT & EMOTE TEST
 	if (keys->up) {
 		DrawText(
@@ -283,7 +275,19 @@ void interface_draw_frame(State state, KeyState keys) {
 				WHITE
 		);
 	}
+	// -----------------------------------------------------------------------------------------
 
+	// Camera position TEST
+	DrawRectangle(
+		info->camera_x,
+		info->camera_y - y_offset,
+		10,
+		10,
+		WHITE
+	);
+
+	// JET & MISSILE
+	// --------------------------------------------
 	// Draw jet and missile
 	Color color;
 
@@ -348,7 +352,10 @@ void interface_draw_frame(State state, KeyState keys) {
 			info->missile->rect.height,
 			WHITE
 		);
+	// --------------------------------------------
 
+	// OBJECTS
+	// ------------------------------------------------------------
 	// Create list of character that are on screen
 	// Rectangle jet_rect = info->jet->rect;
 	List list = state_objects(
@@ -429,7 +436,10 @@ void interface_draw_frame(State state, KeyState keys) {
 			);
 		}
 	}
+	// ------------------------------------------------------------
 
+	// FPS & GAME OVER TEXT
+	// -----------------------------------------------------------------------------------------
 	// Draw score and FPS counter
 	DrawText(TextFormat("%04i", info->score), 20, 20, 40, GRAY);
 	DrawFPS(SCREEN_WIDTH - 80, 0);
@@ -442,6 +452,7 @@ void interface_draw_frame(State state, KeyState keys) {
 			 GetScreenHeight() / 2 - 50, 20, GRAY
 		);
 	}
+	// -----------------------------------------------------------------------------------------
 
 	EndDrawing();
 }
