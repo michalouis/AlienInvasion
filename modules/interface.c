@@ -51,7 +51,7 @@ void interface_init() {
 
 	// Load assets
 	tab_img = LoadTextureFromImage(
-		LoadImage("assets/scifi_box.png")
+		LoadImage("assets/metal_box.png")
 	);
 
 	// background_img = LoadTextureFromImage(

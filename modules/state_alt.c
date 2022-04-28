@@ -56,25 +56,25 @@ void add_objects(State state, float start_y) {
 			20								// Υψος
 		);
 
-		// Δημιουργία εδάφους
-		Object terain_left = create_object(
-			TERAIN,
-			0,								// Αριστερό έδαφος, x = 0
-			bridge->rect.y,					// y ίδιο με την γέφυρα
-			rand() % (SCREEN_W_R/3),		// Πλάτος επιλεγμένο τυχαία
-			4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
-		);
-		int width = rand() % (SCREEN_W_R/2);
-		Object terain_right = create_object(
-			TERAIN,
-			SCREEN_W_R - width,			// Δεξί έδαφος, x = <οθόνη> - <πλάτος εδάφους>
-			bridge->rect.y,					// y ίδιο με τη γέφυρα
-			width,							// Πλάτος, επιλεγμένο τυχαία
-			4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
-		);
+		// // Δημιουργία εδάφους
+		// Object terain_left = create_object(
+		// 	TERAIN,
+		// 	0,								// Αριστερό έδαφος, x = 0
+		// 	bridge->rect.y,					// y ίδιο με την γέφυρα
+		// 	rand() % (SCREEN_W_R/3),		// Πλάτος επιλεγμένο τυχαία
+		// 	4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
+		// );
+		// int width = rand() % (SCREEN_W_R/2);
+		// Object terain_right = create_object(
+		// 	TERAIN,
+		// 	SCREEN_W_R - width,			// Δεξί έδαφος, x = <οθόνη> - <πλάτος εδάφους>
+		// 	bridge->rect.y,					// y ίδιο με τη γέφυρα
+		// 	width,							// Πλάτος, επιλεγμένο τυχαία
+		// 	4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
+		// );
 
-		set_insert(state->objects, terain_left);
-		set_insert(state->objects, terain_right);
+		// set_insert(state->objects, terain_left);
+		// set_insert(state->objects, terain_right);
 		set_insert(state->objects, bridge);
 
 		// Προσθήκη 3 εχθρών πριν από τη γέφυρα.
@@ -305,7 +305,7 @@ void state_update(State state, KeyState keys) {
 		Object enemy = list_node_value(list, node);	// recover object
 		if (enemy->type == HELICOPTER || enemy->type == WARSHIP) {
 			
-			enemy_collision(enemy, set);
+			// enemy_collision(enemy, set);
 			enemy_movement(enemy, state->speed_factor);	
 		}
 	}
