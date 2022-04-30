@@ -26,6 +26,8 @@ Texture emote_slow_img;
 
 Animation emote_neutral;
 Animation heart3;
+Animation heart2;
+Animation heart1;
 
 Texture helicopter_img;
 Texture helicopter_reversed_img;
@@ -121,7 +123,7 @@ void interface_init() {
 
 	// Load assets
 	tab_img = LoadTextureFromImage(
-		LoadImage("assets/metal_box.png")
+		LoadImage("assets/tab_test_opacity200.png")
 	);
 
 	// background_img = LoadTextureFromImage(
@@ -140,6 +142,8 @@ void interface_init() {
 		LoadImage("assets/anim_heart_test.png")
 	);
 	heart3 = create_animation(anim_heart_img, 13, 0.04);
+	heart2 = create_animation(anim_heart_img, 13, 0.04);
+	heart1 = create_animation(anim_heart_img, 13, 0.04);
 
 
 	emote_fast_img = LoadTextureFromImage(
@@ -241,7 +245,7 @@ void interface_draw_frame(State state, KeyState keys) {
  
             if (stars[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
                 stars[i].y -= SCREEN_HEIGHT;
-                stars[i].x = GetRandomValue(0, SCREEN_W_R);
+                stars[i].x = GetRandomValue(0, SCREEN_WIDTH);
             }
         }
         
@@ -269,33 +273,56 @@ void interface_draw_frame(State state, KeyState keys) {
 			WHITE
 	);
 
-	Texture heart;
+	// Texture heart;
 	
 	//Draw 1st heart
-	if (info->hearts != 0)
-		heart = heart_img;
-	else
-		heart = empty_heart_img;
+	// if (info->hearts != 0)
+	// 	heart = heart_img;
+	// else
+	// 	heart = empty_heart_img;
 
-	DrawTexture(
-			heart,
+	// DrawTexture(
+	// 		heart,
+	// 		SCREEN_W_R + (270 * 0.25) - 30 - 94,
+	// 		GetScreenHeight() / 2 + 150 - 95,
+	// 		WHITE
+	// );
+	if (info->hearts != 0 || heart1->repeat) {
+		if (info->hearts >= 0) {
+			DrawTexture(
+				heart_img,
+				SCREEN_W_R + (270 * 0.25) - 30 - 94,
+				GetScreenHeight() / 2 + 150 - 95,
+				WHITE
+			);
+		}
+	} else {
+		DrawTexture(
+			empty_heart_img,
 			SCREEN_W_R + (270 * 0.25) - 30 - 94,
 			GetScreenHeight() / 2 + 150 - 95,
 			WHITE
-	);
+		);
+	}
 
 	// Draw 2nd heart
-	if (info->hearts >= 2)
-		heart = heart_img;
-	else
-		heart = empty_heart_img;
-
-	DrawTexture(
-			heart,
+	if (info->hearts >= 2 || heart2->repeat) {
+		if (info->hearts >= 2) {
+			DrawTexture(
+				heart_img,
+				SCREEN_W_R + (270 * 0.5) - 30 - 94,
+				GetScreenHeight() / 2 + 150 - 95,
+				WHITE
+			);
+		}
+	} else {
+		DrawTexture(
+			empty_heart_img,
 			SCREEN_W_R + (270 * 0.5) - 30 - 94,
 			GetScreenHeight() / 2 + 150 - 95,
 			WHITE
-	);
+		);
+	}
 
 	// Draw 3rd heart
 	if (info->hearts == 3 || heart3->repeat) {
@@ -319,6 +346,22 @@ void interface_draw_frame(State state, KeyState keys) {
 			SCREEN_W_R + (270 * 0.75) - 30 - 94,
 			GetScreenHeight() / 2 + 150 - 95,
 			WHITE
+		);
+	}
+
+	if (heart2->repeat && !(info->hearts >= 2)) {
+		animate_loop_once(
+			heart2,
+			SCREEN_W_R + (270 * 0.5) - 30 - 94,
+			GetScreenHeight() / 2 + 150 - 95
+		);
+	}
+
+	if (heart1->repeat && info->hearts == 0) {
+		animate_loop_once(
+			heart1,
+			SCREEN_W_R + (270 * 0.25) - 30 - 94,
+			GetScreenHeight() / 2 + 150 - 95
 		);
 	}
 
