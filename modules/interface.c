@@ -10,23 +10,22 @@
 #define STARS 200
 #define SCROLL_SPEED 2
 
-typedef struct {
-    float x,    //The stars coordinates
-          y,    //on the screen
-          z;    //The stars depth or distance from camera
-}Star;
 
 // Assets
 Texture tab_img;
 
 Texture heart_img;
 Texture empty_heart_img;
+Texture anim_heart_img;
 
 Texture jet_img;
 
 Texture emote_fast_img;
 Texture emote_neutral_img;
 Texture emote_slow_img;
+
+Animation emote_neutral;
+Animation heart3;
 
 Texture helicopter_img;
 Texture helicopter_reversed_img;
@@ -40,6 +39,77 @@ Star stars[STARS];
 
 float randf() {
     return (rand() % 1000) / 1000.0f;
+}
+
+Animation create_animation(Texture texture, int frames, float change_frame_t) {
+	Animation anim = malloc(sizeof(*anim));
+	anim->texture = texture;
+	anim->frameWidth = (float)(texture.width / frames);
+	anim->maxFrames = (int)(texture.width / (int)anim->frameWidth);
+	anim->timer = 0.0;
+	anim->change_frame_t = change_frame_t;
+	anim->frame = 0;
+	anim->repeat = true;
+
+	return anim;
+}
+
+void animate_loop(Animation anim, float width, float height) {
+	anim->timer += GetFrameTime();
+
+	if (anim->timer >= anim->change_frame_t) {
+		anim->timer = 0.0;
+		anim->frame++;
+	}
+
+	anim->frame = anim->frame % anim->maxFrames;
+
+	Rectangle texture_rec = {
+        (anim->frameWidth * anim->frame),
+        0,
+        anim->frameWidth,
+        anim->texture.height
+	};
+
+	Vector2 vec = {width, height};
+
+	DrawTextureRec(
+        anim->texture,
+        texture_rec,
+        vec,
+        RAYWHITE
+    );
+}
+
+void animate_loop_once(Animation anim, float width, float height) {
+	anim->timer += GetFrameTime();
+
+	if (anim->timer >= anim->change_frame_t) {
+		anim->timer = 0.0;
+		anim->frame++;
+	}
+
+	anim->frame = anim->frame % anim->maxFrames;
+
+	if (anim->frame == anim->maxFrames - 1) {
+		anim->repeat = false;
+	}
+
+	Rectangle texture_rec = {
+        (anim->frameWidth * anim->frame),
+        0,
+        anim->frameWidth,
+        anim->texture.height
+	};
+
+	Vector2 vec = {width, height};
+
+	DrawTextureRec(
+        anim->texture,
+        texture_rec,
+        vec,
+        RAYWHITE
+    );
 }
 
 // LOAD TEXTURES
@@ -59,12 +129,17 @@ void interface_init() {
 	// );
 
 	heart_img = LoadTextureFromImage(
-		LoadImage("assets/heart.png")
+		LoadImage("assets/heart_test.png")
 	);
 
 	empty_heart_img = LoadTextureFromImage(
-		LoadImage("assets/empty_heart.png")
+		LoadImage("assets/empty_heart_test.png")
 	);
+
+	anim_heart_img = LoadTextureFromImage(
+		LoadImage("assets/anim_heart_test.png")
+	);
+	heart3 = create_animation(anim_heart_img, 13, 0.04);
 
 
 	emote_fast_img = LoadTextureFromImage(
@@ -74,6 +149,7 @@ void interface_init() {
 	emote_neutral_img = LoadTextureFromImage(
 		LoadImage("assets/emote_neutral.png")
 	);
+	emote_neutral = create_animation(emote_neutral_img, 3, 0.3);
 
 	emote_slow_img = LoadTextureFromImage(
 		LoadImage("assets/emote_slow.png")
@@ -188,7 +264,7 @@ void interface_draw_frame(State state, KeyState keys) {
 	// Draw Tab
 	DrawTexture(
 			tab_img,
-			630,
+			SCREEN_W_R,
 			0,
 			WHITE
 	);
@@ -203,8 +279,8 @@ void interface_draw_frame(State state, KeyState keys) {
 
 	DrawTexture(
 			heart,
-			SCREEN_W_R + (270 * 0.25) - 30,
-			GetScreenHeight() / 2 + 150,
+			SCREEN_W_R + (270 * 0.25) - 30 - 94,
+			GetScreenHeight() / 2 + 150 - 95,
 			WHITE
 	);
 
@@ -216,23 +292,42 @@ void interface_draw_frame(State state, KeyState keys) {
 
 	DrawTexture(
 			heart,
-			SCREEN_W_R + (270 * 0.5) - 30,
-			GetScreenHeight() / 2 + 150,
+			SCREEN_W_R + (270 * 0.5) - 30 - 94,
+			GetScreenHeight() / 2 + 150 - 95,
 			WHITE
 	);
 
 	// Draw 3rd heart
-	if (info->hearts == 3)
-		heart = heart_img;
-	else
-		heart = empty_heart_img;
-
-	DrawTexture(
-			heart,
-			SCREEN_W_R + (270 * 0.75) - 30,
-			GetScreenHeight() / 2 + 150,
+	if (info->hearts == 3 || heart3->repeat) {
+		if (info->hearts == 3) {
+			DrawTexture(
+				heart_img,
+				SCREEN_W_R + (270 * 0.75) - 30 - 94,
+				GetScreenHeight() / 2 + 150 - 95,
+				WHITE
+			);
+		} else {
+			animate_loop_once(
+				heart3,
+				SCREEN_W_R + (270 * 0.75) - 30 - 94,
+				GetScreenHeight() / 2 + 150 - 95
+			);
+		}
+	} else {
+		DrawTexture(
+			empty_heart_img,
+			SCREEN_W_R + (270 * 0.75) - 30 - 94,
+			GetScreenHeight() / 2 + 150 - 95,
 			WHITE
-	);
+		);
+	}
+
+	// DrawTexture(
+	// 		heart,
+	// 		SCREEN_W_R + (270 * 0.75) - 30,
+	// 		GetScreenHeight() / 2 + 150,
+	// 		WHITE
+	// );
 
 	// TEXT & EMOTE TEST
 	if (keys->up) {
@@ -268,12 +363,13 @@ void interface_draw_frame(State state, KeyState keys) {
 			 GetScreenHeight() / 2 - 50, 30, LIGHTGRAY
 		);
 
-		DrawTexture(
-				emote_neutral_img,
-				SCREEN_W_R + (270 / 2) - 53,
-				GetScreenHeight() / 2,
-				WHITE
-		);
+		// DrawTexture(
+		// 		emote_neutral_img,
+		// 		SCREEN_W_R + (270 / 2) - 53,
+		// 		GetScreenHeight() / 2,
+		// 		WHITE
+		// );
+		animate_loop(emote_neutral, SCREEN_W_R + (270 / 2) - 53, GetScreenHeight() / 2);
 	}
 	// -----------------------------------------------------------------------------------------
 

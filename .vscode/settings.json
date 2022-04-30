@@ -32,6 +32,7 @@
 		"type_traits": "c",
 		"state.h": "c",
 		"raylib.h": "c",
-		"stdio.h": "c"
+		"stdio.h": "c",
+		"stdlib.h": "c"
 	},
 }

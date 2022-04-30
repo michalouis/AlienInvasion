@@ -8,9 +8,9 @@
 
 #define BRIDGE_NUM 100		// πόσες γέφυρες δημιουργούνται στην πίστα
 #define SPACING 200			// απόσταση ανάμεσα στα αντικείμενα της πίστας
-#define SCREEN_WIDTH 900	// Πλάτος της οθόνης
-#define SCREEN_HEIGHT 800	// Υψος της οθόνης
-#define SCREEN_W_R 630
+#define SCREEN_WIDTH 1280	// Πλάτος της οθόνης
+#define SCREEN_HEIGHT 720	// Υψος της οθόνης
+#define SCREEN_W_R 900
 
 typedef enum {
 	TERAIN, HELICOPTER, WARSHIP, JET, MISSLE, BRIDGE
