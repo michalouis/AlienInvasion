@@ -210,6 +210,7 @@ List state_objects(State state, float y_from, float y_to) {
 // Το keys περιέχει τα πλήκτρα τα οποία ήταν πατημένα κατά το frame αυτό.
 
 void state_update(State state, KeyState keys) {
+	// printf("SIZE: %d\n", MeasureText("TO PAIXNIDI", 50));
 	Set set = state->objects;
 
 	//////// GAME OVER & PAUSED MODES ////////

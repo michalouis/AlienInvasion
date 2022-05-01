@@ -24,12 +24,15 @@ void update_and_draw() {
 	// Update state for each frame
 	// and then draw game
 	state_update(state, &keys);
+	// printf("SIZE: %d\n", MeasureText("TO PAIXNIDI", 50));
 	interface_draw_frame(state, &keys);
 }
 
 int main() {
 	state = state_create();
 	interface_init();
+	printf("SIZE: %d\n", MeasureText("TO PAIXNIDI", 50));
+	
 
 	// Η κλήση αυτή καλεί συνεχόμενα την update_and_draw μέχρι ο χρήστης να κλείσει το παράθυρο
 	start_main_loop(update_and_draw);
