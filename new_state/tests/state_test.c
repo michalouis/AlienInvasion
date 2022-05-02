@@ -27,16 +27,16 @@ void test_state_create() {
 
 	TEST_CHECK(title_info->button_selected == 0);
 
-	TEST_CHECK(title_info->button1->posX == 0);
-	TEST_CHECK(title_info->button1->posY == 0);
+	TEST_CHECK(title_info->button1->posX == 300);
+	TEST_CHECK(title_info->button1->posY == 250);
 	TEST_CHECK(title_info->button1->pressed == false);
 
-	TEST_CHECK(title_info->button2->posX == 0);
-	TEST_CHECK(title_info->button2->posY == 200);
+	TEST_CHECK(title_info->button2->posX == 300);
+	TEST_CHECK(title_info->button2->posY == 400);
 	TEST_CHECK(title_info->button2->pressed == false);
 
-	TEST_CHECK(title_info->game_title_text->posX == 250);
-	TEST_CHECK(title_info->game_title_text->posY == 350);
+	TEST_CHECK(title_info->game_title_text->posX == 400);
+	TEST_CHECK(title_info->game_title_text->posY == 100);
 	TEST_CHECK(title_info->game_title_text->fontSize == 50);
 
 
@@ -44,7 +44,7 @@ void test_state_create() {
 
 	
 		
-	// state_destroy(state);
+	state_destroy(state);
 }
 
 

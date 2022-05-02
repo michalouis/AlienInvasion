@@ -77,3 +77,5 @@ void* state_info(State state);
 // STATE_UPDATE
 
 void state_update(State state, KeyState keys);
+
+void state_destroy(State state);
