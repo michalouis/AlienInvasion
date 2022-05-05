@@ -9,6 +9,13 @@ typedef struct {
           z;    //The stars depth or distance from camera
 }Star;
 
+typedef struct {
+    Rectangle rect;
+    float x,    //The stars coordinates
+          y,    //on the screen
+          z;    //The stars depth or distance from camera
+}Meteorite;
+
 // Αρχικοποιεί το interface του παιχνιδιού
 void interface_init();
 
