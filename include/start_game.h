@@ -11,3 +11,5 @@ StartGame create_start_game();
 List state_objects(GameState gamestate, float y_from, float y_to);
 
 void start_game_update(StartGame info, KeyState keys);
+
+void start_game_draw(StartGame start_game, KeyState keys);
