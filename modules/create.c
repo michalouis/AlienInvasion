@@ -1,16 +1,7 @@
-#include "state.h"
+// #include "state.h"
 #include "create.h"
 
 #include <stdlib.h>
-
-Button create_button(TextureInfo texture_info, bool pressed) {
-    Button b = malloc(sizeof(*b));
-
-    b->texture_info = texture_info;
-    b->pressed = pressed;
-
-    return b;
-}
 
 TextInfo create_text(char* content, Vector2 pos, int size, Color color) {
     TextInfo text = malloc(sizeof(*text));

@@ -1,9 +1,35 @@
 #pragma once
 
-#include "state.h"
+// #include "state.h"
+#include "raylib.h"
+#include <stdlib.h>
 
+typedef struct text_info {
+	const char* text;
+	Vector2 pos;
+	int fontSize;
+	Color color;
+}* TextInfo;
 
-Button create_button(TextureInfo texture_info, bool pressed);
+typedef struct texture_info {
+	Vector2 pos;
+	Rectangle rect;
+	Color color;
+}* TextureInfo;
+
+typedef struct animation_info {
+	Vector2 pos;
+	float frameWidth;
+	int maxFrames;
+	float timer;
+	float change_frame_t;
+	int curr_frame;
+}* AnimationInfo;
+
+typedef struct animation {
+    Texture texture;
+    AnimationInfo info;
+}* Animation;
 
 TextInfo create_text(char* content, Vector2 pos, int size, Color color);
 

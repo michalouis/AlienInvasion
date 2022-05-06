@@ -28,13 +28,13 @@ void update_and_draw() {
 }
 
 int main(void) {
-    interface_init();
     state = state_create();
+    interface_init();
 
     start_main_loop(update_and_draw);
 
     interface_close();
-	state_destroy(state);
+	// state_destroy(state);
 
     return 0;
 }

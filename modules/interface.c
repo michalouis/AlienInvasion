@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "state.h"
 #include "create.h"
+#include "title_screen.h"
 #include "start_game.h"
 #include "interface.h"
 #include "ADTList.h"
@@ -153,7 +154,7 @@ void interface_draw_frame(State state, KeyState keys) {
         }
 
 	// -------------------------------------------------------------------------------------
-
+	if (state->info.start_game != NULL || state->info.title_screen != NULL) {
 	switch (state->name) {
 		case TITLE_SCREEN:
 		{
@@ -171,23 +172,17 @@ void interface_draw_frame(State state, KeyState keys) {
 
 			// Draw Buttons
 			DrawTextureRec(
-				info->asset_sheet,
-				info->button1->texture_info->rect,
-				(Vector2) {
-					info->button1->texture_info->pos.x,
-					info->button1->texture_info->pos.y
-				},
-				info->button1->texture_info->color
+				info->textures->asset_sheet,
+				info->textures->button1->rect,
+				info->textures->button1->pos,
+				info->button_selected ? WHITE : YELLOW
 			);
 
 			DrawTextureRec(
-				info->asset_sheet,
-				info->button2->texture_info->rect,
-				(Vector2) {
-					info->button2->texture_info->pos.x,
-					info->button2->texture_info->pos.y
-				},
-				info->button2->texture_info->color
+				info->textures->asset_sheet,
+				info->textures->button2->rect,
+				info->textures->button2->pos,
+				info->button_selected ? YELLOW : WHITE
 			);
 			break;
 		}
@@ -386,6 +381,7 @@ void interface_draw_frame(State state, KeyState keys) {
 		}
 		case CHARACTER_SELECT:
 			break;
+	}
 	}
 	
 	// Draw score and FPS counter

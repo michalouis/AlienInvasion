@@ -2,7 +2,9 @@
 
 #include "raylib.h"
 // #include "interface.h"
+// #include "state_update_title_scr.h"
 #include "ADTSet.h"
+#include "create.h"
 
 #include <time.h>
 
@@ -19,45 +21,7 @@ typedef enum {
 	TERAIN, HELICOPTER, WARSHIP, JET, MISSLE, BRIDGE
 } ObjectType;
 
-typedef struct text_info {
-	const char* text;
-	Vector2 pos;
-	int fontSize;
-	Color color;
-}* TextInfo;
-
-typedef struct texture_info {
-	Vector2 pos;
-	Rectangle rect;
-	Color color;
-}* TextureInfo;
-
-typedef struct animation_info {
-	Vector2 pos;
-	float frameWidth;
-	int maxFrames;
-	float timer;
-	float change_frame_t;
-	int curr_frame;
-}* AnimationInfo;
-
-typedef struct animation {
-    Texture texture;
-    AnimationInfo info;
-}* Animation;
-
-typedef struct button {
-	TextureInfo texture_info;
-	bool pressed;
-}* Button;
-
-typedef struct title_screen {
-	TextInfo title_text;
-	Texture asset_sheet;
-	int button_selected;
-	Button button1;
-	Button button2;
-}* TitleScreen;
+typedef struct title_screen* TitleScreen;
 
 typedef struct heart {
 	TextureInfo filled_heart;

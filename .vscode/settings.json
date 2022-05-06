@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "state.h": "c",
+        "state_update_title_scr.h": "c",
+        "create.h": "c"
+    }
+}
