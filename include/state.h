@@ -10,7 +10,7 @@
 
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 576
-#define SCREEN_W_R 720
+#define SCREEN_W_G 720
 #define SCREEN_W_T 304
 
 typedef enum {

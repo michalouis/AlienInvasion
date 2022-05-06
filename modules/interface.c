@@ -28,11 +28,11 @@ int randf_meteorites() {
     return rand() % 5;
 }
 
-void animate(Animation anim, Vector2 pos, bool loop) {
+void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
 	if (loop || anim->info->curr_frame != anim->info->maxFrames - 1) {
 		anim->info->timer += GetFrameTime();
 
-		if (anim->info->timer >= anim->info->change_frame_t) {
+		if (anim->info->timer >= change_frame_t) {
 			anim->info->timer = 0.0;
 			anim->info->curr_frame++;
 		}
@@ -74,13 +74,13 @@ void interface_init() {
     //-----RANDOMISE THE STARS POSITIONS-----//
 	srand(time(0));
     for (int i = 0; i < STARS; i++) { 
-        stars[i].x = GetRandomValue(0, SCREEN_W_R);
+        stars[i].x = GetRandomValue(0, SCREEN_W_G);
         stars[i].y = GetRandomValue(0, SCREEN_HEIGHT);
         stars[i].z = randf();
     }
 
 	for (int i = 0; i < METEORITES; i++) { 
-        meteorites[i].x = GetRandomValue(-5, SCREEN_W_R - 5);
+        meteorites[i].x = GetRandomValue(-5, SCREEN_W_G - 5);
         meteorites[i].y = GetRandomValue(0, SCREEN_HEIGHT);
         meteorites[i].z = randf();
 		
@@ -119,7 +119,7 @@ void interface_draw_frame(State state, KeyState keys) {
  
             if (stars[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
                 stars[i].y -= SCREEN_HEIGHT;
-                stars[i].x = GetRandomValue(0, SCREEN_W_R - 5);
+                stars[i].x = GetRandomValue(0, SCREEN_W_G - 5);
             }
         }
         
@@ -128,7 +128,7 @@ void interface_draw_frame(State state, KeyState keys) {
  
             if (meteorites[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
                 meteorites[i].y -= SCREEN_HEIGHT + meteorites[i].rect.height;
-                meteorites[i].x = GetRandomValue(-5, SCREEN_W_R - 5);
+                meteorites[i].x = GetRandomValue(-5, SCREEN_W_G - 5);
             }
         }
         
@@ -300,6 +300,7 @@ void interface_draw_frame(State state, KeyState keys) {
 					emote->info->pos.x,
 					emote->info->pos.y
 				},
+				0.2,
 				true
 			);
 
@@ -341,6 +342,7 @@ void interface_draw_frame(State state, KeyState keys) {
 							heart->filled_heart->pos.x,
 							heart->filled_heart->pos.y
 						},
+						0.04,
 						false
 					);
 				} else {
@@ -364,7 +366,7 @@ void interface_draw_frame(State state, KeyState keys) {
 			// Draw score
 			DrawText(
 				TextFormat("SCORE: %04i", gameinfo->game_state->score),
-				SCREEN_W_T / 2 + SCREEN_W_R - MeasureText(TextFormat("SCORE: %04i", gameinfo->game_state->score), 30) / 2,
+				SCREEN_W_T / 2 + SCREEN_W_G - MeasureText(TextFormat("SCORE: %04i", gameinfo->game_state->score), 30) / 2,
 				SCREEN_HEIGHT * 0.75 - 30, 30, GRAY
 			);
 
@@ -372,7 +374,7 @@ void interface_draw_frame(State state, KeyState keys) {
 			if (!gameinfo->game_state->playing) {
 				DrawText(
 					"PRESS [ENTER] TO PLAY AGAIN",
-					SCREEN_W_R / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 30) / 2,
+					SCREEN_W_G / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 30) / 2,
 					SCREEN_HEIGHT / 2 - 30, 30, GRAY
 				);
 			}

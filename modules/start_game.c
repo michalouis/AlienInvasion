@@ -34,7 +34,7 @@ void add_objects(GameState gamestate, float start_y) {
 			BRIDGE,
 			0,								// x στο αριστερό άκρο της οθόνης
 			start_y - 4 * (i+1) * SPACING,	// Η γέφυρα i έχει y = 4 * (i+1) * SPACING
-			SCREEN_W_R,						// Πλάτος ολόκληρη η οθόνη
+			SCREEN_W_G,						// Πλάτος ολόκληρη η οθόνη
 			20								// Υψος
 		);
 
@@ -43,13 +43,13 @@ void add_objects(GameState gamestate, float start_y) {
 		// 	TERAIN,
 		// 	0,								// Αριστερό έδαφος, x = 0
 		// 	bridge->rect.y,					// y ίδιο με την γέφυρα
-		// 	rand() % (SCREEN_W_R/3),		// Πλάτος επιλεγμένο τυχαία
+		// 	rand() % (SCREEN_W_G/3),		// Πλάτος επιλεγμένο τυχαία
 		// 	4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
 		// );
-		// int width = rand() % (SCREEN_W_R/2);
+		// int width = rand() % (SCREEN_W_G/2);
 		// Object terain_right = create_object(
 		// 	TERAIN,
-		// 	SCREEN_W_R - width,			// Δεξί έδαφος, x = <οθόνη> - <πλάτος εδάφους>
+		// 	SCREEN_W_G - width,			// Δεξί έδαφος, x = <οθόνη> - <πλάτος εδάφους>
 		// 	bridge->rect.y,					// y ίδιο με τη γέφυρα
 		// 	width,							// Πλάτος, επιλεγμένο τυχαία
 		// 	4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
@@ -65,8 +65,8 @@ void add_objects(GameState gamestate, float start_y) {
 		// 	float y = bridge->rect.y + (j+1)*SPACING;
 
 		// 	Object enemy = rand() % 2 == 0		// Τυχαία επιλογή ανάμεσα σε πλοίο και ελικόπτερο
-		// 		? create_object(WARSHIP,    (SCREEN_W_R - 83)/2, y, 83, 30)		// οριζόντιο κεντράρισμα
-		// 		: create_object(HELICOPTER, (SCREEN_W_R - 66)/2, y, 66, 25);
+		// 		? create_object(WARSHIP,    (SCREEN_W_G - 83)/2, y, 83, 30)		// οριζόντιο κεντράρισμα
+		// 		: create_object(HELICOPTER, (SCREEN_W_G - 66)/2, y, 66, 25);
 		// 	enemy->forward = rand() % 2 == 0;	// Τυχαία αρχική κατεύθυνση
 
 		// 	set_insert(state->objects, enemy);
@@ -164,9 +164,9 @@ GameState create_gameinfo_state() {
     gamestate->hit = false;
     gamestate->invis_t_start = 0;
 
-    gamestate->jet = create_object(JET, SCREEN_W_R/2 - (35/2),  0, 50, 50);
+    gamestate->jet = create_object(JET, SCREEN_W_G/2 - (35/2),  0, 50, 50);
 
-    gamestate->camera_x = SCREEN_W_R / 2;
+    gamestate->camera_x = SCREEN_W_G / 2;
     gamestate->camera_y = -(SCREEN_HEIGHT / 2);
 
     // Δημιουργούμε τo σετ των αντικειμένων, και προσθέτουμε αντικείμενα
@@ -227,7 +227,7 @@ Heart create_heart(Vector2 pos, Texture texture) {
     // rect = (Rectangle){400, 249, 249, 249};
     // heart->empty_heart = create_texture_info(pos, rect, WHITE);
 
-    heart->heart_explode_anim = create_animation(texture, pos, 13, 0.04);
+    heart->heart_explode_anim = create_animation(texture, pos, 13);
 
     return heart;
 }
@@ -246,7 +246,7 @@ TabInfo create_tabinfo() {
 
     // Create tab
     rect = (Rectangle){0, 0, 304, 576};
-    position = (Vector2){SCREEN_W_R, 0};
+    position = (Vector2){SCREEN_W_G, 0};
 
     tabinfo->tab_texture = create_texture_info(
         position,
@@ -258,7 +258,7 @@ TabInfo create_tabinfo() {
     
     // Normal Speed
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T / 2),
+        SCREEN_W_G + (SCREEN_W_T / 2),
         SCREEN_HEIGHT * 0.7 - 30
     };
 
@@ -272,7 +272,7 @@ TabInfo create_tabinfo() {
     
     // Slow Speed
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T / 2),
+        SCREEN_W_G + (SCREEN_W_T / 2),
         SCREEN_HEIGHT * 0.7 - 30
     };
 
@@ -286,7 +286,7 @@ TabInfo create_tabinfo() {
     
     // Fast Speed
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T / 2),
+        SCREEN_W_G + (SCREEN_W_T / 2),
         SCREEN_HEIGHT * 0.7 - 30
     };
 
@@ -308,21 +308,21 @@ TabInfo create_tabinfo() {
     
     // Heart1
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T * 0.25) - 199 / 2,
+        SCREEN_W_G + (SCREEN_W_T * 0.25) - 199 / 2,
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
     tabinfo->heart1 = create_heart(position, anim_texture);
 
     // Heart2
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T * 0.5) - 199 / 2,
+        SCREEN_W_G + (SCREEN_W_T * 0.5) - 199 / 2,
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
     tabinfo->heart2 = create_heart(position, anim_texture);
 
     // Heart3
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T * 0.75) - 199 / 2,
+        SCREEN_W_G + (SCREEN_W_T * 0.75) - 199 / 2,
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
     tabinfo->heart3 = create_heart(position, anim_texture);
@@ -335,23 +335,23 @@ TabInfo create_tabinfo() {
 
     // all emotes have the same on-screen position
     position = (Vector2){
-        SCREEN_W_R + (SCREEN_W_T/2) - (anim_texture.width/3) / 2,
+        SCREEN_W_G + (SCREEN_W_T/2) - (anim_texture.width/3) / 2,
         0
     };
 
-    tabinfo->emote_neutral_anim = create_animation(anim_texture, position, 3, 0.2);
+    tabinfo->emote_neutral_anim = create_animation(anim_texture, position, 3);
     
     // Emote Fast
     anim_texture = LoadTextureFromImage(
         LoadImage("assets/emote_fast.png")
     );
-    tabinfo->emote_fast_anim = create_animation(anim_texture, position, 3, 0.2);
+    tabinfo->emote_fast_anim = create_animation(anim_texture, position, 3);
     
     // Emote Slow
     anim_texture = LoadTextureFromImage(
         LoadImage("assets/emote_slow.png")
     );
-    tabinfo->emote_slow_anim = create_animation(anim_texture, position, 3, 0.2);
+    tabinfo->emote_slow_anim = create_animation(anim_texture, position, 3);
 
     return tabinfo;
 }
@@ -378,10 +378,10 @@ void restart_game(GameState gamestate) {
 	gamestate->missile = NULL;
 	gamestate->speed_factor = 1;
 
-	gamestate->jet->rect.x = SCREEN_W_R/2 - (35/2);
+	gamestate->jet->rect.x = SCREEN_W_G/2 - (35/2);
 	gamestate->jet->rect.y = 0;
 
-	gamestate->camera_x = SCREEN_W_R / 2;
+	gamestate->camera_x = SCREEN_W_G / 2;
 	gamestate->camera_y = -(SCREEN_HEIGHT / 2);
 
 	gamestate->hit = false;
@@ -507,8 +507,8 @@ void jet_movement(GameState gamestate, float speed, KeyState keys) {
     if (jet->rect.x < 10)
         jet->rect.x = 10;
     
-    if (jet->rect.x > SCREEN_W_R - jet->rect.width - 10)
-        jet->rect.x = SCREEN_W_R - jet->rect.width - 10;
+    if (jet->rect.x > SCREEN_W_G - jet->rect.width - 10)
+        jet->rect.x = SCREEN_W_G - jet->rect.width - 10;
 }
 
 // Checks if jet comes in contact with any objects from the list

@@ -22,7 +22,7 @@ typedef struct animation_info {
 	float frameWidth;
 	int maxFrames;
 	float timer;
-	float change_frame_t;
+	// float change_frame_t;
 	int curr_frame;
 }* AnimationInfo;
 
@@ -35,4 +35,4 @@ TextInfo create_text(char* content, Vector2 pos, int size, Color color);
 
 TextureInfo create_texture_info(Vector2 pos, Rectangle rect, Color color);
 
-Animation create_animation(Texture texture, Vector2 pos, int frames, float change_frame_t);
+Animation create_animation(Texture texture, Vector2 pos, int frames);
