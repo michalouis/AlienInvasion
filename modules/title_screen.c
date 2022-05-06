@@ -78,7 +78,7 @@ TitleScreen create_title_screen() {
 }
 
 void destroy_title_scr(State state) {
-    TitleScreen title_scr = state->info.title_screen;
+    TitleScreen title_scr = state->title_screen;
 
     free(title_scr->textures->button1);
     free(title_scr->textures->button2);
@@ -88,17 +88,17 @@ void destroy_title_scr(State state) {
 
     free(title_scr);
 
-    state->info.title_screen = NULL;
+    state->title_screen = NULL;
 }
 
 void title_screen(State state, KeyState keys) {
-    if (state->info.title_screen == NULL)
-        state->info.title_screen = create_title_screen();
+    if (state->title_screen == NULL)
+        state->title_screen = create_title_screen();
     else
-        state_update_title_scr(state->info.title_screen, keys);
+        state_update_title_scr(state->title_screen, keys);
 
-    if (state->info.title_screen->button_pressed)
-        if (state->info.title_screen->button_selected == START) {
+    if (state->title_screen->button_pressed)
+        if (state->title_screen->button_selected == START) {
             destroy_title_scr(state);
             state->name = START_GAME;
         }

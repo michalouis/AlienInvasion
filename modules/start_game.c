@@ -615,6 +615,13 @@ void start_game_update(StartGame info, KeyState keys) {
 	}
 }
 
+void start_game(State state, KeyState keys) {
+	if (state->start_game == NULL)
+            state->start_game = create_start_game();
+	else
+        start_game_update(state->start_game, keys);
+}
+
 void start_game_draw(StartGame start_game, KeyState keys) {
 	draw_game(start_game, keys);
 	draw_tab(start_game);

@@ -127,16 +127,16 @@ void interface_draw_frame(State state, KeyState keys) {
         }
 
 	// -------------------------------------------------------------------------------------
-	if (state->info.start_game != NULL || state->info.title_screen != NULL) {
+	if (state->start_game != NULL || state->title_screen != NULL) {
 	switch (state->name) {
 		case TITLE_SCREEN:
 		{
-			title_screen_draw(state->info.title_screen);
+			title_screen_draw(state->title_screen);
 			break;
 		}
 		case START_GAME:
 		{
-			start_game_draw(state->info.start_game, keys);
+			start_game_draw(state->start_game, keys);
 			break;
 		}
 		case CHARACTER_SELECT:

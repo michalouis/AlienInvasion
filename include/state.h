@@ -1,8 +1,6 @@
 #pragma once
 
 #include "raylib.h"
-// #include "interface.h"
-// #include "state_update_title_scr.h"
 #include "ADTSet.h"
 #include "draw_related_funcs.h"
 
@@ -17,11 +15,11 @@ typedef enum {
 	TITLE_SCREEN, START_GAME, CHARACTER_SELECT
 } StateName;
 
+typedef struct title_screen* TitleScreen;
+
 typedef enum {
 	TERAIN, HELICOPTER, WARSHIP, JET, MISSLE, BRIDGE
 } ObjectType;
-
-typedef struct title_screen* TitleScreen;
 
 typedef struct heart {
 	TextureInfo filled_heart;
@@ -87,15 +85,19 @@ typedef struct start_game {
 
 // }* CharSelect;
 
-typedef struct state_info {
-	TitleScreen title_screen;
-	StartGame start_game;
-	// struct char_select char_select;
-}* StateInfo;
+// typedef struct state_info {
+// 	TitleScreen title_screen;
+// 	StartGame start_game;
+// 	// CharSelect char_select;
+// }* StateInfo;
 
 typedef struct state {
 	StateName name;
-	struct state_info info;
+	// struct state_info info;
+	TitleScreen title_screen;
+	StartGame start_game;
+	// CharSelect char_select;
+	int selected_character;
 }* State;
 
 // Πληροφορίες για το ποια πλήκτρα είναι πατημένα

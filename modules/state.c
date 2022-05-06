@@ -11,8 +11,8 @@ State state_create() {
     State state = malloc(sizeof(*state));
 
     state->name = TITLE_SCREEN;
-    state->info.title_screen = NULL;
-    state->info.start_game = NULL;
+    state->title_screen = NULL;
+    state->start_game = NULL;
 
     return state;
 }
@@ -20,10 +20,10 @@ State state_create() {
 void* state_info(State state) {
     switch (state->name) {
         case TITLE_SCREEN:
-            return state->info.title_screen;
+            return state->title_screen;
             break;
         case START_GAME:
-            return state->info.start_game;
+            return state->start_game;
             break;
         case CHARACTER_SELECT:
             break;
@@ -38,10 +38,7 @@ void state_update(State state, KeyState keys) {
             title_screen(state, keys);
             break;
         case START_GAME:
-            if (state->info.start_game == NULL)
-                state->info.start_game = create_start_game();
-
-            start_game_update(state_info(state), keys);
+            start_game(state, keys);
             break;
         case CHARACTER_SELECT:
             break;
