@@ -3,22 +3,34 @@
 
 #include <stdlib.h>
 
-TextInfo create_text(char* content, Vector2 pos, int size, Color color) {
+TextInfo create_text(char* content, Vector2 pos, bool center_pos, int size, Color color) {
     TextInfo text = malloc(sizeof(*text));
 
     text->text = content;
-    text->pos.x = pos.x - MeasureText(content, size) /2;
-    text->pos.y = pos.y;
+
+    if (center_pos) {
+        text->pos.x = pos.x - MeasureText(content, size) /2;
+        text->pos.y = pos.y;
+    } else {
+        text->pos = pos;
+    }
+
     text->fontSize = size;
     text->color = color;
 
     return text;
 }
 
-TextureInfo create_texture_info(Vector2 pos, Rectangle rect, Color color) {
+TextureInfo create_texture_info(Vector2 pos, bool center_pos, Rectangle rect, Color color) {
     TextureInfo texture_info = malloc(sizeof(*texture_info));
 
-    texture_info->pos = pos;
+    if (center_pos) {
+        texture_info->pos.x = pos.x - rect.width / 2;
+        texture_info->pos.y = pos.y;
+    } else {
+        texture_info->pos = pos;
+    }
+
     texture_info->rect = rect;
     texture_info->color = WHITE;
 

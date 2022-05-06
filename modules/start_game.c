@@ -187,19 +187,19 @@ GameTextures create_game_textures() {
 	int height = textures->jet.height;
 
     textures->jet_neutral_info = create_texture_info(
-        (Vector2) {0, 0},
+        (Vector2) {0, 0}, false,
         (Rectangle) {width * 1, 0, width, height},
         WHITE
     );
 
     textures->jet_left_info = create_texture_info(
-        (Vector2) {0, 0},
+        (Vector2) {0, 0}, false,
         (Rectangle) {width * 0, 0, width, height},
         WHITE
     );
 
     textures->jet_right_info = create_texture_info(
-        (Vector2) {0, 0},
+        (Vector2) {0, 0}, false,
         (Rectangle) {width * 2, 0, width, height},
         WHITE
     );
@@ -221,7 +221,7 @@ Heart create_heart(Vector2 pos, Texture texture) {
     Rectangle rect;
 
     rect = (Rectangle){320, 0, 199, 199};
-    heart->filled_heart = create_texture_info(pos, rect, WHITE);
+    heart->filled_heart = create_texture_info(pos, true, rect, WHITE);
 
     // rect = (Rectangle){400, 249, 249, 249};
     // heart->empty_heart = create_texture_info(pos, rect, WHITE);
@@ -248,7 +248,7 @@ TabInfo create_tabinfo() {
     position = (Vector2){SCREEN_W_G, 0};
 
     tabinfo->tab_texture = create_texture_info(
-        position,
+        position, false,
         rect,
         WHITE
     );
@@ -264,7 +264,7 @@ TabInfo create_tabinfo() {
     tabinfo->speed_normal_text =
         create_text(
             "SPEED: NORMAL",
-            position,
+            position, true,
             30,
             LIGHTGRAY
         );
@@ -278,7 +278,7 @@ TabInfo create_tabinfo() {
     tabinfo->speed_slow_text =
         create_text(
             "SPEED: SLOW",
-            position,
+            position, true,
             30,
             RED
         );
@@ -292,14 +292,14 @@ TabInfo create_tabinfo() {
     tabinfo->speed_fast_text =
         create_text(
             "SPEED: FAST",
-            position,
+            position, true,
             30,
             DARKGREEN
         );
 
     Texture anim_texture;
 
-    //-----Create hearts-----//
+    //-----Create hearts-----// - 199 / 2
     // Create heart_animation
     anim_texture = LoadTextureFromImage(
         LoadImage("assets/heart_anim.png")
@@ -307,21 +307,21 @@ TabInfo create_tabinfo() {
     
     // Heart1
     position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T * 0.25) - 199 / 2,
+        SCREEN_W_G + (SCREEN_W_T * 0.25),
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
     tabinfo->heart1 = create_heart(position, anim_texture);
 
     // Heart2
     position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T * 0.5) - 199 / 2,
+        SCREEN_W_G + (SCREEN_W_T * 0.5),
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
     tabinfo->heart2 = create_heart(position, anim_texture);
 
     // Heart3
     position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T * 0.75) - 199 / 2,
+        SCREEN_W_G + (SCREEN_W_T * 0.75),
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
     tabinfo->heart3 = create_heart(position, anim_texture);

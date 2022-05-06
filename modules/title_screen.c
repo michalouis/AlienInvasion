@@ -42,19 +42,19 @@ TitleScreen create_title_screen() {
     Rectangle rect; // used for asset position in asset_sheet
     
     // Create button1
-    position = (Vector2){SCREEN_WIDTH / 2 - 80, 250};
+    position = (Vector2){SCREEN_WIDTH / 2, 250};
     rect = (Rectangle){0, 0, 160, 80};
     textures->button1 = create_texture_info(
-        position,
+        position, true,
         rect,
         WHITE
     );
 
     // Create button2
-    position = (Vector2){SCREEN_WIDTH / 2 - 80, 400};
+    position = (Vector2){SCREEN_WIDTH / 2, 400};
     rect = (Rectangle){0, 80, 160, 80};
     textures->button2 = create_texture_info(
-        position,
+        position, true,
         rect,
         WHITE
     );
@@ -69,7 +69,7 @@ TitleScreen create_title_screen() {
     position = (Vector2){SCREEN_WIDTH / 2, 100};
     title_info->title_text = create_text(
         "TO PAIXNIDI",
-        position,
+        position, true,
         50,
         WHITE
     );
