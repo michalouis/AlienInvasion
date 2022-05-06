@@ -80,7 +80,7 @@ void draw_game(StartGame start_game, KeyState keys) {
 			}	
 }
 
-void draw_tab(StartGame start_game) {
+void draw_tab(StartGame start_game, KeyState keys) {
     // get game info & tab info
 	GameInfo gameinfo = start_game->game;
 	TabInfo tabinfo = start_game->tab;
@@ -107,9 +107,9 @@ void draw_tab(StartGame start_game) {
 
 			// Emote
 			Animation emote;
-			if (IsKeyDown(KEY_UP))
+			if (keys->up)
 				emote = tabinfo->emote_fast_anim;
-			else if (IsKeyDown(KEY_DOWN))
+			else if (keys->down)
 				emote = tabinfo->emote_slow_anim;
 			else
 				emote = tabinfo->emote_neutral_anim;
@@ -134,9 +134,9 @@ void draw_tab(StartGame start_game) {
 
 			// Speed text
 			TextInfo text;
-			if (IsKeyDown(KEY_UP))
+			if (keys->up)
 				text = tabinfo->speed_fast_text;
-			else if (IsKeyDown(KEY_DOWN))
+			else if (keys->down)
 				text = tabinfo->speed_slow_text;
 			else
 				text = tabinfo->speed_normal_text;

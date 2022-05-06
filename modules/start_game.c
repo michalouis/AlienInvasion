@@ -624,5 +624,5 @@ void start_game(State state, KeyState keys) {
 
 void start_game_draw(StartGame start_game, KeyState keys) {
 	draw_game(start_game, keys);
-	draw_tab(start_game);
+	draw_tab(start_game, keys);
 }
