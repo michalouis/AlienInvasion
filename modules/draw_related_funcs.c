@@ -1,5 +1,5 @@
 // #include "state.h"
-#include "create.h"
+#include "draw_related_funcs.h"
 
 #include <stdlib.h>
 
@@ -44,4 +44,31 @@ Animation create_animation(Texture texture, Vector2 pos, int frames) {
 	anim->info = create_animation_info(anim->texture, pos, frames);
 
 	return anim;
+}
+
+void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
+	if (loop || anim->info->curr_frame != anim->info->maxFrames - 1) {
+		anim->info->timer += GetFrameTime();
+
+		if (anim->info->timer >= change_frame_t) {
+			anim->info->timer = 0.0;
+			anim->info->curr_frame++;
+		}
+
+		anim->info->curr_frame = anim->info->curr_frame % anim->info->maxFrames;
+	}
+
+	Rectangle texture_rec = {
+			(anim->info->frameWidth * anim->info->curr_frame),
+			0,
+			anim->info->frameWidth,
+			anim->texture.height
+		};
+	
+	DrawTextureRec(
+        anim->texture,
+        texture_rec,
+        pos,
+        RAYWHITE
+    );
 }

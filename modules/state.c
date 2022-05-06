@@ -5,7 +5,7 @@
 #include "interface.h"
 #include "title_screen.h"
 #include "start_game.h"
-#include "create.h"
+#include "draw_related_funcs.h"
 
 State state_create() {
     State state = malloc(sizeof(*state));

@@ -1,6 +1,6 @@
 #include "raylib.h"
 #include "state.h"
-#include "create.h"
+#include "draw_related_funcs.h"
 #include "title_screen.h"
 #include "start_game.h"
 #include "interface.h"
@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 #define STARS 200
-#define METEORITES 12
+#define METEORITES 15
 #define SCROLL_SPEED_S 2
 #define SCROLL_SPEED_M 3
 
@@ -26,33 +26,6 @@ float randf() {
 
 int randf_meteorites() {
     return rand() % 5;
-}
-
-void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
-	if (loop || anim->info->curr_frame != anim->info->maxFrames - 1) {
-		anim->info->timer += GetFrameTime();
-
-		if (anim->info->timer >= change_frame_t) {
-			anim->info->timer = 0.0;
-			anim->info->curr_frame++;
-		}
-
-		anim->info->curr_frame = anim->info->curr_frame % anim->info->maxFrames;
-	}
-
-	Rectangle texture_rec = {
-			(anim->info->frameWidth * anim->info->curr_frame),
-			0,
-			anim->info->frameWidth,
-			anim->texture.height
-		};
-	
-	DrawTextureRec(
-        anim->texture,
-        texture_rec,
-        pos,
-        RAYWHITE
-    );
 }
 
 void interface_init() {
@@ -74,13 +47,13 @@ void interface_init() {
     //-----RANDOMISE THE STARS POSITIONS-----//
 	srand(time(0));
     for (int i = 0; i < STARS; i++) { 
-        stars[i].x = GetRandomValue(0, SCREEN_W_G);
+        stars[i].x = GetRandomValue(0, SCREEN_WIDTH);
         stars[i].y = GetRandomValue(0, SCREEN_HEIGHT);
         stars[i].z = randf();
     }
 
 	for (int i = 0; i < METEORITES; i++) { 
-        meteorites[i].x = GetRandomValue(-5, SCREEN_W_G - 5);
+        meteorites[i].x = GetRandomValue(-5, SCREEN_WIDTH);
         meteorites[i].y = GetRandomValue(0, SCREEN_HEIGHT);
         meteorites[i].z = randf();
 		
@@ -119,7 +92,7 @@ void interface_draw_frame(State state, KeyState keys) {
  
             if (stars[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
                 stars[i].y -= SCREEN_HEIGHT;
-                stars[i].x = GetRandomValue(0, SCREEN_W_G - 5);
+                stars[i].x = GetRandomValue(0, SCREEN_WIDTH);
             }
         }
         
@@ -128,7 +101,7 @@ void interface_draw_frame(State state, KeyState keys) {
  
             if (meteorites[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
                 meteorites[i].y -= SCREEN_HEIGHT + meteorites[i].rect.height;
-                meteorites[i].x = GetRandomValue(-5, SCREEN_W_G - 5);
+                meteorites[i].x = GetRandomValue(-5, SCREEN_WIDTH);
             }
         }
         
@@ -158,32 +131,7 @@ void interface_draw_frame(State state, KeyState keys) {
 	switch (state->name) {
 		case TITLE_SCREEN:
 		{
-			// get title screen info
-			TitleScreen info = state_info(state);
-	
-			// Draw text
-			DrawText(
-				info->title_text->text,
-				info->title_text->pos.x,
-				info->title_text->pos.y,
-				info->title_text->fontSize,
-				info->title_text->color
-			);
-
-			// Draw Buttons
-			DrawTextureRec(
-				info->textures->asset_sheet,
-				info->textures->button1->rect,
-				info->textures->button1->pos,
-				info->button_selected ? WHITE : YELLOW
-			);
-
-			DrawTextureRec(
-				info->textures->asset_sheet,
-				info->textures->button2->rect,
-				info->textures->button2->pos,
-				info->button_selected ? YELLOW : WHITE
-			);
+			title_screen_draw(state->info.title_screen);
 			break;
 		}
 		case START_GAME:

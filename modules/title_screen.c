@@ -1,7 +1,7 @@
 #include "state.h"
 #include "raylib.h"
 #include "interface.h"
-#include "create.h"
+#include "draw_related_funcs.h"
 #include"title_screen.h"
 
 #include <stdlib.h>
@@ -102,4 +102,30 @@ void title_screen(State state, KeyState keys) {
             destroy_title_scr(state);
             state->name = START_GAME;
         }
+}
+
+void title_screen_draw(TitleScreen title_screen) {
+    // Draw text
+	DrawText(
+		title_screen->title_text->text,
+		title_screen->title_text->pos.x,
+		title_screen->title_text->pos.y,
+		title_screen->title_text->fontSize,
+		title_screen->title_text->color
+	);
+
+	// Draw Buttons
+	DrawTextureRec(
+		title_screen->textures->asset_sheet,
+		title_screen->textures->button1->rect,
+		title_screen->textures->button1->pos,
+		title_screen->button_selected ? WHITE : YELLOW
+	);
+
+	DrawTextureRec(
+		title_screen->textures->asset_sheet,
+		title_screen->textures->button2->rect,
+		title_screen->textures->button2->pos,
+		title_screen->button_selected ? YELLOW : WHITE
+	);
 }

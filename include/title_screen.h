@@ -1,7 +1,7 @@
 #pragma once
 
 // #include "state.h"
-#include "create.h"
+#include "draw_related_funcs.h"
 
 typedef enum {
     START, KATI
@@ -20,12 +20,14 @@ typedef struct title_screen {
 	TextInfo title_text;
 }* TitleScreen;
 
-void state_update_title_scr(TitleScreen info, KeyState keys);
+// void state_update_title_scr(TitleScreen info, KeyState keys);
 
-int WhichButtonIsPressed(TitleScreen info);
+// int WhichButtonIsPressed(TitleScreen info);
 
-TitleScreen create_title_screen();
+// TitleScreen create_title_screen();
 
-void destroy_title_scr(State state);
+// void destroy_title_scr(State state);
 
 void title_screen(State state, KeyState keys);
+
+void title_screen_draw(TitleScreen title_screen);
