@@ -34,6 +34,8 @@ typedef struct tab_info {
 typedef struct object {
 	ObjectType type;				// Τύπος (Εδαφος / Ελικόπτερο / Πλοίο / Αεροσκάφος / Πύραυλος / Γέφυρα)
 	Rectangle rect;					// Θέση και μέγεθος του αντικειμένου. Το Rectangle ορίζεται στο include/raylib.h, line 213
+	time_t countdown;
+	time_t timer;
 	bool forward;					// true: το αντικείμενο κινείται προς τα δεξιά
 }* Object;
 

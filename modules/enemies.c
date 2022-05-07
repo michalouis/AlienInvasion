@@ -1,4 +1,9 @@
 #include "start_game.h"
+#include "missile.h"
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 
 // Checks if an enemy is about to collide with a terain object 
 // If it does change its direction, else don't
@@ -8,6 +13,7 @@ void enemy_collision(Object enemy, Set set) {
 	// If enemy is about to collide with a terain object change its direction
 	if (enemy->rect.x < 0 || enemy->rect.x + enemy->rect.width > SCREEN_W_G)
 		enemy->forward = !enemy->forward;
+
 
 }
 
@@ -28,13 +34,25 @@ void enemy_movement(Object enemy, float speed) {
 		enemy->rect.x -= pixels;	// move "pixels" left multiplied by game's speed
 }
 
+void enemy_missile(GameState gamestate, Object enemy) {
+	
+	printf("HELLO!\n");
+	time_t timel = time(NULL);
+	if(timel > enemy->countdown) {
+		missile_create(gamestate, enemy, true);
+		timel = time(NULL);
+		enemy->countdown = time(NULL) + GetRandomValue(2,3);
+		printf("HELLO!\n");
+	}
+}
+
 void enemies_update(GameState gamestate) {
     Set set = gamestate->objects;
 
     List list = state_objects(
 		gamestate,
 		gamestate->camera_y + SCREEN_HEIGHT,
-		gamestate->camera_y - SCREEN_HEIGHT
+		gamestate->camera_y - 100
 	); 
 
 	for	(ListNode node = list_first(list);	// iterate list
@@ -45,9 +63,12 @@ void enemies_update(GameState gamestate) {
 		if (enemy->type == HELICOPTER || enemy->type == WARSHIP) {
 			
 			enemy_collision(enemy, set);
-			enemy_movement(enemy, gamestate->speed_factor);	
+			enemy_movement(enemy, gamestate->speed_factor);
+			enemy_missile(gamestate, enemy);
 		}
 	}
 
 	list_destroy(list);
+
+	
 }

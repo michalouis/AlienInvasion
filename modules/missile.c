@@ -44,10 +44,11 @@ bool missile_collision(GameState gamestate, Object missile, List list) {
 }
 
 bool missile_distance(GameState gamestate, Object missile){
-	float jet_y = gamestate->jet->rect.y;	// recover jet's y coordinate
+	float camera_y = gamestate->camera_y;	// recover jet's y coordinate
 	float missile_y = missile->rect.y;	// recover missile's y coordinate
+	int missile_height = missile->rect.height;
 				
-	if (abs(missile_y - jet_y) > SCREEN_HEIGHT)
+	if (missile_y < camera_y - missile_height)
 		return true;
 
     return false;
@@ -94,14 +95,14 @@ void missiles_update(GameState gamestate) {
     list_destroy(remove_missiles);
 }
 
-void missile_create(GameState gamestate, bool key_pressed) {
+void missile_create(GameState gamestate, Object obj, bool key_pressed) {
 	if ((set_size(gamestate->missiles) < 3) && key_pressed) {
 
 		Missile missile = malloc(sizeof(*missile));
 
 		missile->type = P_MISSILE;
 
-		Rectangle jet_rect = gamestate->jet->rect;	// recover jet's coordinates
+		Rectangle jet_rect = obj->rect;	// recover jet's coordinates
 		Rectangle missile_rect = {
 			jet_rect.x + (jet_rect.width)/2,	// missile's starting position
 			jet_rect.y,							// is the center of the jet's position

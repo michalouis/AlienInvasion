@@ -19,6 +19,12 @@ Object create_object(ObjectType type, float x, float y, float width, float heigh
 	obj->rect.y = y;
 	obj->rect.width = width;
 	obj->rect.height = height;
+
+	if (type == WARSHIP || type == HELICOPTER){
+		obj->timer = time(NULL);
+		obj->countdown = time(NULL) + GetRandomValue(2,3);
+	}
+
 	return obj;
 }
 
@@ -505,7 +511,7 @@ void start_game_update(StartGame info, KeyState keys) {
 
 	// The following functions handle everything that has to do with the missile
 
-    missile_create(gamestate, keys->space);
+    missile_create(gamestate, gamestate->jet, keys->space);
 
 	missiles_update(gamestate);
 
