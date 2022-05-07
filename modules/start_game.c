@@ -390,138 +390,6 @@ void restart_game(GameState gamestate) {
 	add_objects(gamestate, 0);
 }
 
-// Creates a missile if there isn't one already
-
-// void missile_fire(GameState gamestate, bool key_pressed) {
-// 	printf("MISSILE_FIRE IN\n");
-// 	if ((set_size(gamestate->missiles) < 3) && key_pressed) {
-// 		Rectangle jet_rect = gamestate->jet->rect;	// recover jet's coordinates
-
-// 		Object missile = create_object(			// create missile
-// 			MISSLE,
-// 			jet_rect.x + (jet_rect.width)/2,	// missile's starting position
-// 			jet_rect.y,							// is the center of the jet's position
-// 			5,
-// 			15
-// 		);
-
-// 		set_insert(gamestate->missiles, missile);
-// 	}
-// 	printf("MISSILE_FIRE OUT\n");
-// }
-
-// // Moves missile depending on the game's speed
-
-// void missile_movement(Set missiles, float speed) {
-// 	printf("MISSILE_MOVEMENT IN\n");
-// 	if (set_size(missiles) != 0) {
-	
-// 		printf("SIZE: %d\n", set_size(missiles));
-// 		for(SetNode node = set_first(missiles);
-// 			node != SET_EOF;
-// 			printf("MOVE!!!!!!!!\n"), node = set_next(missiles, node)) {
-
-// 				printf("MOVE IN!!!\n");
-// 				Object missile = set_node_value(missiles, node);
-// 				missile->rect.y -= 10 * speed;	// 10 pixels upwards multiplied by game's speed
-// 				printf("MOVE OUT!!!\n");
-// 			}
-// 	}
-// 	printf("MISSILE_MOVEMENT OUT\n");
-
-// }
-
-// // Checks if missile comes in contact with any objects from the list
-// // If it collides with a terain object, destroy the missile
-// // If it collides with any other object, destroy the missile, add 10 point to the score
-// // and remove the object from the set
-
-// void missile_collision(GameState gamestate, Set set) {
-// 	printf("MISSILE_COLLISION IN\n");
-// 	if (set_size(gamestate->missiles) != 0) {
-
-// 		for(SetNode node = set_first(gamestate->missiles);
-// 			node != SET_EOF;
-// 			node = set_next(gamestate->missiles, node)) {
-
-// 			Object missile = set_node_value(gamestate->missiles, node);
-// 			Rectangle missile_rect = missile->rect;	// recover missile dimensions
-
-// 			List list = state_objects(	//create list
-// 				gamestate,
-// 				missile->rect.y + missile->rect.height,
-// 				missile->rect.y - 4 * SPACING
-// 			);
-
-// 			for	(ListNode node = list_first(list);	// iterate list
-// 				node != LIST_EOF;
-// 				node = list_next(list, node)) {
-
-// 				Object enemy = list_node_value(list, node);	// recover object
-// 				Rectangle enemy_rect = enemy->rect;			// recover object dimensions
-
-// 				bool collision = CheckCollisionRecs(	// does the missile collide with this object?
-// 					missile_rect, enemy_rect
-// 				);
-						
-// 				if (collision) {	// if they collide, go in
-// 					if (enemy->type == TERAIN) {
-// 						set_remove(gamestate->missiles, missile);	// destroy missile
-// 						// missile = NULL;
-// 					} else {
-// 						gamestate->score += 10;	// increase score
-// 						set_remove(set, enemy);		// remove object
-// 						set_remove(gamestate->missiles, missile);	// destroy missile
-// 						// missile = NULL;
-// 					}
-// 					list_destroy(list);	//free list memory
-// 					return;
-// 				}
-// 			}
-
-// 			list_destroy(list);	//free list memory
-// 		}
-
-// 	}
-// 	printf("MISSILE_COLLISION OUT\n");
-// }
-
-// // Checks if the missile is too far away from the jet 
-// // and destroys it if it is
-
-// void missile_destroy(GameState gamestate) {
-// 	printf("MISSILE_DESTROY IN\n");
-
-// 	Set missiles = gamestate->missiles;
-
-// 	List remove_missiles = list_create(NULL);
-// 	if (set_size(gamestate->missiles) != 0) {
-// 		for(SetNode node = set_first(gamestate->missiles);
-// 			node != SET_EOF;
-// 			node = set_next(gamestate->missiles, node)) {
-
-// 			Object missile = set_node_value(gamestate->missiles, node);
-
-// 			float jet_y = gamestate->jet->rect.y;	// recover jet's y coordinate
-// 			float missile_y = missile->rect.y;	// recover missile's y coordinate
-				
-// 			if (abs(missile_y - jet_y) > SCREEN_HEIGHT) {
-// 				list_insert_next(remove_missiles, list_first(remove_missiles), missile);
-// 			}
-// 		}
-
-// 		if (list_size(remove_missiles) != 0) {
-// 			for(ListNode node = list_first(remove_missiles);
-// 				node != LIST_EOF;
-// 				node = list_next(remove_missiles, node)) {
-// 					set_remove(missiles, list_node_value(remove_missiles, node));
-// 				}
-// 		}
-// 		list_destroy(remove_missiles);
-		
-// 	}
-// 	printf("MISSILE_DESTROY OUT\n");
-// }
 
 // Moves jet depending on the pressed keys
 // and the game's speed
@@ -594,40 +462,6 @@ bool jet_collision(GameState gamestate, Rectangle jet_rect) {
 // If it does change its direction, else don't
 
 void enemy_collision(Object enemy, Set set) {
-
-	// // Find the first terain object after the enemy
-	// Object obj;
-	// SetNode node = set_find_node(set, enemy);
-	// do {
-	// 	node = set_next(set, node);
-	// 	obj = set_node_value(set, node);
-	// } while (obj->type != TERAIN);
-
-	// // Objects are stored in the set in such way that
-	// // the next node contains the other terain object
-	// Object terain_1 = set_node_value(set, node);
-	// Object terain_2 = set_node_value(set, set_next(set, node));
-
-	// // Find which terain object is the left
-	// // one and which is the right one
-	// Object terain_left;
-	// Object terain_right;
-	// if (terain_1->rect.x < terain_2->rect.x) {
-	// 	terain_left = terain_1;
-	// 	terain_right = terain_2;
-	// } else {
-	// 	terain_left = terain_2;
-	// 	terain_right = terain_1;
-	// }
-
-	// // Find x coordinates the enemy can move between
-	// // before touching a terain object 
-	// float x_left = terain_left->rect.width;
-	// float x_right = terain_right->rect.x;
-
-	// // If enemy is about to collide with a terain object change its direction
-	// if (enemy->rect.x < x_left || enemy->rect.x + enemy->rect.width > x_right)
-	// 	enemy->forward = !enemy->forward;
 
 	// If enemy is about to collide with a terain object change its direction
 	if (enemy->rect.x < 0 || enemy->rect.x + enemy->rect.width > SCREEN_W_G)
@@ -702,11 +536,6 @@ void start_game_update(StartGame info, KeyState keys) {
     missile_create(gamestate, keys->space);
 
 	missiles_update(gamestate);
-    // missile_movement(gamestate->missiles, gamestate->speed_factor);
-
-    // missile_collision(gamestate, set);
-    
-    // missile_destroy(gamestate);
 
     //////// JET ////////
 
