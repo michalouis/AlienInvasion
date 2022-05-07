@@ -539,6 +539,68 @@ bool jet_collision(GameState gamestate, Rectangle jet_rect) {
 							// collide with the jet, return "false"
 }
 
+// Checks if an enemy is about to collide with a terain object 
+// If it does change its direction, else don't
+
+void enemy_collision(Object enemy, Set set) {
+
+	// // Find the first terain object after the enemy
+	// Object obj;
+	// SetNode node = set_find_node(set, enemy);
+	// do {
+	// 	node = set_next(set, node);
+	// 	obj = set_node_value(set, node);
+	// } while (obj->type != TERAIN);
+
+	// // Objects are stored in the set in such way that
+	// // the next node contains the other terain object
+	// Object terain_1 = set_node_value(set, node);
+	// Object terain_2 = set_node_value(set, set_next(set, node));
+
+	// // Find which terain object is the left
+	// // one and which is the right one
+	// Object terain_left;
+	// Object terain_right;
+	// if (terain_1->rect.x < terain_2->rect.x) {
+	// 	terain_left = terain_1;
+	// 	terain_right = terain_2;
+	// } else {
+	// 	terain_left = terain_2;
+	// 	terain_right = terain_1;
+	// }
+
+	// // Find x coordinates the enemy can move between
+	// // before touching a terain object 
+	// float x_left = terain_left->rect.width;
+	// float x_right = terain_right->rect.x;
+
+	// // If enemy is about to collide with a terain object change its direction
+	// if (enemy->rect.x < x_left || enemy->rect.x + enemy->rect.width > x_right)
+	// 	enemy->forward = !enemy->forward;
+
+	// If enemy is about to collide with a terain object change its direction
+	if (enemy->rect.x < 0 || enemy->rect.x + enemy->rect.width > SCREEN_W_G)
+		enemy->forward = !enemy->forward;
+
+}
+
+// Move enemies depending on the the direction
+// they are facing and on the game's speed
+
+void enemy_movement(Object enemy, float speed) {
+	int pixels;
+	if (enemy->type == HELICOPTER)	// enemies move differently
+		pixels = 4;	// helictopers move 4 pixels
+	else
+		pixels = 3;	// warships move 3 pixels
+
+	if (enemy->forward)	// depending on their direction
+						// they move left or right
+		enemy->rect.x += pixels;	// move "pixels" right multiplied by game's speed
+	else
+		enemy->rect.x -= pixels;	// move "pixels" left multiplied by game's speed
+}
+
 // Finds the last bridge of the current state and returns it
 
 Object find_last_bridge(Set set) {
@@ -621,6 +683,32 @@ void start_game_update(StartGame info, KeyState keys) {
 			gamestate->hit = false;
 		}
 	}
+
+	/////// ENEMIES ////////
+
+	// The functions enemy_movement and enemy_collision handle everything that has to do with the enemies
+	// More information about them above the state_update function (line 328 - 384)
+
+	// Create list of objects near the jet
+	List list = state_objects(
+		gamestate,
+		gamestate->camera_y + SCREEN_HEIGHT,
+		gamestate->camera_y - SCREEN_HEIGHT
+	); 
+
+	for	(ListNode node = list_first(list);	// iterate list
+    	node != LIST_EOF;
+    	node = list_next(list, node)) {
+
+		Object enemy = list_node_value(list, node);	// recover object
+		if (enemy->type == HELICOPTER || enemy->type == WARSHIP) {
+			
+			enemy_collision(enemy, set);
+			enemy_movement(enemy, gamestate->speed_factor);	
+		}
+	}
+
+	list_destroy(list);
 
 	Object last_bridge = find_last_bridge(set);
 	float last_bridge_y = last_bridge->rect.y;
