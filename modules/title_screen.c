@@ -1,11 +1,11 @@
 #include "state.h"
 #include "raylib.h"
-#include "interface.h"
+// #include "interface.h"
 #include "draw_related_funcs.h"
 #include"title_screen.h"
 
 #include <stdlib.h>
-#include <stdio.h>
+// #include <stdio.h>
 
 void state_update_title_scr(TitleScreen title_scr, KeyState keys) {
     if (keys->up) title_scr->button_selected--;
@@ -30,12 +30,10 @@ TitleScreen create_title_screen() {
     
     // CREATE TITLE SCREEN TEXTURES
     // ------------------------------------------------------
-    // Allocate memory for title screen textures
-    Textures textures = malloc(sizeof(*textures));
     
     // Load file with the title screen assets
-    textures->asset_sheet = LoadTextureFromImage(
-		LoadImage("assets/title_scr_asset_sheet.png")
+    title_info->asset_sheet = LoadTexture(
+		"assets/title_scr_asset_sheet.png"
 	);
 
     Vector2 position;   // used for position on screen
@@ -44,7 +42,7 @@ TitleScreen create_title_screen() {
     // Create button1
     position = (Vector2){SCREEN_WIDTH / 2, 250};
     rect = (Rectangle){0, 0, 160, 80};
-    textures->button1 = create_texture_info(
+    title_info->button1 = create_texture_info(
         position, true,
         rect,
         WHITE
@@ -53,13 +51,12 @@ TitleScreen create_title_screen() {
     // Create button2
     position = (Vector2){SCREEN_WIDTH / 2, 400};
     rect = (Rectangle){0, 80, 160, 80};
-    textures->button2 = create_texture_info(
+    title_info->button2 = create_texture_info(
         position, true,
         rect,
         WHITE
     );
 
-    title_info->textures = textures;
     // ------------------------------------------------------
 
     title_info->button_selected = 0;    // Which button is selected
@@ -80,11 +77,11 @@ TitleScreen create_title_screen() {
 void destroy_title_scr(State state) {
     TitleScreen title_scr = state->title_screen;
 
-    free(title_scr->textures->button1);
-    free(title_scr->textures->button2);
-    free(title_scr->textures);
+    destroy_texture_info(title_scr->button1);
+    destroy_texture_info(title_scr->button2);
+    UnloadTexture(title_scr->asset_sheet);
     
-    free(title_scr->title_text);
+    destroy_text(title_scr->title_text);
 
     free(title_scr);
 
@@ -116,16 +113,16 @@ void title_screen_draw(TitleScreen title_screen) {
 
 	// Draw Buttons
 	DrawTextureRec(
-		title_screen->textures->asset_sheet,
-		title_screen->textures->button1->rect,
-		title_screen->textures->button1->pos,
+		title_screen->asset_sheet,
+		title_screen->button1->rect,
+		title_screen->button1->pos,
 		title_screen->button_selected ? WHITE : YELLOW
 	);
 
 	DrawTextureRec(
-		title_screen->textures->asset_sheet,
-		title_screen->textures->button2->rect,
-		title_screen->textures->button2->pos,
+		title_screen->asset_sheet,
+		title_screen->button2->rect,
+		title_screen->button2->pos,
 		title_screen->button_selected ? YELLOW : WHITE
 	);
 }

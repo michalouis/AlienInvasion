@@ -33,8 +33,14 @@ typedef struct animation {
 
 TextInfo create_text(char* content, Vector2 pos, bool center_pos, int size, Color color);
 
+void destroy_text(TextInfo text);
+
 TextureInfo create_texture_info(Vector2 pos, bool center_pos, Rectangle rect, Color color);
 
+void destroy_texture_info(TextureInfo texture_info);
+
 Animation create_animation(Texture texture, Vector2 pos, int frames);
+
+void destroy_animation(Animation anim);
 
 void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop);

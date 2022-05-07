@@ -3,7 +3,7 @@
 #include "state.h"
 #include "ADTList.h"
 
-#define BRIDGE_NUM 100		// πόσες γέφυρες δημιουργούνται στην πίστα
+#define BRIDGE_NUM 50		// πόσες γέφυρες δημιουργούνται στην πίστα
 #define SPACING 200			// απόσταση ανάμεσα στα αντικείμενα της πίστας
 
 typedef enum {

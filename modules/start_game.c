@@ -58,18 +58,18 @@ void add_objects(GameState gamestate, float start_y) {
 		// set_insert(state->objects, terain_right);
 		set_insert(gamestate->objects, bridge);
 
-		// // Προσθήκη 3 εχθρών πριν από τη γέφυρα.
-		// for (int j = 0; j < 3; j++) {
-		// 	// Ο πρώτος εχθρός βρίσκεται SPACING pixels κάτω από τη γέφυρα, ο δεύτερος 2*SPACING pixels κάτω από τη γέφυρα, κλπ.
-		// 	float y = bridge->rect.y + (j+1)*SPACING;
+		// Προσθήκη 3 εχθρών πριν από τη γέφυρα.
+		for (int j = 0; j < 3; j++) {
+			// Ο πρώτος εχθρός βρίσκεται SPACING pixels κάτω από τη γέφυρα, ο δεύτερος 2*SPACING pixels κάτω από τη γέφυρα, κλπ.
+			float y = bridge->rect.y + (j+1)*SPACING;
 
-		// 	Object enemy = rand() % 2 == 0		// Τυχαία επιλογή ανάμεσα σε πλοίο και ελικόπτερο
-		// 		? create_object(WARSHIP,    (SCREEN_W_G - 83)/2, y, 83, 30)		// οριζόντιο κεντράρισμα
-		// 		: create_object(HELICOPTER, (SCREEN_W_G - 66)/2, y, 66, 25);
-		// 	enemy->forward = rand() % 2 == 0;	// Τυχαία αρχική κατεύθυνση
+			Object enemy = rand() % 2 == 0		// Τυχαία επιλογή ανάμεσα σε πλοίο και ελικόπτερο
+				? create_object(WARSHIP,    (SCREEN_W_G - 83)/2, y, 83, 30)		// οριζόντιο κεντράρισμα
+				: create_object(HELICOPTER, (SCREEN_W_G - 66)/2, y, 66, 25);
+			enemy->forward = rand() % 2 == 0;	// Τυχαία αρχική κατεύθυνση
 
-		// 	set_insert(state->objects, enemy);
-		// }
+			set_insert(gamestate->objects, enemy);
+		}
 	}
 }
 
@@ -179,8 +179,8 @@ GameState create_gameinfo_state() {
 GameTextures create_game_textures() {
     GameTextures textures = malloc(sizeof(*textures));
 
-    textures->jet = LoadTextureFromImage(
-		LoadImage("assets/jet.png")
+    textures->jet = LoadTexture(
+		"assets/jet.png"
 	);
 
 	int width = textures->jet.width / 3;
@@ -223,9 +223,6 @@ Heart create_heart(Vector2 pos, Texture texture) {
     rect = (Rectangle){320, 0, 199, 199};
     heart->filled_heart = create_texture_info(pos, true, rect, WHITE);
 
-    // rect = (Rectangle){400, 249, 249, 249};
-    // heart->empty_heart = create_texture_info(pos, rect, WHITE);
-
     heart->heart_explode_anim = create_animation(texture, pos, 13);
 
     return heart;
@@ -236,8 +233,8 @@ TabInfo create_tabinfo() {
     TabInfo tabinfo = malloc(sizeof(*tabinfo));
 
     // Load file with the tab assets
-    tabinfo->asset_sheet = LoadTextureFromImage(
-		LoadImage("assets/tabinfo_asset_sheet.png")
+    tabinfo->asset_sheet = LoadTexture(
+		"assets/tabinfo_asset_sheet.png"
 	);
     
     Vector2 position;   // used for position on screen
@@ -301,8 +298,8 @@ TabInfo create_tabinfo() {
 
     //-----Create hearts-----// - 199 / 2
     // Create heart_animation
-    anim_texture = LoadTextureFromImage(
-        LoadImage("assets/heart_anim.png")
+    anim_texture = LoadTexture(
+        "assets/heart_anim.png"
     );
     
     // Heart1
@@ -328,8 +325,8 @@ TabInfo create_tabinfo() {
 
     //-----Create Emote animations-----//
     // Emote Neutral
-    anim_texture = LoadTextureFromImage(
-        LoadImage("assets/emote_neutral.png")
+    anim_texture = LoadTexture(
+        "assets/emote_neutral.png"
     );
 
     // all emotes have the same on-screen position
@@ -341,14 +338,14 @@ TabInfo create_tabinfo() {
     tabinfo->emote_neutral_anim = create_animation(anim_texture, position, 3);
     
     // Emote Fast
-    anim_texture = LoadTextureFromImage(
-        LoadImage("assets/emote_fast.png")
+    anim_texture = LoadTexture(
+        "assets/emote_fast.png"
     );
     tabinfo->emote_fast_anim = create_animation(anim_texture, position, 3);
     
     // Emote Slow
-    anim_texture = LoadTextureFromImage(
-        LoadImage("assets/emote_slow.png")
+    anim_texture = LoadTexture(
+        "assets/emote_slow.png"
     );
     tabinfo->emote_slow_anim = create_animation(anim_texture, position, 3);
 
@@ -542,16 +539,27 @@ bool jet_collision(GameState gamestate, Rectangle jet_rect) {
 							// collide with the jet, return "false"
 }
 
+// Finds the last bridge of the current state and returns it
+
+Object find_last_bridge(Set set) {
+	Object bridge;
+	SetNode node = set_last(set);	// recover last node of set
+	bridge = set_node_value(set, node);	// recover last bridge
+
+	return bridge;
+}
+
 void start_game_update(StartGame info, KeyState keys) {
-    Set set = info->game->game_state->objects;
+	GameState gamestate = info->game->game_state;
+    Set set = gamestate->objects;
 
     //////// GAME OVER & PAUSED MODES ////////
 
 	// If the game is over don't go deeper in the function (return)
 
-	if (!info->game->game_state->playing) {
+	if (!gamestate->playing) {
 		if (keys->enter)	// If enter is pressed restart game
-			restart_game(info->game->game_state);
+			restart_game(gamestate);
 		
 		return;
 	}
@@ -559,7 +567,7 @@ void start_game_update(StartGame info, KeyState keys) {
     // Pause(or unpause) game if the p key is pressed
 
     if (keys->p)
-		info->game->game_state->paused = !info->game->game_state->paused;
+		gamestate->paused = !gamestate->paused;
 
     // Paused mode
 	// If the game is paused don't go deeper in the function to
@@ -568,50 +576,57 @@ void start_game_update(StartGame info, KeyState keys) {
 	// Debug mode (can only be accessed if game is paused)
 	// The game will only move while the n key is pressed (1 frame)
 
-	if (info->game->game_state->paused && !keys->n)
+	if (gamestate->paused && !keys->n)
 		return;
 
 
-    info->game->game_state->camera_y -= 3;
+    gamestate->camera_y -= 3 * gamestate->speed_factor;
 
     //////// MISSILE ////////
 
 	// The following functions handle everything that has to do with the missile
 
-    missile_fire(info->game->game_state, keys->space);
+    missile_fire(gamestate, keys->space);
 
-    missile_movement(info->game->game_state->missile, info->game->game_state->speed_factor);
+    missile_movement(gamestate->missile, gamestate->speed_factor);
 
-    missile_collision(info->game->game_state, set);
+    missile_collision(gamestate, set);
     
-    missile_destroy(info->game->game_state);
+    missile_destroy(gamestate);
 
     //////// JET ////////
 
 	// The functions jet_movement and jet_collision handle everything that has to do with the jet
 
-    jet_movement(info->game->game_state, info->game->game_state->speed_factor, keys);
+    jet_movement(gamestate, gamestate->speed_factor, keys);
 
-    if (!info->game->game_state->hit) {
-		if (jet_collision(info->game->game_state, info->game->game_state->jet->rect)) {	// If the jet collides with 
-			info->game->game_state->hearts--;							// an object, stop the game
-			info->game->game_state->hit = true;
-			info->game->game_state->invis_t_start = time(NULL);
+    if (!gamestate->hit) {
+		if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
+			gamestate->hearts--;											// an object, stop the game
+			gamestate->hit = true;
+			gamestate->invis_t_start = time(NULL);
 		}
 	}
 
-	if (!info->game->game_state->hearts) {
-		info->game->game_state->playing = false;
+	if (!gamestate->hearts) {
+		gamestate->playing = false;
 		return;
 	}
 
-	if (info->game->game_state->hit) {
+	if (gamestate->hit) {
 		time_t t_now = time(NULL);
 
-		if(t_now > info->game->game_state->invis_t_start + 5) {
-			info->game->game_state->invis_t_start = 0;
-			info->game->game_state->hit = false;
+		if(t_now > gamestate->invis_t_start + 5) {
+			gamestate->invis_t_start = 0;
+			gamestate->hit = false;
 		}
+	}
+
+	Object last_bridge = find_last_bridge(set);
+	float last_bridge_y = last_bridge->rect.y;
+	if (abs(last_bridge_y - gamestate->jet->rect.y) < SCREEN_HEIGHT) {
+		add_objects(gamestate, last_bridge_y);
+		gamestate->speed_factor += 0.3 * gamestate->speed_factor;
 	}
 }
 
