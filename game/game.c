@@ -15,7 +15,7 @@ void update_and_draw() {
 		.left = IsKeyDown(KEY_LEFT),
 		.right = IsKeyDown(KEY_RIGHT),
 		.enter = IsKeyPressed(KEY_ENTER),
-		.space = IsKeyDown(KEY_SPACE),
+		.space = IsKeyPressed(KEY_SPACE),
 		.p = IsKeyPressed(KEY_P),
 		.n = IsKeyDown(KEY_N),
 	};

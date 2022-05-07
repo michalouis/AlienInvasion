@@ -34,14 +34,20 @@ void draw_game(StartGame start_game, KeyState keys) {
 			);
 
 			// Draw Missile
-			if (gameinfo->game_state->missile != NULL)
-				DrawRectangle(
-					gameinfo->game_state->missile->rect.x,
-					gameinfo->game_state->missile->rect.y - gameinfo->game_state->camera_y,
-					gameinfo->game_state->missile->rect.width,
-					gameinfo->game_state->missile->rect.height,
-					WHITE
-				);
+			if (gameinfo->game_state->missiles != 0)
+				for(SetNode node = set_first(gameinfo->game_state->missiles);
+					node != SET_EOF;
+					node = set_next(gameinfo->game_state->missiles, node)) {
+				
+					Object missile = set_node_value(gameinfo->game_state->missiles, node);
+					DrawRectangle(
+						missile->rect.x,
+						missile->rect.y - gameinfo->game_state->camera_y,
+						missile->rect.width,
+						missile->rect.height,
+						WHITE
+					);
+				}
 
 			// OBJECTS
 			// ------------------------------------------------------------

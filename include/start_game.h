@@ -39,7 +39,7 @@ typedef struct object {
 
 typedef struct game_state {
 	Object jet;
-	Object missile;
+	Set missiles;
 	Set objects;
 	bool playing;
 	bool paused;
