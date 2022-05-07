@@ -1,5 +1,14 @@
 #include "start_game.h"
 
-bool missile_create(GameState, bool);
+typedef enum {
+    P_MISSILE, E_MISSILE    // player missile, enemy missile
+} MissileType;
 
-bool missiles_update(GameState gamestate);
+typedef struct missile{
+    MissileType type;
+    Rectangle rect;
+}* Missile;
+
+void missile_create(GameState, bool);
+
+void missiles_update(GameState gamestate);
