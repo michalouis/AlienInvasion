@@ -60,9 +60,9 @@ void enemies_update(GameState gamestate) {
 		Object enemy = list_node_value(list, node);	// recover object
 		if (enemy->type == HELICOPTER || enemy->type == WARSHIP) {
 			
+			enemy_missile(gamestate, enemy);
 			enemy_collision(enemy, set);
 			enemy_movement(enemy, gamestate->speed_factor);
-			enemy_missile(gamestate, enemy);
 		}
 	}
 

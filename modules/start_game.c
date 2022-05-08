@@ -93,14 +93,6 @@ int compare_objects(Pointer a, Pointer b) {
 	} else if (obj_a->rect.y > obj_b->rect.y) {
 		return -1;
 	} else {
-		
-		// // Special case: bridge asset won't be placed above terain
-		// if (obj_a->type == TERAIN && obj_b->type == BRIDGE) {
-		// 	return 1;
-		// }
-		// if(obj_a->type == BRIDGE && obj_b->type == TERAIN) {
-		// 	return -1;
-		// }
 
 		// comparing memory addresses
 		if (a < b) {
@@ -111,6 +103,28 @@ int compare_objects(Pointer a, Pointer b) {
 			return 0;
 		}
 	}
+}
+
+int compare_missiles(Pointer a, Pointer b) {
+	// Object obj_a = a;
+	// Object obj_b = b;
+
+	// // comparing coordinates of y axis
+	// if (obj_a->rect.y < obj_b->rect.y) {
+	// 	return 1;
+	// } else if (obj_a->rect.y > obj_b->rect.y) {
+	// 	return -1;
+	// } else {
+
+		// comparing memory addresses
+		if (a < b) {
+			return 1;
+		} else if (a > b) {
+			return -1;
+		} else {
+			return 0;
+		}
+	// }
 }
 
 // Επιστρέφει μια λίστα με όλα τα αντικείμενα του παιχνιδιού στην κατάσταση state,
@@ -166,7 +180,7 @@ GameState create_gameinfo_state() {
     gamestate->speed_factor = 1;
     gamestate->score = 0;
     gamestate->hearts = 3;
-    gamestate->missiles = set_create(compare_objects, free);
+    gamestate->missiles = set_create(compare_missiles, free);
 
     gamestate->hit = false;
     gamestate->invis_t_start = 0;
@@ -379,7 +393,7 @@ void restart_game(GameState gamestate) {
 	gamestate->paused = false;
 	gamestate->score = 0;
 	gamestate->hearts = 3;
-	gamestate->missiles = set_create(compare_objects, free);
+	gamestate->missiles = set_create(compare_missiles, free);
 	gamestate->speed_factor = 1;
 
 	gamestate->jet->rect.x = SCREEN_W_G/2 - (35/2);
@@ -523,13 +537,13 @@ void start_game_update(StartGame info, KeyState keys) {
 
     jet_movement(gamestate, gamestate->speed_factor, keys);
 
-    // if (!gamestate->hit) {
-	// 	if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
-	// 		gamestate->hearts--;											// an object, stop the game
-	// 		gamestate->hit = true;
-	// 		gamestate->invis_t_start = time(NULL);
-	// 	}
-	// }
+    if (!gamestate->hit) {
+		if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
+			gamestate->hearts--;											// an object, stop the game
+			gamestate->hit = true;
+			gamestate->invis_t_start = time(NULL);
+		}
+	}
 
 	if (!gamestate->hearts) {
 		gamestate->playing = false;
