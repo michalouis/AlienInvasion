@@ -1,4 +1,5 @@
 #include "draw_related_funcs.h"
+#include "missile.h"
 #include "start_game.h"
 
 void draw_game(StartGame start_game, KeyState keys) {
@@ -39,13 +40,13 @@ void draw_game(StartGame start_game, KeyState keys) {
 					node != SET_EOF;
 					node = set_next(gameinfo->game_state->missiles, node)) {
 				
-					Object missile = set_node_value(gameinfo->game_state->missiles, node);
+					Missile missile = set_node_value(gameinfo->game_state->missiles, node);
 					DrawRectangle(
 						missile->rect.x,
 						missile->rect.y - gameinfo->game_state->camera_y,
 						missile->rect.width,
 						missile->rect.height,
-						WHITE
+						missile->type == P_MISSILE ? RED : BLUE
 					);
 				}
 

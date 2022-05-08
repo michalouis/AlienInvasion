@@ -1,116 +1,136 @@
+#include "missile.h"
 #include "start_game.h"
 #include "ADTList.h"
 #include "ADTSet.h"
-#include "missile.h"
 
 #include <stdio.h>
 
-void missile_movement(Object missile, float speed) {
-	missile->rect.y -= 10 * speed;	// 10 pixels upwards multiplied by game's speed
+void missile_movement(Missile missile, float speed) {
+	if (missile->type == P_MISSILE) {
+		missile->rect.y -= 10 * speed;	// 10 pixels upwards multiplied by game's speed
+	} else if (missile->type == E_MISSILE) {
+		missile->rect.y += 5 * speed;	// 10 pixels upwards multiplied by game's speed
+	}
 }
 
-bool missile_collision(GameState gamestate, Object missile, List list) {
-	bool missile_collided = false;
-	Rectangle missile_rect = missile->rect;	// recover missile dimensions
+// bool missile_collision(GameState gamestate, Missile missile, List list) {
+	
+// }
 
-	for	(ListNode node = list_first(list);	// iterate list
-		node != LIST_EOF;
-		node = list_next(list, node)) {
-
-			Object enemy = list_node_value(list, node);	// recover object
-			Rectangle enemy_rect = enemy->rect;			// recover object dimensions
-
-			bool collision = CheckCollisionRecs(	// does the missile collide with this object?
-				missile_rect, enemy_rect
-			);
-								
-			
-			if (collision) {	// if they collide, go in
-				if (enemy->type == TERAIN) {
-					missile_collided = true;
-					break;
-				} else {
-					gamestate->score += 10;	// increase score
-					set_remove(gamestate->objects, enemy);		// remove object
-					missile_collided = true;
-					break;
-				}
-			}
+bool missile_distance(GameState gamestate, Missile missile){
+	printf("GO IN\n");
+	if (missile->rect.y < gamestate->camera_y - missile->rect.height && missile->type == P_MISSILE) {
+		set_remove(gamestate->missiles, missile);
+		printf("REMOVED\n");
+		printf("GO OUT\n");
+		return true;
+	} else if (missile->rect.y > gamestate->camera_y + SCREEN_HEIGHT && missile->type == E_MISSILE) {
+		set_remove(gamestate->missiles, missile);
+		printf("REMOVED\n");
+		printf("GO OUT\n");
+		return true;
 	}
 
-	list_destroy(list);	//free list memory
-	
-    return missile_collided;
+	printf("GO OUT\n");
+	return false;
 }
 
-bool missile_distance(GameState gamestate, Object missile){
-	float camera_y = gamestate->camera_y;	// recover jet's y coordinate
-	float missile_y = missile->rect.y;	// recover missile's y coordinate
-	int missile_height = missile->rect.height;
-				
-	if (missile_y < camera_y - missile_height)
-		return true;
+// void missiles_destroy(Missile missile, GameState gamestate) {
+//     // for(ListNode node = list_first(list);	// iterate list
+// 	// 	node != LIST_EOF;
+// 	// 	node = list_next(list, node)) {
+//     //         list_remove(gamestate->missiles, list_node_value(list, node));
+//     // }
 
-    return false;
-}
+// 	ListNode node_before = LIST_BOF;	// used to remove object from list
+// 	for	(ListNode node = list_first(gamestate->missiles);	// iterate list
+// 		node != LIST_EOF;
+// 		node = list_next(gamestate->missiles, node)) {
 
-void missiles_destroy(List list, GameState gamestate) {
-    for(ListNode node = list_first(list);	// iterate list
-		node != LIST_EOF;
-		node = list_next(list, node)) {
-            set_remove(gamestate->missiles, list_node_value(list, node));
-    }
-}
+// 		if (list_node_value(gamestate->missiles, node) == missile)
+// 			list_remove_next(gamestate->missiles, node_before);
+
+
+// 		node_before = node;
+// 	}
+
+// 	// int size = list_size(list);
+// 	// for(int i = 0 ; i < size ; i++) {
+// 	// 	list_remove_next(list, LIST_BOF);
+// 	// }
+// }
 
 void missiles_update(GameState gamestate) {
     Set missiles = gamestate->missiles;
     float speed = gamestate->speed_factor;
-    List remove_missiles = list_create(NULL);
+    // List remove_missiles = list_create(free);
 
-    for(SetNode node = set_first(missiles);
+
+	// SetNode prev_node = SET_BOF;
+	for(SetNode node = set_first(missiles);
 		node != SET_EOF;
 		node = set_next(missiles, node)) {
 
-        Object missile = set_node_value(missiles, node);
+		printf("AGAIN\n");
+		Missile missile = set_node_value(missiles, node);
 
+		if (missile_distance(gamestate, missile)) {
+			printf("NEXT\n");
+			if (set_size(missiles) != 0) {
+				node = set_first(missiles);
+			// 	// prev_node = SET_BOF;
+			} else {
+				break;
+			}
+			// printf("NEXT\n");
+		}
+	}
+
+	printf("SIZE: ");
+	printf("%d\n", set_size(missiles));
+	
+    for(SetNode node = set_first(missiles);
+		node != SET_EOF;
+		printf("MPIKA4\n"), node = set_next(missiles, node)) {
+
+		printf("MPIKA1\n");
+        Missile missile = set_node_value(missiles, node);
+
+		printf("MPIKA2\n");
         missile_movement(missile, speed);
 
-        List list = state_objects(	//create list
-			gamestate,
-			missile->rect.y + missile->rect.height,
-			missile->rect.y - 4 * SPACING
-		);
-            
-        if (missile_collision(gamestate, missile, list)) {
-            list_insert_next(remove_missiles, list_last(remove_missiles), missile);
-            continue;
-        }
+		printf("MPIKA3\n");
+	}
 
-        if (missile_distance(gamestate, missile)) {
-            list_insert_next(remove_missiles, list_last(remove_missiles), missile);
-        }
-    }
-
-    missiles_destroy(remove_missiles, gamestate);
-    list_destroy(remove_missiles);
+	printf("----------\n");
 }
 
-void missile_create(GameState gamestate, Object obj, bool key_pressed) {
-	if ((set_size(gamestate->missiles) < 3) && key_pressed) {
+void missile_create(GameState gamestate, Object obj, MissileType missile_type) {
+	// if ((set_size(gamestate->missiles) < 3)) {
+	Missile missile = malloc(sizeof(*missile));
 
-		Missile missile = malloc(sizeof(*missile));
+	missile->type = missile_type;
 
-		missile->type = P_MISSILE;
+	Rectangle obj_rect = obj->rect;			// recover jet's coordinates
+	Rectangle missile_rect;
+	if(missile_type == P_MISSILE) {
 
-		Rectangle jet_rect = obj->rect;	// recover jet's coordinates
-		Rectangle missile_rect = {
-			jet_rect.x + (jet_rect.width)/2,	// missile's starting position
-			jet_rect.y,							// is the center of the jet's position
+		missile_rect = (Rectangle) {
+			obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+			obj_rect.y,							// is the center of the jet's position
 			5,
 			15
 		};
-		missile->rect = missile_rect;
-
-		set_insert(gamestate->missiles, missile);
+	} else {
+		missile_rect = (Rectangle) {
+			obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+			obj_rect.y + obj_rect.height,		// is the center of the jet's position
+			5,
+			15
+		};
 	}
+
+	missile->rect = missile_rect;
+
+	set_insert(gamestate->missiles, missile);
 }

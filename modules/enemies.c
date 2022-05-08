@@ -35,14 +35,12 @@ void enemy_movement(Object enemy, float speed) {
 }
 
 void enemy_missile(GameState gamestate, Object enemy) {
-	
-	printf("HELLO!\n");
 	time_t timel = time(NULL);
-	if(timel > enemy->countdown) {
-		missile_create(gamestate, enemy, true);
+	if(timel >= enemy->countdown) {
+		missile_create(gamestate, enemy, E_MISSILE);
 		timel = time(NULL);
-		enemy->countdown = time(NULL) + GetRandomValue(2,3);
-		printf("HELLO!\n");
+		// enemy->countdown = timel + GetRandomValue(1,2);	
+		enemy->countdown = timel + 1;	
 	}
 }
 

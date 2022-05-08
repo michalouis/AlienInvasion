@@ -371,8 +371,8 @@ StartGame create_start_game() {
 }
 
 void restart_game(GameState gamestate) {
-	if (set_size(gamestate->missiles) != 0)// if there's a missile,
-		set_destroy(gamestate->missiles);	// free its memory
+	// Destroy and create new list for missiles
+	set_destroy(gamestate->missiles);	// free its memory
 
 	// Reinitialize state information
 	gamestate->playing = true;
@@ -511,8 +511,10 @@ void start_game_update(StartGame info, KeyState keys) {
 
 	// The following functions handle everything that has to do with the missile
 
-    missile_create(gamestate, gamestate->jet, keys->space);
+	if(keys->space)
+    	missile_create(gamestate, gamestate->jet, P_MISSILE);
 
+	printf("MPAINO\n");
 	missiles_update(gamestate);
 
     //////// JET ////////
@@ -521,13 +523,13 @@ void start_game_update(StartGame info, KeyState keys) {
 
     jet_movement(gamestate, gamestate->speed_factor, keys);
 
-    if (!gamestate->hit) {
-		if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
-			gamestate->hearts--;											// an object, stop the game
-			gamestate->hit = true;
-			gamestate->invis_t_start = time(NULL);
-		}
-	}
+    // if (!gamestate->hit) {
+	// 	if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
+	// 		gamestate->hearts--;											// an object, stop the game
+	// 		gamestate->hit = true;
+	// 		gamestate->invis_t_start = time(NULL);
+	// 	}
+	// }
 
 	if (!gamestate->hearts) {
 		gamestate->playing = false;

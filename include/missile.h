@@ -9,6 +9,6 @@ typedef struct missile{
     Rectangle rect;
 }* Missile;
 
-void missile_create(GameState, Object, bool);
+void missile_create(GameState, Object, MissileType);
 
 void missiles_update(GameState gamestate);

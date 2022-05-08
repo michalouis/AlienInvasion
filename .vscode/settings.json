@@ -4,6 +4,7 @@
         "state_update_title_scr.h": "c",
         "create.h": "c",
         "draw_related_funcs.h": "c",
-        "start_game.h": "c"
+        "start_game.h": "c",
+        "adtlist.h": "c"
     }
 }
