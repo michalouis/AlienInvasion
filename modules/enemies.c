@@ -37,10 +37,16 @@ void enemy_movement(Object enemy, float speed) {
 void enemy_missile(GameState gamestate, Object enemy) {
 	time_t timel = time(NULL);
 	if(timel >= enemy->countdown) {
-		missile_create(gamestate, enemy, E_MISSILE);
+		MissileType m_type;
+		if (enemy->type == WARSHIP)
+			m_type = W_MISSILE;
+		else
+			m_type = H_MISSILE;
+		
+		missile_create(gamestate, enemy, m_type);
 		timel = time(NULL);
-		// enemy->countdown = timel + GetRandomValue(1,2);	
-		enemy->countdown = timel + 1;	
+		enemy->countdown = timel + GetRandomValue(2,3);	
+		// enemy->countdown = timel + 1;	
 	}
 }
 

@@ -24,13 +24,14 @@ void draw_game(StartGame start_game, KeyState keys) {
 			else
 				jet_texture_info = gameinfo->game_textures->jet_neutral_info;
 
-			DrawTextureRec(
-				gameinfo->game_textures->jet,
-				jet_texture_info->rect,
-				(Vector2) {
+			DrawRectangle(
+				// gameinfo->game_textures->jet,
+				// (Vector2) {
 					gameinfo->game_state->jet->rect.x,
-					gameinfo->game_state->jet->rect.y - gameinfo->game_state->camera_y
-				},
+					gameinfo->game_state->jet->rect.y - gameinfo->game_state->camera_y,
+				// },
+				jet_texture_info->rect.width,
+				jet_texture_info->rect.height,
 				color
 			);
 
