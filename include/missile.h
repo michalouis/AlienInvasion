@@ -11,6 +11,6 @@ typedef struct missile{
     bool right;
 }* Missile;
 
-void missile_create(GameState, Object, MissileType);
+void missile_create(GameState, Rectangle, MissileType);
 
 void missiles_update(GameState gamestate);

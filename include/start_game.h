@@ -1,6 +1,7 @@
 #pragma once
 
 #include "state.h"
+#include "jet.h"
 #include "ADTList.h"
 
 #define BRIDGE_NUM 50		// πόσες γέφυρες δημιουργούνται στην πίστα
@@ -40,7 +41,7 @@ typedef struct object {
 }* Object;
 
 typedef struct game_state {
-	Object jet;
+	Jet jet;
 	Set missiles;
 	Set objects;
 	bool playing;

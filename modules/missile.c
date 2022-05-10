@@ -58,7 +58,7 @@ bool missile_collision(GameState gamestate, Missile missile, List list) {
 		
 		list_destroy(list);	//free list memory
 	} else {
-		Object jet = gamestate->jet;	// recover object
+		Jet jet = gamestate->jet;	// recover object
 		Rectangle jet_rect = jet->rect;			// recover object dimensions
 
 		bool collision = CheckCollisionRecs(	// does the missile collide with this object?
@@ -153,13 +153,13 @@ void missiles_update(GameState gamestate) {
 	printf("----------\n");
 }
 
-void missile_create(GameState gamestate, Object obj, MissileType missile_type) {
+void missile_create(GameState gamestate, Rectangle obj_rect, MissileType missile_type) {
 	if (missile_type != W_MISSILE) {
 		Missile missile = malloc(sizeof(*missile));
 
 		missile->type = missile_type;
 
-		Rectangle obj_rect = obj->rect;			// recover jet's coordinates
+		// Rectangle obj_rect = obj->rect;			// recover jet's coordinates
 		Rectangle missile_rect;
 		if(missile_type == P_MISSILE) {
 
@@ -172,7 +172,7 @@ void missile_create(GameState gamestate, Object obj, MissileType missile_type) {
 
 			missile->upwards = true;
 		} else if (missile_type == H_MISSILE){
-			if (gamestate->jet->rect.y < obj->rect.y) {
+			if (gamestate->jet->rect.y < obj_rect.y) {
 				missile_rect = (Rectangle) {
 					obj_rect.x + (obj_rect.width)/2,	// missile's starting position
 					obj_rect.y,		// is the center of the jet's position
@@ -203,10 +203,10 @@ void missile_create(GameState gamestate, Object obj, MissileType missile_type) {
 		missile1->type = missile_type;
 		missile2->type = missile_type;
 
-		Rectangle obj_rect = obj->rect;			// recover jet's coordinates
+		// Rectangle obj_rect = obj->rect;			// recover jet's coordinates
 		Rectangle missile_rect;
 
-		if (gamestate->jet->rect.y < obj->rect.y) {
+		if (gamestate->jet->rect.y < obj_rect.y) {
 			missile_rect = (Rectangle) {
 				obj_rect.x + (obj_rect.width)/2,	// missile's starting position
 				obj_rect.y,		// is the center of the jet's position

@@ -43,7 +43,7 @@ void enemy_missile(GameState gamestate, Object enemy) {
 		else
 			m_type = H_MISSILE;
 		
-		missile_create(gamestate, enemy, m_type);
+		missile_create(gamestate, enemy->rect, m_type);
 		timel = time(NULL);
 		enemy->countdown = timel + GetRandomValue(2,3);	
 		// enemy->countdown = timel + 1;	

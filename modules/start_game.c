@@ -4,6 +4,7 @@
 #include "start_game.h"
 #include "missile.h"
 #include "enemies.h"
+#include "jet.h"
 #include "start_game_draw.h"
 #include "set_utils.h"
 #include "ADTList.h"
@@ -185,7 +186,7 @@ GameState create_gameinfo_state() {
     gamestate->hit = false;
     gamestate->invis_t_start = 0;
 
-    gamestate->jet = create_object(JET, SCREEN_W_G/2 - (35/2),  0, 50, 50);
+    gamestate->jet = jet_create(SCREEN_W_G/2 - (35/2),  0, 50, 50);
 
     gamestate->camera_x = SCREEN_W_G / 2;
     gamestate->camera_y = -(SCREEN_HEIGHT / 2);
@@ -396,8 +397,7 @@ void restart_game(GameState gamestate) {
 	gamestate->missiles = set_create(compare_missiles, free);
 	gamestate->speed_factor = 1;
 
-	gamestate->jet->rect.x = SCREEN_W_G/2 - (35/2);
-	gamestate->jet->rect.y = 0;
+	gamestate->jet = jet_reset(gamestate->jet, SCREEN_W_G/2 - (35/2), 0);
 
 	gamestate->camera_x = SCREEN_W_G / 2;
 	gamestate->camera_y = -(SCREEN_HEIGHT / 2);
@@ -416,7 +416,7 @@ void restart_game(GameState gamestate) {
 // and the game's speed
 
 void jet_movement(GameState gamestate, float speed, KeyState keys) {
-    Object jet = gamestate->jet;
+    Jet jet = gamestate->jet;
     // float camera_x = gamestate->camera_x;
     float camera_y = gamestate->camera_y;
 
@@ -526,7 +526,7 @@ void start_game_update(StartGame info, KeyState keys) {
 	// The following functions handle everything that has to do with the missile
 
 	if(keys->space)
-    	missile_create(gamestate, gamestate->jet, P_MISSILE);
+    	missile_create(gamestate, gamestate->jet->rect, P_MISSILE);
 
 	printf("MPAINO\n");
 	missiles_update(gamestate);
