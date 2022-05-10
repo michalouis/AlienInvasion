@@ -10,7 +10,7 @@ void draw_game(StartGame start_game, KeyState keys) {
     // Draw Jet
 			Color color;
 
-			if (gameinfo->game_state->hit) {
+			if (gameinfo->game_state->jet->hit) {
 				color = RED;
 			} else {
 				color = WHITE;
@@ -171,7 +171,7 @@ void draw_tab(StartGame start_game, KeyState keys) {
 				else if (i == 2)
 					heart = start_game->tab->heart3;
 
-				if (gameinfo->game_state->hearts <= i) {
+				if (gameinfo->game_state->jet->hearts <= i) {
 					animate(
 						heart->heart_explode_anim,
 						(Vector2) {

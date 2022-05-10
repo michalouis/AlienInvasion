@@ -68,10 +68,10 @@ bool missile_collision(GameState gamestate, Missile missile, List list) {
 		if(collision) {
 			set_remove(gamestate->missiles, missile);	// remove object
 			missile_collided = true;
-			if (!gamestate->hit) {
-				gamestate->hearts--;						// an object, stop the game
-				gamestate->hit = true;
-				gamestate->invis_t_start = time(NULL);
+			if (!gamestate->jet->hit) {
+				gamestate->jet->hearts--;						// an object, stop the game
+				gamestate->jet->hit = true;
+				gamestate->jet->invis_t_start = time(NULL);
 			}
 		}
 	}
@@ -80,7 +80,6 @@ bool missile_collision(GameState gamestate, Missile missile, List list) {
 }
 
 bool missile_distance(GameState gamestate, Missile missile){
-	printf("GO IN\n");
 	if (missile->rect.y < gamestate->camera_y - missile->rect.height) {
 		set_remove(gamestate->missiles, missile);
 		return true;
@@ -106,7 +105,6 @@ void missiles_update(GameState gamestate) {
 		node != SET_EOF;
 		node = set_next(missiles, node)) {
 
-		printf("AGAIN\n");
 		Missile missile = set_node_value(missiles, node);
 
 		List list = state_objects(	//create list
@@ -116,7 +114,6 @@ void missiles_update(GameState gamestate) {
 		);
             
         if (missile_collision(gamestate, missile, list)) {
-			printf("NEXT\n");
 			if (set_size(missiles) != 0) {
 				node = set_first(missiles);
 			} else {
@@ -125,7 +122,6 @@ void missiles_update(GameState gamestate) {
 		}
 
 		if (missile_distance(gamestate, missile)) {
-			printf("NEXT\n");
 			if (set_size(missiles) != 0) {
 				node = set_first(missiles);
 			} else {
@@ -134,23 +130,15 @@ void missiles_update(GameState gamestate) {
 		}
 	}
 
-	printf("SIZE: ");
-	printf("%d\n", set_size(missiles));
-	
     for(SetNode node = set_first(missiles);
 		node != SET_EOF;
-		printf("MPIKA4\n"), node = set_next(missiles, node)) {
+		node = set_next(missiles, node)) {
 
-		printf("MPIKA1\n");
         Missile missile = set_node_value(missiles, node);
-
-		printf("MPIKA2\n");
-        missile_movement(missile, speed);
-
-		printf("MPIKA3\n");
+		
+        missile_movement(missile, speed);		
 	}
 
-	printf("----------\n");
 }
 
 void missile_create(GameState gamestate, Rectangle obj_rect, MissileType missile_type) {

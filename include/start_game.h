@@ -48,9 +48,9 @@ typedef struct game_state {
 	bool paused;
 	float speed_factor;
 	int score;
-	int hearts;
-	bool hit;
-	time_t invis_t_start;
+	// int hearts;
+	// bool hit;
+	// time_t invis_t_start;
 	float camera_x;
 	float camera_y;
 }* GameState;

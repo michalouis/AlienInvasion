@@ -180,11 +180,11 @@ GameState create_gameinfo_state() {
     gamestate->paused = false;
     gamestate->speed_factor = 1;
     gamestate->score = 0;
-    gamestate->hearts = 3;
+    // gamestate->hearts = 3;
     gamestate->missiles = set_create(compare_missiles, free);
 
-    gamestate->hit = false;
-    gamestate->invis_t_start = 0;
+    // gamestate->hit = false;
+    // gamestate->invis_t_start = 0;
 
     gamestate->jet = jet_create(SCREEN_W_G/2 - (35/2),  0, 50, 50);
 
@@ -393,7 +393,7 @@ void restart_game(GameState gamestate) {
 	gamestate->playing = true;
 	gamestate->paused = false;
 	gamestate->score = 0;
-	gamestate->hearts = 3;
+	// gamestate->hearts = 3;
 	gamestate->missiles = set_create(compare_missiles, free);
 	gamestate->speed_factor = 1;
 
@@ -402,8 +402,8 @@ void restart_game(GameState gamestate) {
 	gamestate->camera_x = SCREEN_W_G / 2;
 	gamestate->camera_y = -(SCREEN_HEIGHT / 2);
 
-	gamestate->hit = false;
-	gamestate->invis_t_start = 0;
+	// gamestate->hit = false;
+	// gamestate->invis_t_start = 0;
 
 	// Destroy and create new set for objects
 	set_destroy(gamestate->objects);
@@ -528,7 +528,6 @@ void start_game_update(StartGame info, KeyState keys) {
 	if(keys->space)
     	missile_create(gamestate, gamestate->jet->rect, P_MISSILE);
 
-	printf("MPAINO\n");
 	missiles_update(gamestate);
 
     //////// JET ////////
@@ -537,27 +536,32 @@ void start_game_update(StartGame info, KeyState keys) {
 
     jet_movement(gamestate, gamestate->speed_factor, keys);
 
-    if (!gamestate->hit) {
-		if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
-			gamestate->hearts--;											// an object, stop the game
-			gamestate->hit = true;
-			gamestate->invis_t_start = time(NULL);
-		}
-	}
+	if (!gamestate->jet->hit)
+		if(jet_collision(gamestate, gamestate->jet->rect))
+			gamestate->jet->hit = true;
 
-	if (!gamestate->hearts) {
+	jet_hit(gamestate->jet);
+    // if (!gamestate->hit) {
+	// 	if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
+	// 		gamestate->hearts--;											// an object, stop the game
+	// 		gamestate->hit = true;
+	// 		gamestate->invis_t_start = time(NULL);
+	// 	}
+	// }
+
+	if (jet_gameover(gamestate->jet)) {
 		gamestate->playing = false;
 		return;
 	}
 
-	if (gamestate->hit) {
-		time_t t_now = time(NULL);
+	// if (gamestate->hit) {
+	// 	time_t t_now = time(NULL);
 
-		if(t_now > gamestate->invis_t_start + 5) {
-			gamestate->invis_t_start = 0;
-			gamestate->hit = false;
-		}
-	}
+	// 	if(t_now > gamestate->invis_t_start + 5) {
+	// 		gamestate->invis_t_start = 0;
+	// 		gamestate->hit = false;
+	// 	}
+	// }
 
 
 	/////// ENEMIES ////////

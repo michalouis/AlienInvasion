@@ -12,6 +12,10 @@ typedef struct jet {
 
 Jet jet_create(float x, float y, float width, float height);
 
+void jet_hit(Jet jet);
+
+bool jet_gameover(Jet jet);
+
 Jet jet_reset(Jet jet, float x, float y);
 
 void jet_destroy(Jet jet);
