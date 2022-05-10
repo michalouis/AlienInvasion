@@ -6,171 +6,11 @@
 #include "enemies.h"
 #include "jet.h"
 #include "start_game_draw.h"
-#include "set_utils.h"
 #include "ADTList.h"
 #include "ADTSet.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-
-Object create_object(ObjectType type, float x, float y, float width, float height) {
-	Object obj = malloc(sizeof(*obj));
-	obj->type = type;
-	obj->rect.x = x;
-	obj->rect.y = y;
-	obj->rect.width = width;
-	obj->rect.height = height;
-
-	if (type == WARSHIP || type == HELICOPTER){
-		obj->timer = time(NULL);
-		obj->countdown = time(NULL) + GetRandomValue(2,3);
-	}
-
-	return obj;
-}
-
-void add_objects(GameState gamestate, float start_y) {
-	// Προσθέτουμε BRIDGE_NUM γέφυρες.
-	// Στο διάστημα ανάμεσα σε δύο διαδοχικές γέφυρες προσθέτουμε:
-	// - Εδαφος, αριστερά και δεξιά της οθόνης (με μεταβαλλόμενο πλάτος).
-	// - 3 εχθρούς (ελικόπτερα και πλοία)
-	// Τα αντικείμενα έχουν SPACING pixels απόσταση μεταξύ τους.
-
-	for (int i = 0; i < BRIDGE_NUM; i++) {
-		// Δημιουργία γέφυρας
-		Object bridge = create_object(
-			BRIDGE,
-			0,								// x στο αριστερό άκρο της οθόνης
-			start_y - 4 * (i+1) * SPACING,	// Η γέφυρα i έχει y = 4 * (i+1) * SPACING
-			SCREEN_W_G,						// Πλάτος ολόκληρη η οθόνη
-			20								// Υψος
-		);
-
-		// // Δημιουργία εδάφους
-		// Object terain_left = create_object(
-		// 	TERAIN,
-		// 	0,								// Αριστερό έδαφος, x = 0
-		// 	bridge->rect.y,					// y ίδιο με την γέφυρα
-		// 	rand() % (SCREEN_W_G/3),		// Πλάτος επιλεγμένο τυχαία
-		// 	4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
-		// );
-		// int width = rand() % (SCREEN_W_G/2);
-		// Object terain_right = create_object(
-		// 	TERAIN,
-		// 	SCREEN_W_G - width,			// Δεξί έδαφος, x = <οθόνη> - <πλάτος εδάφους>
-		// 	bridge->rect.y,					// y ίδιο με τη γέφυρα
-		// 	width,							// Πλάτος, επιλεγμένο τυχαία
-		// 	4*SPACING						// Υψος καλύπτει το χώρο ανάμεσα σε 2 γέφυρες
-		// );
-
-		// set_insert(state->objects, terain_left);
-		// set_insert(state->objects, terain_right);
-		set_insert(gamestate->objects, bridge);
-
-		// Προσθήκη 3 εχθρών πριν από τη γέφυρα.
-		for (int j = 0; j < 3; j++) {
-			// Ο πρώτος εχθρός βρίσκεται SPACING pixels κάτω από τη γέφυρα, ο δεύτερος 2*SPACING pixels κάτω από τη γέφυρα, κλπ.
-			float y = bridge->rect.y + (j+1)*SPACING;
-
-			Object enemy = rand() % 2 == 0		// Τυχαία επιλογή ανάμεσα σε πλοίο και ελικόπτερο
-				? create_object(WARSHIP,    (SCREEN_W_G - 83)/2, y, 83, 30)		// οριζόντιο κεντράρισμα
-				: create_object(HELICOPTER, (SCREEN_W_G - 66)/2, y, 66, 25);
-			enemy->forward = rand() % 2 == 0;	// Τυχαία αρχική κατεύθυνση
-
-			set_insert(gamestate->objects, enemy);
-		}
-	}
-}
-
-// CompareFunc comparing objects (used for set)
-
-int compare_objects(Pointer a, Pointer b) {
-	Object obj_a = a;
-	Object obj_b = b;
-
-	// comparing coordinates of y axis
-	if (obj_a->rect.y < obj_b->rect.y) {
-		return 1;
-	} else if (obj_a->rect.y > obj_b->rect.y) {
-		return -1;
-	} else {
-
-		// comparing memory addresses
-		if (a < b) {
-			return 1;
-		} else if (a > b) {
-			return -1;
-		} else {
-			return 0;
-		}
-	}
-}
-
-int compare_missiles(Pointer a, Pointer b) {
-	// Object obj_a = a;
-	// Object obj_b = b;
-
-	// // comparing coordinates of y axis
-	// if (obj_a->rect.y < obj_b->rect.y) {
-	// 	return 1;
-	// } else if (obj_a->rect.y > obj_b->rect.y) {
-	// 	return -1;
-	// } else {
-
-		// comparing memory addresses
-		if (a < b) {
-			return 1;
-		} else if (a > b) {
-			return -1;
-		} else {
-			return 0;
-		}
-	// }
-}
-
-// Επιστρέφει μια λίστα με όλα τα αντικείμενα του παιχνιδιού στην κατάσταση state,
-// των οποίων η συντεταγμένη x είναι ανάμεσα στο x_from και x_to.
-
-List state_objects(GameState gamestate, float y_from, float y_to) {
-	List list = list_create(NULL);	// create list
-
-
-	Object obj1 = malloc(sizeof(Object));	// allocate memory
-	obj1->rect.y = y_from;	// give y coordinate to obj1 
-							// (required for the next functions)
-
-	Object obj2 = malloc(sizeof(Object));	// allocate memory
-	obj2->rect.y = y_to;	// give y coordinate to obj2
-							// (required for the next functions)
-
-	Set set = gamestate->objects;
-
-	// Find first and last objects between y_from and y_to coordinates
-	Object obj_first = set_find_eq_or_greater(set, obj1);
-	Object obj_last = set_find_eq_or_smaller(set, obj2);
-
-	// If there are no objects between y_from and y_to,
-	// return empty list
-	if (obj_first == NULL || obj_last == NULL) {
-		return list;
-	}
-
-	// Iterate set from obj_first to obj_last and add
-	// objects to the list we created
-
-	SetNode first_node = set_find_node(set, obj_first);
-	SetNode last_node = set_find_node(set, obj_last);
-	
-	for(SetNode node = first_node;
-		node != set_next(set, last_node);
-		node = set_next(set, node)) {
-
-		Object obj = set_node_value(set, node);			// recover object
-		list_insert_next(list, list_last(list), obj);	// insert object to list
-	}
-
-	return list;
-}
 
 GameState create_gameinfo_state() {
     // Allocate memory for game struct in StartGame
@@ -181,7 +21,7 @@ GameState create_gameinfo_state() {
     gamestate->speed_factor = 1;
     gamestate->score = 0;
     // gamestate->hearts = 3;
-    gamestate->missiles = set_create(compare_missiles, free);
+    gamestate->missiles = set_create(missile_comparefunc, free);
 
     // gamestate->hit = false;
     // gamestate->invis_t_start = 0;
@@ -193,7 +33,7 @@ GameState create_gameinfo_state() {
 
     // Δημιουργούμε τo σετ των αντικειμένων, και προσθέτουμε αντικείμενα
 	// ξεκινώντας από start_y = 0.
-	gamestate->objects = set_create(compare_objects, free);
+	gamestate->objects = set_create(enemies_comparefunc, free);
 	add_objects(gamestate, 0);
 
     return gamestate;
@@ -394,7 +234,7 @@ void restart_game(GameState gamestate) {
 	gamestate->paused = false;
 	gamestate->score = 0;
 	// gamestate->hearts = 3;
-	gamestate->missiles = set_create(compare_missiles, free);
+	gamestate->missiles = set_create(missile_comparefunc, free);
 	gamestate->speed_factor = 1;
 
 	gamestate->jet = jet_reset(gamestate->jet, SCREEN_W_G/2 - (35/2), 0);
@@ -407,7 +247,7 @@ void restart_game(GameState gamestate) {
 
 	// Destroy and create new set for objects
 	set_destroy(gamestate->objects);
-	gamestate->objects = set_create(compare_objects, free);
+	gamestate->objects = set_create(enemies_comparefunc, free);
 	add_objects(gamestate, 0);
 }
 
@@ -445,38 +285,6 @@ void jet_movement(GameState gamestate, float speed, KeyState keys) {
     
     if (jet->rect.x > SCREEN_W_G - jet->rect.width - 10)
         jet->rect.x = SCREEN_W_G - jet->rect.width - 10;
-}
-
-// Checks if jet comes in contact with any objects from the list
-// If it does it returns "true", else it returns "false"
-
-bool jet_collision(GameState gamestate, Rectangle jet_rect) {
-	bool collision = false;
-
-	List list = state_objects(	//create list
-		gamestate,
-		gamestate->jet->rect.y + gamestate->jet->rect.height,
-		gamestate->jet->rect.y - 4 * SPACING
-	);
-
-	for	(ListNode node = list_first(list);	// iterate list
-    	node != LIST_EOF;
-    	node = list_next(list, node)) {
-
-		Object obj = list_node_value(list, node);	// recover object
-		collision = CheckCollisionRecs(		// check if jet and object collide
-			jet_rect, obj->rect
-		);
-
-		if (collision) {
-			list_destroy(list);	//free list memory
-			return true;		// if they collide, return "true"
-		}	
-	}
-
-	list_destroy(list);		// free list memory
-	return false;			// if none of the objects of the list
-							// collide with the jet, return "false"
 }
 
 // Finds the last bridge of the current state and returns it
@@ -537,29 +345,22 @@ void start_game_update(StartGame info, KeyState keys) {
     jet_movement(gamestate, gamestate->speed_factor, keys);
 
 	if (!gamestate->jet->hit)
-		if(jet_collision(gamestate, gamestate->jet->rect))
-			gamestate->jet->hit = true;
+		jet_collision(gamestate->objects, gamestate->jet);
+			// gamestate->jet->hit = true;
 
 	jet_hit(gamestate->jet);
-    // if (!gamestate->hit) {
-	// 	if (jet_collision(gamestate, gamestate->jet->rect)) {	// If the jet collides with 
-	// 		gamestate->hearts--;											// an object, stop the game
-	// 		gamestate->hit = true;
-	// 		gamestate->invis_t_start = time(NULL);
-	// 	}
-	// }
 
 	if (jet_gameover(gamestate->jet)) {
 		gamestate->playing = false;
 		return;
 	}
 
-	// if (gamestate->hit) {
+	// if (gamestate->jet->hit) {
 	// 	time_t t_now = time(NULL);
 
-	// 	if(t_now > gamestate->invis_t_start + 5) {
-	// 		gamestate->invis_t_start = 0;
-	// 		gamestate->hit = false;
+	// 	if(t_now > gamestate->jet->invis_t_start + 5) {
+	// 		gamestate->jet->invis_t_start = 0;
+	// 		gamestate->jet->hit = false;
 	// 	}
 	// }
 

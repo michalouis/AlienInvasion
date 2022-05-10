@@ -1,6 +1,8 @@
 #pragma once
 
 #include "raylib.h"
+// #include "start_game.h"
+#include "ADTSet.h"
 #include "time.h"
 
 typedef struct jet {
@@ -11,6 +13,8 @@ typedef struct jet {
 }* Jet;
 
 Jet jet_create(float x, float y, float width, float height);
+
+void jet_collision(Set, Jet jet);
 
 void jet_hit(Jet jet);
 

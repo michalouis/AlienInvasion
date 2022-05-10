@@ -2,6 +2,8 @@
 #include "start_game.h"
 #include "ADTList.h"
 #include "ADTSet.h"
+#include "enemies.h"
+#include "jet.h"
 
 #include <stdio.h>
 
@@ -68,11 +70,7 @@ bool missile_collision(GameState gamestate, Missile missile, List list) {
 		if(collision) {
 			set_remove(gamestate->missiles, missile);	// remove object
 			missile_collided = true;
-			if (!gamestate->jet->hit) {
-				gamestate->jet->hearts--;						// an object, stop the game
-				gamestate->jet->hit = true;
-				gamestate->jet->invis_t_start = time(NULL);
-			}
+			gamestate->jet->hit = true;
 		}
 	}
 
@@ -107,8 +105,8 @@ void missiles_update(GameState gamestate) {
 
 		Missile missile = set_node_value(missiles, node);
 
-		List list = state_objects(	//create list
-			gamestate,
+		List list = state_enemies(	//create list
+			gamestate->objects,
 			missile->rect.y + missile->rect.height,
 			missile->rect.y - 4 * SPACING
 		);
@@ -139,6 +137,16 @@ void missiles_update(GameState gamestate) {
         missile_movement(missile, speed);		
 	}
 
+}
+
+int missile_comparefunc(Pointer a, Pointer b) {
+	// comparing memory addresses
+	if (a < b)
+		return 1;
+	else if (a > b)
+		return -1;
+	else
+		return 0;
 }
 
 void missile_create(GameState gamestate, Rectangle obj_rect, MissileType missile_type) {

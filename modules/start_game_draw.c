@@ -1,5 +1,6 @@
 #include "draw_related_funcs.h"
 #include "missile.h"
+#include "enemies.h"
 #include "jet.h"
 #include "start_game.h"
 
@@ -56,8 +57,8 @@ void draw_game(StartGame start_game, KeyState keys) {
 			// ------------------------------------------------------------
 			// Create list of character that are on screen
 			// Rectangle jet_rect = info->jet->rect;
-			List list = state_objects(
-				gameinfo->game_state,
+			List list = state_enemies(
+				gameinfo->game_state->objects,
 				gameinfo->game_state->camera_y + SCREEN_HEIGHT,
 				gameinfo->game_state->camera_y - SCREEN_HEIGHT
 			);
