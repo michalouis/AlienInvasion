@@ -252,41 +252,6 @@ void restart_game(GameState gamestate) {
 }
 
 
-// Moves jet depending on the pressed keys
-// and the game's speed
-
-void jet_movement(GameState gamestate, float speed, KeyState keys) {
-    Jet jet = gamestate->jet;
-    // float camera_x = gamestate->camera_x;
-    float camera_y = gamestate->camera_y;
-
-	if (keys->up)
-		jet->rect.y -= 7 * speed;	// 6 pixels upwards multiplied by game's speed
-	else if (keys->down)
-		jet->rect.y += 1.5 * speed;	// 2 pixels upwards multiplied by game's speed
-	else
-		jet->rect.y -= 3 * speed;	// 3 pixels upwards multiplied by game's speed
-
-	if (keys->left && keys->right)	// If both left and right arrows are
-		return;						// pressed don't move left or right
-	else if (keys->left)
-		jet->rect.x -= 3 * speed;	// 3 pixels left multiplied by game's speed
-	else if (keys->right)
-		jet->rect.x += 3 * speed;	// 3 pixels right multiplied by game's speed
-    
-    if (jet->rect.y < camera_y + 10)
-        jet->rect.y = camera_y + 10;
-
-    if (jet->rect.y > camera_y + SCREEN_HEIGHT - jet->rect.height - 10)
-        jet->rect.y = camera_y + SCREEN_HEIGHT - jet->rect.height - 10;
-
-    if (jet->rect.x < 10)
-        jet->rect.x = 10;
-    
-    if (jet->rect.x > SCREEN_W_G - jet->rect.width - 10)
-        jet->rect.x = SCREEN_W_G - jet->rect.width - 10;
-}
-
 // Finds the last bridge of the current state and returns it
 
 Object find_last_bridge(Set set) {
@@ -342,27 +307,18 @@ void start_game_update(StartGame info, KeyState keys) {
 
 	// The functions jet_movement and jet_collision handle everything that has to do with the jet
 
-    jet_movement(gamestate, gamestate->speed_factor, keys);
-
-	if (!gamestate->jet->hit)
-		jet_collision(gamestate->objects, gamestate->jet);
-			// gamestate->jet->hit = true;
-
-	jet_hit(gamestate->jet);
+    jet_update(
+        gamestate->jet,
+        keys,
+        gamestate->speed_factor,
+        gamestate->camera_y,
+        gamestate->objects
+    );
 
 	if (jet_gameover(gamestate->jet)) {
 		gamestate->playing = false;
 		return;
 	}
-
-	// if (gamestate->jet->hit) {
-	// 	time_t t_now = time(NULL);
-
-	// 	if(t_now > gamestate->jet->invis_t_start + 5) {
-	// 		gamestate->jet->invis_t_start = 0;
-	// 		gamestate->jet->hit = false;
-	// 	}
-	// }
 
 
 	/////// ENEMIES ////////

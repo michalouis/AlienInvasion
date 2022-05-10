@@ -1,9 +1,9 @@
 #pragma once
 
 #include "raylib.h"
-// #include "start_game.h"
 #include "ADTSet.h"
 #include "time.h"
+#include "state.h"
 
 typedef struct jet {
     Rectangle rect;
@@ -14,9 +14,11 @@ typedef struct jet {
 
 Jet jet_create(float x, float y, float width, float height);
 
-void jet_collision(Set, Jet jet);
+void jet_update(Jet jet, KeyState keys, float speed, float, Set objects);
 
-void jet_hit(Jet jet);
+// void jet_collision(Set, Jet jet);
+
+// void jet_hit(Jet jet);
 
 bool jet_gameover(Jet jet);
 

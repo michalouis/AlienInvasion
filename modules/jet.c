@@ -2,6 +2,7 @@
 #include "start_game.h"
 #include "enemies.h"
 #include "ADTList.h"
+#include "state.h"
 
 #include <time.h>
 #include <stdlib.h>
@@ -19,6 +20,41 @@ Jet jet_create(float x, float y, float width, float height) {
     jet->invis_t_start = 0;
 
     return jet;
+}
+
+// Moves jet depending on the pressed keys
+// and the game's speed
+
+void jet_movement(Jet jet, float speed, float camera_y, KeyState keys) {
+    // Jet jet = gamestate->jet;
+    // float camera_x = gamestate->camera_x;
+    // float camera_y = gamestate->camera_y;
+
+	if (keys->up)
+		jet->rect.y -= 7 * speed;	// 6 pixels upwards multiplied by game's speed
+	else if (keys->down)
+		jet->rect.y += 1.5 * speed;	// 2 pixels upwards multiplied by game's speed
+	else
+		jet->rect.y -= 3 * speed;	// 3 pixels upwards multiplied by game's speed
+
+	if (keys->left && keys->right)	// If both left and right arrows are
+		return;						// pressed don't move left or right
+	else if (keys->left)
+		jet->rect.x -= 3 * speed;	// 3 pixels left multiplied by game's speed
+	else if (keys->right)
+		jet->rect.x += 3 * speed;	// 3 pixels right multiplied by game's speed
+    
+    if (jet->rect.y < camera_y + 10)
+        jet->rect.y = camera_y + 10;
+
+    if (jet->rect.y > camera_y + SCREEN_HEIGHT - jet->rect.height - 10)
+        jet->rect.y = camera_y + SCREEN_HEIGHT - jet->rect.height - 10;
+
+    if (jet->rect.x < 10)
+        jet->rect.x = 10;
+    
+    if (jet->rect.x > SCREEN_W_G - jet->rect.width - 10)
+        jet->rect.x = SCREEN_W_G - jet->rect.width - 10;
 }
 
 // Checks if jet comes in contact with any objects from the list
@@ -72,6 +108,12 @@ void jet_hit(Jet jet) {
 			jet->hit = false;
 		}
     }
+}
+
+void jet_update(Jet jet, KeyState keys, float speed, float camera_y, Set objects) {
+    jet_movement(jet, speed, camera_y, keys);
+	jet_collision(objects, jet);
+	jet_hit(jet);
 }
 
 bool jet_gameover(Jet jet) {
