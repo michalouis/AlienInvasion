@@ -1,5 +1,6 @@
 #include "draw_related_funcs.h"
 #include "missile.h"
+#include "jet.h"
 #include "start_game.h"
 
 void draw_game(StartGame start_game, KeyState keys) {
