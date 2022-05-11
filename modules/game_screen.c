@@ -4,6 +4,7 @@
 #include "game_screen.h"
 #include "missile.h"
 #include "enemies.h"
+#include "beams.h"
 #include "jet.h"
 #include "game_screen_draw.h"
 #include "ADTList.h"
@@ -36,6 +37,8 @@ Game create_game() {
 	game->objects = set_create(enemies_comparefunc, free);
 	add_objects(game, 0);
 
+    game->beams = set_create(missile_comparefunc, free);
+
     return game;
 }
 
@@ -46,8 +49,8 @@ GameTextures create_game_textures() {
 		"assets/jet.png"
 	);
 
-	int width = textures->jet.width / 3;
-	int height = textures->jet.height;
+	int width = (textures->jet.width / 3) * 0.75;
+	int height = textures->jet.height * 0.75;
 
     textures->jet_neutral_info = create_texture_info(
         (Vector2) {0, 0}, false,
@@ -69,15 +72,6 @@ GameTextures create_game_textures() {
 
     return textures;
 }
-
-// GameScreen create_start() {
-//     GameInfo gameinfo = malloc(sizeof(*gameinfo));
-
-//     gameinfo->game = create_game();
-//     gameinfo->game_textures = create_game_textures();
-
-//     return gameinfo;
-// }
 
 Heart create_heart(Vector2 pos, Texture texture) {
     Heart heart = malloc(sizeof(*heart));
@@ -306,6 +300,14 @@ void game_screen_update(GameScreen game_screen, KeyState keys) {
 
 
     game->camera_y -= 3 * game->speed_factor;
+
+    if(IsKeyPressed(KEY_B)) {
+        beam_create(game->beams, game->camera_y);
+    }
+
+    if(set_size(game->beams) != 0) {
+        beam_update(game->beams);
+    }
 
     //////// MISSILE ////////
 

@@ -45,6 +45,7 @@ typedef struct game {
 	Jet jet;
 	Set missiles;
 	Set objects;
+	Set beams;
 	bool playing;
 	bool paused;
 	float speed_factor;

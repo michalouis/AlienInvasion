@@ -1,6 +1,7 @@
 #include "draw_related_funcs.h"
 #include "missile.h"
 #include "enemies.h"
+#include "beams.h"
 #include "jet.h"
 #include "game_screen.h"
 
@@ -38,7 +39,7 @@ void draw_game(GameScreen game_screen, KeyState keys) {
 			);
 
 			// Draw Missile
-			if (game->missiles != 0)
+			if (set_size(game->missiles) != 0)
 				for(SetNode node = set_first(game->missiles);
 					node != SET_EOF;
 					node = set_next(game->missiles, node)) {
@@ -50,6 +51,60 @@ void draw_game(GameScreen game_screen, KeyState keys) {
 						missile->rect.width,
 						missile->rect.height,
 						missile->type == P_MISSILE ? RED : BLUE
+					);
+				}
+
+			if(set_size(game->beams) != 0)
+				for(SetNode node = set_first(game->beams);
+					node != SET_EOF;
+					node = set_next(game->beams, node)) {
+				
+					Beam beam = set_node_value(game->beams, node);
+					Vector2 vec;
+					
+					vec = beam->ring1;
+					DrawRectangle(
+						vec.x,
+						vec.y - game->camera_y,
+						17,
+						50,
+						MAGENTA
+					);
+
+					vec = beam->ring2;
+					DrawRectangle(
+						vec.x,
+						vec.y - game->camera_y,
+						17,
+						50,
+						MAGENTA
+					);
+
+					vec = beam->ring3;
+					DrawRectangle(
+						vec.x,
+						vec.y - game->camera_y,
+						17,
+						50,
+						MAGENTA
+					);
+
+					vec = beam->ring4;
+					DrawRectangle(
+						vec.x,
+						vec.y - game->camera_y,
+						17,
+						50,
+						MAGENTA
+					);
+
+					vec = beam->ring5;
+					DrawRectangle(
+						vec.x,
+						vec.y - game->camera_y,
+						17,
+						50,
+						MAGENTA
 					);
 				}
 
