@@ -13,6 +13,7 @@ typedef enum {
 
 typedef struct heart {
 	TextureInfo filled_heart;
+	TextureInfo empty_heart;
 	Animation heart_explode_anim;
 }* Heart;
 

@@ -69,17 +69,19 @@ void destroy_animation(Animation anim) {
     free(anim);
 }
 
-void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
-	if (loop || anim->info->curr_frame != anim->info->maxFrames - 1) {
-		anim->info->timer += GetFrameTime();
+bool animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
+    if (!loop && anim->info->curr_frame == anim->info->maxFrames - 1) {
+        return false;
+    }
 
-		if (anim->info->timer >= change_frame_t) {
-			anim->info->timer = 0.0;
-			anim->info->curr_frame++;
-		}
+	anim->info->timer += GetFrameTime();
 
-		anim->info->curr_frame = anim->info->curr_frame % anim->info->maxFrames;
+	if (anim->info->timer >= change_frame_t) {
+		anim->info->timer = 0.0;
+		anim->info->curr_frame++;
 	}
+
+	anim->info->curr_frame = anim->info->curr_frame % anim->info->maxFrames;
 
 	Rectangle texture_rec = {
 			(anim->info->frameWidth * anim->info->curr_frame),
@@ -94,4 +96,6 @@ void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
         pos,
         RAYWHITE
     );
+
+    return true;
 }

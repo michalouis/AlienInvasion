@@ -174,7 +174,7 @@ void draw_tab(StartGame start_game, KeyState keys) {
 					heart = start_game->tab->heart3;
 
 				if (gameinfo->game_state->jet->hearts <= i) {
-					animate(
+					bool active = animate(
 						heart->heart_explode_anim,
 						(Vector2) {
 							heart->filled_heart->pos.x,
@@ -183,11 +183,23 @@ void draw_tab(StartGame start_game, KeyState keys) {
 						0.04,
 						false
 					);
+
+					if(!active) {
+						heart_texture = heart->empty_heart;
+
+						DrawTextureRec(
+							tabinfo->asset_sheet,
+							heart_texture->rect,
+							(Vector2) {
+								heart_texture->pos.x,
+								heart_texture->pos.y
+							},
+							heart_texture->color
+						);
+					}
 				} else {
-						// if (gameinfo->hearts <= i)
-						// 	heart_texture = heart->empty_heart;
-						// else
-						heart_texture = heart->filled_heart;
+						
+					heart_texture = heart->filled_heart;
 
 					DrawTextureRec(
 						tabinfo->asset_sheet,

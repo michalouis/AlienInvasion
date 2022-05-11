@@ -43,4 +43,4 @@ Animation create_animation(Texture texture, Vector2 pos, int frames);
 
 void destroy_animation(Animation anim);
 
-void animate(Animation anim, Vector2 pos, float change_frame_t, bool loop);
+bool animate(Animation anim, Vector2 pos, float change_frame_t, bool loop);

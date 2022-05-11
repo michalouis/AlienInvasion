@@ -85,6 +85,9 @@ Heart create_heart(Vector2 pos, Texture texture) {
 
     rect = (Rectangle){320, 0, 199, 199};
     heart->filled_heart = create_texture_info(pos, true, rect, WHITE);
+    rect = (Rectangle){320, 199, 199, 199};
+    heart->empty_heart = create_texture_info(pos, true, rect, WHITE);
+
 
     heart->heart_explode_anim = create_animation(texture, pos, 13);
 
