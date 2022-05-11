@@ -13,6 +13,6 @@ typedef struct missile{
 
 int missile_comparefunc(Pointer a, Pointer b);
 
-void missile_create(GameState, Rectangle, MissileType);
+void missile_create(Game, Rectangle, MissileType);
 
-void missiles_update(GameState gamestate);
+void missiles_update(Game);

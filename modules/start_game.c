@@ -12,31 +12,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-GameState create_gameinfo_state() {
+Game create_game() {
     // Allocate memory for game struct in StartGame
-    GameState gamestate = malloc(sizeof(*gamestate));
+    Game game = malloc(sizeof(*game));
 
-    gamestate->playing = true;
-    gamestate->paused = false;
-    gamestate->speed_factor = 1;
-    gamestate->score = 0;
-    // gamestate->hearts = 3;
-    gamestate->missiles = set_create(missile_comparefunc, free);
+    game->playing = true;
+    game->paused = false;
+    game->speed_factor = 1;
+    game->score = 0;
+    // game->hearts = 3;
+    game->missiles = set_create(missile_comparefunc, free);
 
-    // gamestate->hit = false;
-    // gamestate->invis_t_start = 0;
+    // game->hit = false;
+    // game->invis_t_start = 0;
 
-    gamestate->jet = jet_create(SCREEN_W_G/2 - (35/2),  0, 50, 50);
+    game->jet = jet_create(SCREEN_W_G/2 - (35/2),  0, 50, 50);
 
-    gamestate->camera_x = SCREEN_W_G / 2;
-    gamestate->camera_y = -(SCREEN_HEIGHT / 2);
+    game->camera_x = SCREEN_W_G / 2;
+    game->camera_y = -(SCREEN_HEIGHT / 2);
 
     // Δημιουργούμε τo σετ των αντικειμένων, και προσθέτουμε αντικείμενα
 	// ξεκινώντας από start_y = 0.
-	gamestate->objects = set_create(enemies_comparefunc, free);
-	add_objects(gamestate, 0);
+	game->objects = set_create(enemies_comparefunc, free);
+	add_objects(game, 0);
 
-    return gamestate;
+    return game;
 }
 
 GameTextures create_game_textures() {
@@ -70,14 +70,14 @@ GameTextures create_game_textures() {
     return textures;
 }
 
-GameInfo create_gameinfo() {
-    GameInfo gameinfo = malloc(sizeof(*gameinfo));
+// StartGame create_start() {
+//     GameInfo gameinfo = malloc(sizeof(*gameinfo));
 
-    gameinfo->game_state = create_gameinfo_state();
-    gameinfo->game_textures = create_game_textures();
+//     gameinfo->game = create_game();
+//     gameinfo->game_textures = create_game_textures();
 
-    return gameinfo;
-}
+//     return gameinfo;
+// }
 
 Heart create_heart(Vector2 pos, Texture texture) {
     Heart heart = malloc(sizeof(*heart));
@@ -99,9 +99,9 @@ void reset_heart(Heart heart) {
     animation_reset(anim);
 }
 
-TabInfo create_tabinfo() {
+Tab create_tab() {
     // Allocate memory for tab struct in StartGame
-    TabInfo tabinfo = malloc(sizeof(*tabinfo));
+    Tab tabinfo = malloc(sizeof(*tabinfo));
 
     // Load file with the tab assets
     tabinfo->asset_sheet = LoadTexture(
@@ -227,37 +227,39 @@ StartGame create_start_game() {
     // Allocate memory for StartGame room
     StartGame startgame = malloc(sizeof(*startgame));
 
-    startgame->game = create_gameinfo();
-    startgame->tab = create_tabinfo();
+    startgame->game = create_game();
+    startgame->tab = create_tab();
+    startgame->game_textures = create_game_textures();
+
 
     return startgame;
 }
 
 void restart_game(StartGame info) {
-    GameState gamestate = info->game->game_state;
+    Game game = info->game;
 
 	// Destroy and create new list for missiles
-	set_destroy(gamestate->missiles);	// free its memory
+	set_destroy(game->missiles);	// free its memory
 
 	// Reinitialize state information
-	gamestate->playing = true;
-	gamestate->paused = false;
-	gamestate->score = 0;
-	// gamestate->hearts = 3;
-	gamestate->missiles = set_create(missile_comparefunc, free);
-	gamestate->speed_factor = 1;
+	game->playing = true;
+	game->paused = false;
+	game->score = 0;
+	// game->hearts = 3;
+	game->missiles = set_create(missile_comparefunc, free);
+	game->speed_factor = 1;
 
-	gamestate->jet = jet_reset(gamestate->jet, SCREEN_W_G/2 - (35/2), 0);
+	game->jet = jet_reset(game->jet, SCREEN_W_G/2 - (35/2), 0);
 
-	gamestate->camera_x = SCREEN_W_G / 2;
-	gamestate->camera_y = -(SCREEN_HEIGHT / 2);
+	game->camera_x = SCREEN_W_G / 2;
+	game->camera_y = -(SCREEN_HEIGHT / 2);
 
 	// Destroy and create new set for objects
-	set_destroy(gamestate->objects);
-	gamestate->objects = set_create(enemies_comparefunc, free);
-	add_objects(gamestate, 0);
+	set_destroy(game->objects);
+	game->objects = set_create(enemies_comparefunc, free);
+	add_objects(game, 0);
 
-    TabInfo tab = info->tab;
+    Tab tab = info->tab;
     reset_heart(tab->heart1);
     reset_heart(tab->heart2);
     reset_heart(tab->heart3);
@@ -275,13 +277,13 @@ Object find_last_bridge(Set set) {
 }
 
 void start_game_update(StartGame info, KeyState keys) {
-	GameState gamestate = info->game->game_state;
+	Game game = info->game;
 
     //////// GAME OVER & PAUSED MODES ////////
 
 	// If the game is over don't go deeper in the function (return)
 
-	if (!gamestate->playing) {
+	if (!game->playing) {
 		if (keys->enter)	// If enter is pressed restart game
 			restart_game(info);
 		
@@ -291,7 +293,7 @@ void start_game_update(StartGame info, KeyState keys) {
     // Pause(or unpause) game if the p key is pressed
 
     if (keys->p)
-		gamestate->paused = !gamestate->paused;
+		game->paused = !game->paused;
 
     // Paused mode
 	// If the game is paused don't go deeper in the function to
@@ -300,35 +302,35 @@ void start_game_update(StartGame info, KeyState keys) {
 	// Debug mode (can only be accessed if game is paused)
 	// The game will only move while the n key is pressed (1 frame)
 
-	if (gamestate->paused && !keys->n)
+	if (game->paused && !keys->n)
 		return;
 
 
-    gamestate->camera_y -= 3 * gamestate->speed_factor;
+    game->camera_y -= 3 * game->speed_factor;
 
     //////// MISSILE ////////
 
 	// The following functions handle everything that has to do with the missile
 
 	if(keys->space)
-    	missile_create(gamestate, gamestate->jet->rect, P_MISSILE);
+    	missile_create(game, game->jet->rect, P_MISSILE);
 
-	missiles_update(gamestate);
+	missiles_update(game);
 
     //////// JET ////////
 
 	// The functions jet_movement and jet_collision handle everything that has to do with the jet
 
     jet_update(
-        gamestate->jet,
+        game->jet,
+        game->camera_y,
+        game->speed_factor,
         keys,
-        gamestate->speed_factor,
-        gamestate->camera_y,
-        gamestate->objects
+        game->objects
     );
 
-	if (jet_gameover(gamestate->jet)) {
-		gamestate->playing = false;
+	if (jet_gameover(game->jet)) {
+		game->playing = false;
 		return;
 	}
 
@@ -338,15 +340,15 @@ void start_game_update(StartGame info, KeyState keys) {
 	// The functions enemy_movement and enemy_collision handle everything that has to do with the enemies
 	// More information about them above the state_update function (line 328 - 384)
 
-	enemies_update(gamestate);
+	enemies_update(game);
     
-	Set set = gamestate->objects;
+	Set set = game->objects;
 
 	Object last_bridge = find_last_bridge(set);
 	float last_bridge_y = last_bridge->rect.y;
-	if (abs(last_bridge_y - gamestate->jet->rect.y) < SCREEN_HEIGHT) {
-		add_objects(gamestate, last_bridge_y);
-		gamestate->speed_factor += 0.3 * gamestate->speed_factor;
+	if (abs(last_bridge_y - game->jet->rect.y) < SCREEN_HEIGHT) {
+		add_objects(game, last_bridge_y);
+		game->speed_factor += 0.3 * game->speed_factor;
 	}
 }
 

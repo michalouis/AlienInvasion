@@ -30,7 +30,7 @@ typedef struct tab_info {
 	TextInfo speed_fast_text;
 	TextInfo speed_slow_text;
 
-}* TabInfo;
+}* Tab;
 
 // Πληροφορίες για κάθε αντικείμενο
 typedef struct object {
@@ -49,12 +49,9 @@ typedef struct game_state {
 	bool paused;
 	float speed_factor;
 	int score;
-	// int hearts;
-	// bool hit;
-	// time_t invis_t_start;
 	float camera_x;
 	float camera_y;
-}* GameState;
+}* Game;
 
 typedef struct game_textures {
 	Texture jet;
@@ -63,18 +60,18 @@ typedef struct game_textures {
 	TextureInfo jet_right_info;
 }* GameTextures;
 
-typedef struct game_info {
-	GameState game_state;
-	GameTextures game_textures;
-}* GameInfo;
+// typedef struct game_info {
+// 	Game game;
+// 	GameTextures game_textures;
+// }* GameInfo;
 
 typedef struct start_game {
-	GameInfo game;
-	TabInfo tab;
-
+	Game game;
+	Tab tab;
+	GameTextures game_textures;
 }* StartGame;
 
-List state_objects(GameState gamestate, float y_from, float y_to);
+// List state_objects(Game, float y_from, float y_to);
 
 void start_game(State state, KeyState keys);
 

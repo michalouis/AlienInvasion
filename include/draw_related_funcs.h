@@ -22,7 +22,6 @@ typedef struct animation_info {
 	float frameWidth;
 	int maxFrames;
 	float timer;
-	// float change_frame_t;
 	int curr_frame;
 }* AnimationInfo;
 

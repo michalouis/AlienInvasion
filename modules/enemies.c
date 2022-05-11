@@ -78,7 +78,7 @@ void enemy_movement(Object enemy, float speed) {
 		enemy->rect.x -= pixels;	// move "pixels" left multiplied by game's speed
 }
 
-void enemy_missile(GameState gamestate, Object enemy) {
+void enemy_missile(Game game, Object enemy) {
 	time_t timel = time(NULL);
 	if(timel >= enemy->countdown) {
 		MissileType m_type;
@@ -87,20 +87,20 @@ void enemy_missile(GameState gamestate, Object enemy) {
 		else
 			m_type = H_MISSILE;
 		
-		missile_create(gamestate, enemy->rect, m_type);
+		missile_create(game, enemy->rect, m_type);
 		timel = time(NULL);
 		enemy->countdown = timel + GetRandomValue(2,3);	
 		// enemy->countdown = timel + 1;	
 	}
 }
 
-void enemies_update(GameState gamestate) {
-    Set set = gamestate->objects;
+void enemies_update(Game game) {
+    Set set = game->objects;
 
     List list = state_enemies(
-		gamestate->objects,
-		gamestate->camera_y + SCREEN_HEIGHT,
-		gamestate->camera_y - 100
+		game->objects,
+		game->camera_y + SCREEN_HEIGHT,
+		game->camera_y - 100
 	); 
 
 	for	(ListNode node = list_first(list);	// iterate list
@@ -110,9 +110,9 @@ void enemies_update(GameState gamestate) {
 		Object enemy = list_node_value(list, node);	// recover object
 		if (enemy->type == HELICOPTER || enemy->type == WARSHIP) {
 			
-			enemy_missile(gamestate, enemy);
+			enemy_missile(game, enemy);
 			enemy_collision(enemy, set);
-			enemy_movement(enemy, gamestate->speed_factor);
+			enemy_movement(enemy, game->speed_factor);
 		}
 	}
 
@@ -160,7 +160,7 @@ Object create_object(ObjectType type, float x, float y, float width, float heigh
 	return obj;
 }
 
-void add_objects(GameState gamestate, float start_y) {
+void add_objects(Game game, float start_y) {
 	// Προσθέτουμε BRIDGE_NUM γέφυρες.
 	// Στο διάστημα ανάμεσα σε δύο διαδοχικές γέφυρες προσθέτουμε:
 	// - Εδαφος, αριστερά και δεξιά της οθόνης (με μεταβαλλόμενο πλάτος).
@@ -196,7 +196,7 @@ void add_objects(GameState gamestate, float start_y) {
 
 		// set_insert(state->objects, terain_left);
 		// set_insert(state->objects, terain_right);
-		set_insert(gamestate->objects, bridge);
+		set_insert(game->objects, bridge);
 
 		// Προσθήκη 3 εχθρών πριν από τη γέφυρα.
 		for (int j = 0; j < 3; j++) {
@@ -208,7 +208,7 @@ void add_objects(GameState gamestate, float start_y) {
 				: create_object(HELICOPTER, (SCREEN_W_G - 66)/2, y, 66, 25);
 			enemy->forward = rand() % 2 == 0;	// Τυχαία αρχική κατεύθυνση
 
-			set_insert(gamestate->objects, enemy);
+			set_insert(game->objects, enemy);
 		}
 	}
 }

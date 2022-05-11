@@ -110,7 +110,7 @@ void jet_hit(Jet jet) {
     }
 }
 
-void jet_update(Jet jet, KeyState keys, float speed, float camera_y, Set objects) {
+void jet_update(Jet jet, float camera_y, float speed, KeyState keys, Set objects) {
     jet_movement(jet, speed, camera_y, keys);
 	jet_collision(objects, jet);
 	jet_hit(jet);

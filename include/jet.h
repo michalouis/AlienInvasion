@@ -14,7 +14,7 @@ typedef struct jet {
 
 Jet jet_create(float x, float y, float width, float height);
 
-void jet_update(Jet jet, KeyState keys, float speed, float, Set objects);
+void jet_update(Jet jet, float camera_y, float speed, KeyState keys, Set objects);
 
 // void jet_collision(Set, Jet jet);
 

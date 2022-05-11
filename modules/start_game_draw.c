@@ -6,13 +6,13 @@
 
 void draw_game(StartGame start_game, KeyState keys) {
     // get game info & tab info
-	GameInfo gameinfo = start_game->game;
-	// TabInfo tabinfo = start_game->tab;
+	Game game = start_game->game;
+	GameTextures game_textures= start_game->game_textures;
 
     // Draw Jet
 			Color color;
 
-			if (gameinfo->game_state->jet->hit) {
+			if (game->jet->hit) {
 				color = RED;
 			} else {
 				color = WHITE;
@@ -20,17 +20,17 @@ void draw_game(StartGame start_game, KeyState keys) {
 
 			TextureInfo jet_texture_info;
 			if(keys->left)
-				jet_texture_info = gameinfo->game_textures->jet_left_info;
+				jet_texture_info = game_textures->jet_left_info;
 			else if(keys->right)
-				jet_texture_info = gameinfo->game_textures->jet_right_info;
+				jet_texture_info = game_textures->jet_right_info;
 			else
-				jet_texture_info = gameinfo->game_textures->jet_neutral_info;
+				jet_texture_info = game_textures->jet_neutral_info;
 
 			DrawRectangle(
 				// gameinfo->game_textures->jet,
 				// (Vector2) {
-					gameinfo->game_state->jet->rect.x,
-					gameinfo->game_state->jet->rect.y - gameinfo->game_state->camera_y,
+					game->jet->rect.x,
+					game->jet->rect.y - game->camera_y,
 				// },
 				jet_texture_info->rect.width,
 				jet_texture_info->rect.height,
@@ -38,15 +38,15 @@ void draw_game(StartGame start_game, KeyState keys) {
 			);
 
 			// Draw Missile
-			if (gameinfo->game_state->missiles != 0)
-				for(SetNode node = set_first(gameinfo->game_state->missiles);
+			if (game->missiles != 0)
+				for(SetNode node = set_first(game->missiles);
 					node != SET_EOF;
-					node = set_next(gameinfo->game_state->missiles, node)) {
+					node = set_next(game->missiles, node)) {
 				
-					Missile missile = set_node_value(gameinfo->game_state->missiles, node);
+					Missile missile = set_node_value(game->missiles, node);
 					DrawRectangle(
 						missile->rect.x,
-						missile->rect.y - gameinfo->game_state->camera_y,
+						missile->rect.y - game->camera_y,
 						missile->rect.width,
 						missile->rect.height,
 						missile->type == P_MISSILE ? RED : BLUE
@@ -58,9 +58,9 @@ void draw_game(StartGame start_game, KeyState keys) {
 			// Create list of character that are on screen
 			// Rectangle jet_rect = info->jet->rect;
 			List list = state_enemies(
-				gameinfo->game_state->objects,
-				gameinfo->game_state->camera_y + SCREEN_HEIGHT,
-				gameinfo->game_state->camera_y - SCREEN_HEIGHT
+				game->objects,
+				game->camera_y + SCREEN_HEIGHT,
+				game->camera_y - SCREEN_HEIGHT
 			);
 
 			// Draw objects from list
@@ -72,7 +72,7 @@ void draw_game(StartGame start_game, KeyState keys) {
 				
 				DrawRectangle(
 					obj->rect.x,
-					obj->rect.y - gameinfo->game_state->camera_y,
+					obj->rect.y - game->camera_y,
 					obj->rect.width,
 					obj->rect.height,
 					GREEN
@@ -81,7 +81,7 @@ void draw_game(StartGame start_game, KeyState keys) {
 			// ------------------------------------------------------------
 
             // If game is over, draw message to play again
-			if (!gameinfo->game_state->playing) {
+			if (!game->playing) {
 				DrawText(
 					"PRESS [ENTER] TO PLAY AGAIN",
 					SCREEN_W_G / 2 - MeasureText("PRESS [ENTER] TO PLAY AGAIN", 30) / 2,
@@ -92,24 +92,24 @@ void draw_game(StartGame start_game, KeyState keys) {
 
 void draw_tab(StartGame start_game, KeyState keys) {
     // get game info & tab info
-	GameInfo gameinfo = start_game->game;
-	TabInfo tabinfo = start_game->tab;
+	Game game = start_game->game;
+	Tab tab = start_game->tab;
 
 
     // Draw Tab
 			
 			// DrawTextureRec(
-			// 	tabinfo->asset_sheet,
-			// 	tabinfo->tab_texture->rect,
+			// 	tab->asset_sheet,
+			// 	tab->tab_texture->rect,
 			// 	(Vector2) {
-			// 		tabinfo->tab_texture->pos.x,
-			// 		tabinfo->tab_texture->pos.y,
+			// 		tab->tab_texture->pos.x,
+			// 		tab->tab_texture->pos.y,
 			// 	},
-			// 	tabinfo->tab_texture->color
+			// 	tab->tab_texture->color
 			// );
 			DrawRectangle(
-				tabinfo->tab_texture->pos.x,
-				tabinfo->tab_texture->pos.y,
+				tab->tab_texture->pos.x,
+				tab->tab_texture->pos.y,
 				SCREEN_W_T,
 				SCREEN_HEIGHT,
 				MAROON
@@ -118,11 +118,11 @@ void draw_tab(StartGame start_game, KeyState keys) {
 			// Emote
 			Animation emote;
 			if (keys->up)
-				emote = tabinfo->emote_fast_anim;
+				emote = tab->emote_fast_anim;
 			else if (keys->down)
-				emote = tabinfo->emote_slow_anim;
+				emote = tab->emote_slow_anim;
 			else
-				emote = tabinfo->emote_neutral_anim;
+				emote = tab->emote_neutral_anim;
 
 			DrawRectangle(
 				emote->info->pos.x,
@@ -145,11 +145,11 @@ void draw_tab(StartGame start_game, KeyState keys) {
 			// Speed text
 			TextInfo text;
 			if (keys->up)
-				text = tabinfo->speed_fast_text;
+				text = tab->speed_fast_text;
 			else if (keys->down)
-				text = tabinfo->speed_slow_text;
+				text = tab->speed_slow_text;
 			else
-				text = tabinfo->speed_normal_text;
+				text = tab->speed_normal_text;
 
 			DrawText(
 				text->text,
@@ -173,7 +173,7 @@ void draw_tab(StartGame start_game, KeyState keys) {
 				else if (i == 2)
 					heart = start_game->tab->heart3;
 
-				if (gameinfo->game_state->jet->hearts <= i) {
+				if (game->jet->hearts <= i) {
 					bool active = animate(
 						heart->heart_explode_anim,
 						(Vector2) {
@@ -188,7 +188,7 @@ void draw_tab(StartGame start_game, KeyState keys) {
 						heart_texture = heart->empty_heart;
 
 						DrawTextureRec(
-							tabinfo->asset_sheet,
+							tab->asset_sheet,
 							heart_texture->rect,
 							(Vector2) {
 								heart_texture->pos.x,
@@ -202,7 +202,7 @@ void draw_tab(StartGame start_game, KeyState keys) {
 					heart_texture = heart->filled_heart;
 
 					DrawTextureRec(
-						tabinfo->asset_sheet,
+						tab->asset_sheet,
 						heart_texture->rect,
 						(Vector2) {
 							heart_texture->pos.x,
@@ -215,8 +215,8 @@ void draw_tab(StartGame start_game, KeyState keys) {
 
 			// Draw score
 			DrawText(
-				TextFormat("SCORE: %04i", gameinfo->game_state->score),
-				SCREEN_W_T / 2 + SCREEN_W_G - MeasureText(TextFormat("SCORE: %04i", gameinfo->game_state->score), 30) / 2,
+				TextFormat("SCORE: %04i", game->score),
+				SCREEN_W_T / 2 + SCREEN_W_G - MeasureText(TextFormat("SCORE: %04i", game->score), 30) / 2,
 				SCREEN_HEIGHT * 0.75 - 30, 30, GRAY
 			);
 }

@@ -7,12 +7,6 @@ typedef enum {
     START, KATI
 }* Buttons;
 
-// typedef struct textures{
-// 	Texture asset_sheet;
-// 	TextureInfo button1;
-// 	TextureInfo button2;
-// }* Textures;
-
 typedef struct title_screen {
 	TextInfo title_text;
 	Texture asset_sheet;
