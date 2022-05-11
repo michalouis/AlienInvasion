@@ -94,6 +94,11 @@ Heart create_heart(Vector2 pos, Texture texture) {
     return heart;
 }
 
+void reset_heart(Heart heart) {
+    Animation anim = heart->heart_explode_anim;
+    animation_reset(anim);
+}
+
 TabInfo create_tabinfo() {
     // Allocate memory for tab struct in StartGame
     TabInfo tabinfo = malloc(sizeof(*tabinfo));
@@ -228,7 +233,9 @@ StartGame create_start_game() {
     return startgame;
 }
 
-void restart_game(GameState gamestate) {
+void restart_game(StartGame info) {
+    GameState gamestate = info->game->game_state;
+
 	// Destroy and create new list for missiles
 	set_destroy(gamestate->missiles);	// free its memory
 
@@ -245,13 +252,15 @@ void restart_game(GameState gamestate) {
 	gamestate->camera_x = SCREEN_W_G / 2;
 	gamestate->camera_y = -(SCREEN_HEIGHT / 2);
 
-	// gamestate->hit = false;
-	// gamestate->invis_t_start = 0;
-
 	// Destroy and create new set for objects
 	set_destroy(gamestate->objects);
 	gamestate->objects = set_create(enemies_comparefunc, free);
 	add_objects(gamestate, 0);
+
+    TabInfo tab = info->tab;
+    reset_heart(tab->heart1);
+    reset_heart(tab->heart2);
+    reset_heart(tab->heart3);
 }
 
 
@@ -274,7 +283,7 @@ void start_game_update(StartGame info, KeyState keys) {
 
 	if (!gamestate->playing) {
 		if (keys->enter)	// If enter is pressed restart game
-			restart_game(gamestate);
+			restart_game(info);
 		
 		return;
 	}

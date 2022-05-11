@@ -62,6 +62,11 @@ Animation create_animation(Texture texture, Vector2 pos, int frames) {
 	return anim;
 }
 
+void animation_reset(Animation anim) {
+    anim->info->curr_frame = 0;
+    anim->info->timer = 0.0;
+}
+
 void destroy_animation(Animation anim) {
     UnloadTexture(anim->texture);
     free(anim->info);

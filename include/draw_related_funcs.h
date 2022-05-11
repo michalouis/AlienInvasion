@@ -41,6 +41,8 @@ void destroy_texture_info(TextureInfo texture_info);
 
 Animation create_animation(Texture texture, Vector2 pos, int frames);
 
+void animation_reset(Animation anim);
+
 void destroy_animation(Animation anim);
 
 bool animate(Animation anim, Vector2 pos, float change_frame_t, bool loop);
