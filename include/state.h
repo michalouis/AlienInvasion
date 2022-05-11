@@ -16,7 +16,7 @@ typedef enum {
 } StateName;
 
 typedef struct title_screen* TitleScreen;
-typedef struct start_game* StartGame;
+typedef struct game_screen* GameScreen;
 
 // typedef struct char_select {
 
@@ -25,7 +25,7 @@ typedef struct start_game* StartGame;
 typedef struct state {
 	StateName name;
 	TitleScreen title_screen;
-	StartGame start_game;
+	GameScreen game_screen;
 	// CharSelect char_select;
 	int selected_character;
 }* State;

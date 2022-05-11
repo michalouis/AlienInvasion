@@ -4,7 +4,7 @@
 #include "state.h"
 #include "interface.h"
 #include "title_screen.h"
-#include "start_game.h"
+#include "game_screen.h"
 #include "draw_related_funcs.h"
 
 State state_create() {
@@ -12,7 +12,7 @@ State state_create() {
 
     state->name = TITLE_SCREEN;
     state->title_screen = NULL;
-    state->start_game = NULL;
+    state->game_screen = NULL;
 
     return state;
 }
@@ -23,7 +23,7 @@ void* state_info(State state) {
             return state->title_screen;
             break;
         case START_GAME:
-            return state->start_game;
+            return state->game_screen;
             break;
         case CHARACTER_SELECT:
             break;
@@ -38,7 +38,7 @@ void state_update(State state, KeyState keys) {
             title_screen(state, keys);
             break;
         case START_GAME:
-            start_game(state, keys);
+            game_screen(state, keys);
             break;
         case CHARACTER_SELECT:
             break;

@@ -1,11 +1,11 @@
 #include "raylib.h"
 #include "state.h"
 #include "draw_related_funcs.h"
-#include "start_game.h"
+#include "game_screen.h"
 #include "missile.h"
 #include "enemies.h"
 #include "jet.h"
-#include "start_game_draw.h"
+#include "game_screen_draw.h"
 #include "ADTList.h"
 #include "ADTSet.h"
 
@@ -13,7 +13,7 @@
 #include <stdlib.h>
 
 Game create_game() {
-    // Allocate memory for game struct in StartGame
+    // Allocate memory for game struct in GameScreen
     Game game = malloc(sizeof(*game));
 
     game->playing = true;
@@ -70,7 +70,7 @@ GameTextures create_game_textures() {
     return textures;
 }
 
-// StartGame create_start() {
+// GameScreen create_start() {
 //     GameInfo gameinfo = malloc(sizeof(*gameinfo));
 
 //     gameinfo->game = create_game();
@@ -100,11 +100,11 @@ void reset_heart(Heart heart) {
 }
 
 Tab create_tab() {
-    // Allocate memory for tab struct in StartGame
-    Tab tabinfo = malloc(sizeof(*tabinfo));
+    // Allocate memory for tab struct in GameScreen
+    Tab tab = malloc(sizeof(*tab));
 
     // Load file with the tab assets
-    tabinfo->asset_sheet = LoadTexture(
+    tab->asset_sheet = LoadTexture(
 		"assets/tabinfo_asset_sheet.png"
 	);
     
@@ -115,7 +115,7 @@ Tab create_tab() {
     rect = (Rectangle){0, 0, 304, 576};
     position = (Vector2){SCREEN_W_G, 0};
 
-    tabinfo->tab_texture = create_texture_info(
+    tab->tab_texture = create_texture_info(
         position, false,
         rect,
         WHITE
@@ -129,7 +129,7 @@ Tab create_tab() {
         SCREEN_HEIGHT * 0.7 - 30
     };
 
-    tabinfo->speed_normal_text =
+    tab->speed_normal_text =
         create_text(
             "SPEED: NORMAL",
             position, true,
@@ -143,7 +143,7 @@ Tab create_tab() {
         SCREEN_HEIGHT * 0.7 - 30
     };
 
-    tabinfo->speed_slow_text =
+    tab->speed_slow_text =
         create_text(
             "SPEED: SLOW",
             position, true,
@@ -157,7 +157,7 @@ Tab create_tab() {
         SCREEN_HEIGHT * 0.7 - 30
     };
 
-    tabinfo->speed_fast_text =
+    tab->speed_fast_text =
         create_text(
             "SPEED: FAST",
             position, true,
@@ -178,21 +178,21 @@ Tab create_tab() {
         SCREEN_W_G + (SCREEN_W_T * 0.25),
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
-    tabinfo->heart1 = create_heart(position, anim_texture);
+    tab->heart1 = create_heart(position, anim_texture);
 
     // Heart2
     position = (Vector2){
         SCREEN_W_G + (SCREEN_W_T * 0.5),
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
-    tabinfo->heart2 = create_heart(position, anim_texture);
+    tab->heart2 = create_heart(position, anim_texture);
 
     // Heart3
     position = (Vector2){
         SCREEN_W_G + (SCREEN_W_T * 0.75),
         SCREEN_HEIGHT * 0.53 - 199 / 2
     };
-    tabinfo->heart3 = create_heart(position, anim_texture);
+    tab->heart3 = create_heart(position, anim_texture);
 
     //-----Create Emote animations-----//
     // Emote Neutral
@@ -206,26 +206,26 @@ Tab create_tab() {
         0
     };
 
-    tabinfo->emote_neutral_anim = create_animation(anim_texture, position, 3);
+    tab->emote_neutral_anim = create_animation(anim_texture, position, 3);
     
     // Emote Fast
     anim_texture = LoadTexture(
         "assets/emote_fast.png"
     );
-    tabinfo->emote_fast_anim = create_animation(anim_texture, position, 3);
+    tab->emote_fast_anim = create_animation(anim_texture, position, 3);
     
     // Emote Slow
     anim_texture = LoadTexture(
         "assets/emote_slow.png"
     );
-    tabinfo->emote_slow_anim = create_animation(anim_texture, position, 3);
+    tab->emote_slow_anim = create_animation(anim_texture, position, 3);
 
-    return tabinfo;
+    return tab;
 }
 
-StartGame create_start_game() {
-    // Allocate memory for StartGame room
-    StartGame startgame = malloc(sizeof(*startgame));
+GameScreen create_game_screen() {
+    // Allocate memory for GameScreen room
+    GameScreen startgame = malloc(sizeof(*startgame));
 
     startgame->game = create_game();
     startgame->tab = create_tab();
@@ -235,8 +235,8 @@ StartGame create_start_game() {
     return startgame;
 }
 
-void restart_game(StartGame info) {
-    Game game = info->game;
+void restart_game(GameScreen game_screen) {
+    Game game = game_screen->game;
 
 	// Destroy and create new list for missiles
 	set_destroy(game->missiles);	// free its memory
@@ -245,7 +245,6 @@ void restart_game(StartGame info) {
 	game->playing = true;
 	game->paused = false;
 	game->score = 0;
-	// game->hearts = 3;
 	game->missiles = set_create(missile_comparefunc, free);
 	game->speed_factor = 1;
 
@@ -259,7 +258,7 @@ void restart_game(StartGame info) {
 	game->objects = set_create(enemies_comparefunc, free);
 	add_objects(game, 0);
 
-    Tab tab = info->tab;
+    Tab tab = game_screen->tab;
     reset_heart(tab->heart1);
     reset_heart(tab->heart2);
     reset_heart(tab->heart3);
@@ -276,8 +275,8 @@ Object find_last_bridge(Set set) {
 	return bridge;
 }
 
-void start_game_update(StartGame info, KeyState keys) {
-	Game game = info->game;
+void game_screen_update(GameScreen game_screen, KeyState keys) {
+	Game game = game_screen->game;
 
     //////// GAME OVER & PAUSED MODES ////////
 
@@ -285,7 +284,7 @@ void start_game_update(StartGame info, KeyState keys) {
 
 	if (!game->playing) {
 		if (keys->enter)	// If enter is pressed restart game
-			restart_game(info);
+			restart_game(game_screen);
 		
 		return;
 	}
@@ -352,14 +351,14 @@ void start_game_update(StartGame info, KeyState keys) {
 	}
 }
 
-void start_game(State state, KeyState keys) {
-	if (state->start_game == NULL)
-            state->start_game = create_start_game();
+void game_screen(State state, KeyState keys) {
+	if (state->game_screen == NULL)
+            state->game_screen = create_game_screen();
 	else
-        start_game_update(state->start_game, keys);
+        game_screen_update(state->game_screen, keys);
 }
 
-void start_game_draw(StartGame start_game, KeyState keys) {
-	draw_game(start_game, keys);
-	draw_tab(start_game, keys);
+void game_screen_draw(GameScreen game_screen, KeyState keys) {
+	draw_game(game_screen, keys);
+	draw_tab(game_screen, keys);
 }

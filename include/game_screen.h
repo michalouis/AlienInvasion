@@ -17,7 +17,7 @@ typedef struct heart {
 	Animation heart_explode_anim;
 }* Heart;
 
-typedef struct tab_info {
+typedef struct tab {
 	Texture asset_sheet;
 	TextureInfo tab_texture;
 	Heart heart1;
@@ -41,7 +41,7 @@ typedef struct object {
 	bool forward;					// true: το αντικείμενο κινείται προς τα δεξιά
 }* Object;
 
-typedef struct game_state {
+typedef struct game {
 	Jet jet;
 	Set missiles;
 	Set objects;
@@ -60,19 +60,14 @@ typedef struct game_textures {
 	TextureInfo jet_right_info;
 }* GameTextures;
 
-// typedef struct game_info {
-// 	Game game;
-// 	GameTextures game_textures;
-// }* GameInfo;
-
-typedef struct start_game {
+typedef struct game_screen {
 	Game game;
 	Tab tab;
 	GameTextures game_textures;
-}* StartGame;
+}* GameScreen;
 
 // List state_objects(Game, float y_from, float y_to);
 
-void start_game(State state, KeyState keys);
+void game_screen(State state, KeyState keys);
 
-void start_game_draw(StartGame start_game, KeyState keys);
+void game_screen_draw(GameScreen game_screen, KeyState keys);

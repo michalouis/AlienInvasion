@@ -2,12 +2,12 @@
 #include "missile.h"
 #include "enemies.h"
 #include "jet.h"
-#include "start_game.h"
+#include "game_screen.h"
 
-void draw_game(StartGame start_game, KeyState keys) {
+void draw_game(GameScreen game_screen, KeyState keys) {
     // get game info & tab info
-	Game game = start_game->game;
-	GameTextures game_textures= start_game->game_textures;
+	Game game = game_screen->game;
+	GameTextures game_textures= game_screen->game_textures;
 
     // Draw Jet
 			Color color;
@@ -90,10 +90,10 @@ void draw_game(StartGame start_game, KeyState keys) {
 			}	
 }
 
-void draw_tab(StartGame start_game, KeyState keys) {
+void draw_tab(GameScreen game_screen, KeyState keys) {
     // get game info & tab info
-	Game game = start_game->game;
-	Tab tab = start_game->tab;
+	Game game = game_screen->game;
+	Tab tab = game_screen->tab;
 
 
     // Draw Tab
@@ -163,15 +163,15 @@ void draw_tab(StartGame start_game, KeyState keys) {
 			Heart heart;
 			TextureInfo heart_texture;
 
-			heart = start_game->tab->heart1;
+			heart = game_screen->tab->heart1;
 
 			for(int i = 0 ; i < 3 ; i++){
 				if (i == 0)
-					heart = start_game->tab->heart1;
+					heart = game_screen->tab->heart1;
 				else if (i == 1)
-					heart = start_game->tab->heart2;
+					heart = game_screen->tab->heart2;
 				else if (i == 2)
-					heart = start_game->tab->heart3;
+					heart = game_screen->tab->heart3;
 
 				if (game->jet->hearts <= i) {
 					bool active = animate(

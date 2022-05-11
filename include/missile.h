@@ -1,4 +1,4 @@
-#include "start_game.h"
+#include "game_screen.h"
 
 typedef enum {
     P_MISSILE, H_MISSILE, W_MISSILE    // player missile, enemy missile

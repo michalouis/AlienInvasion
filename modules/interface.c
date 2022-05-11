@@ -2,7 +2,7 @@
 #include "state.h"
 #include "draw_related_funcs.h"
 #include "title_screen.h"
-#include "start_game.h"
+#include "game_screen.h"
 #include "interface.h"
 #include "ADTList.h"
 
@@ -127,7 +127,7 @@ void interface_draw_frame(State state, KeyState keys) {
         }
 
 	// -------------------------------------------------------------------------------------
-	if (state->start_game != NULL || state->title_screen != NULL) {
+	if (state->game_screen != NULL || state->title_screen != NULL) {
 	switch (state->name) {
 		case TITLE_SCREEN:
 		{
@@ -136,7 +136,7 @@ void interface_draw_frame(State state, KeyState keys) {
 		}
 		case START_GAME:
 		{
-			start_game_draw(state->start_game, keys);
+			game_screen_draw(state->game_screen, keys);
 			break;
 		}
 		case CHARACTER_SELECT:

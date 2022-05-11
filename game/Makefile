@@ -11,7 +11,7 @@ CFLAGS = -Wall -Werror -g -I$(INCLUDE)
 LDFLAGS = -lm
 
 # Αρχεία .o
-OBJS = game.o $(MODULES)/state.o $(MODULES)/draw_related_funcs.o $(MODULES)/set_utils.o $(MODULES)/title_screen.o $(MODULES)/start_game.o $(MODULES)/jet.o $(MODULES)/missile.o $(MODULES)/start_game_draw.o $(MODULES)/interface.o $(MODULES)/enemies.o $(LIB)/k08.a $(LIB)/libraylib.a
+OBJS = game.o $(MODULES)/state.o $(MODULES)/draw_related_funcs.o $(MODULES)/set_utils.o $(MODULES)/title_screen.o $(MODULES)/game_screen.o $(MODULES)/jet.o $(MODULES)/missile.o $(MODULES)/game_screen_draw.o $(MODULES)/interface.o $(MODULES)/enemies.o $(LIB)/k08.a $(LIB)/libraylib.a
 
 # Το εκτελέσιμο πρόγραμμα
 EXEC = game
