@@ -62,50 +62,62 @@ void draw_game(GameScreen game_screen, KeyState keys) {
 					Beam beam = set_node_value(game->beams, node);
 					Vector2 vec;
 					
-					vec = beam->ring1;
-					DrawRectangle(
-						vec.x,
-						vec.y - game->camera_y,
-						17,
-						50,
-						MAGENTA
-					);
+					Animation anim = beam->ring1;
 
-					vec = beam->ring2;
-					DrawRectangle(
-						vec.x,
-						vec.y - game->camera_y,
-						17,
-						50,
-						MAGENTA
-					);
+					vec = beam->ring1_pos;
+					vec.y = vec.y - game->camera_y;
+					animate(anim, vec, 0.5, true);
+					// DrawRectangle(
+					// 	vec.x,
+					// 	vec.y - game->camera_y,
+					// 	17,
+					// 	50,
+					// 	MAGENTA
+					// );
 
-					vec = beam->ring3;
-					DrawRectangle(
-						vec.x,
-						vec.y - game->camera_y,
-						17,
-						50,
-						MAGENTA
-					);
+					vec = beam->ring2_pos;
+					vec.y = vec.y - game->camera_y;
+					animate(anim, vec, 0.5, true);
+					// DrawRectangle(
+					// 	vec.x,
+					// 	vec.y - game->camera_y,
+					// 	17,
+					// 	50,
+					// 	MAGENTA
+					// );
 
-					vec = beam->ring4;
-					DrawRectangle(
-						vec.x,
-						vec.y - game->camera_y,
-						17,
-						50,
-						MAGENTA
-					);
+					vec = beam->ring3_pos;
+					vec.y = vec.y - game->camera_y;
+					animate(anim, vec, 0.5, true);
+					// DrawRectangle(
+					// 	vec.x,
+					// 	vec.y - game->camera_y,
+					// 	17,
+					// 	50,
+					// 	MAGENTA
+					// );
 
-					vec = beam->ring5;
-					DrawRectangle(
-						vec.x,
-						vec.y - game->camera_y,
-						17,
-						50,
-						MAGENTA
-					);
+					vec = beam->ring4_pos;
+					vec.y = vec.y - game->camera_y;
+					animate(anim, vec, 0.5, true);
+					// DrawRectangle(
+					// 	vec.x,
+					// 	vec.y - game->camera_y,
+					// 	17,
+					// 	50,
+					// 	MAGENTA
+					// );
+
+					vec = beam->ring5_pos;
+					vec.y = vec.y - game->camera_y;
+					animate(anim, vec, 0.5, true);
+					// DrawRectangle(
+					// 	vec.x,
+					// 	vec.y - game->camera_y,
+					// 	17,
+					// 	50,
+					// 	MAGENTA
+					// );
 				}
 
 			// OBJECTS
