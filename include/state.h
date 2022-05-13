@@ -6,10 +6,10 @@
 
 #include <time.h>
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 576
-#define SCREEN_W_G 720
-#define SCREEN_W_T 304
+#define SCREEN_WIDTH 1280
+#define SCREEN_HEIGHT 720
+#define SCREEN_W_G 880
+#define SCREEN_W_T 400
 
 typedef enum {
 	TITLE_SCREEN, START_GAME, CHARACTER_SELECT

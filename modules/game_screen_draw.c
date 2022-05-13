@@ -192,11 +192,11 @@ void draw_tab(GameScreen game_screen, KeyState keys) {
 				emote = tab->emote_neutral_anim;
 
 			DrawRectangle(
-				emote->info->pos.x,
-				emote->info->pos.y + 10,
-				254,
-				254,
-				BLACK
+				SCREEN_W_G + 15,
+				15,
+				SCREEN_W_T - 30,
+				SCREEN_W_T - 30,
+				DARKBLUE
 			);
 
 			animate(
