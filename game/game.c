@@ -14,10 +14,11 @@ void update_and_draw() {
 		.down = IsKeyDown(KEY_DOWN),
 		.left = IsKeyDown(KEY_LEFT),
 		.right = IsKeyDown(KEY_RIGHT),
-		.enter = IsKeyPressed(KEY_ENTER),
 		.space = IsKeyPressed(KEY_SPACE),
+		.x = IsKeyPressed(KEY_X),
+		.enter = IsKeyPressed(KEY_ENTER),
 		.p = IsKeyPressed(KEY_P),
-		.n = IsKeyDown(KEY_N),
+		.b = IsKeyPressed(KEY_B),
 	};
 
 
@@ -34,7 +35,7 @@ int main(void) {
     start_main_loop(update_and_draw);
 
     interface_close();
-	// state_destroy(state);
+	state_destroy(state);
 
     return 0;
 }

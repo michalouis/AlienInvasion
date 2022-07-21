@@ -1,106 +1,94 @@
-// #include "state.h"
 #include "draw_related_funcs.h"
-
 #include <stdlib.h>
 
-TextInfo create_text(char* content, Vector2 pos, bool center_pos, int size, Color color) {
-    TextInfo text = malloc(sizeof(*text));
-
-    text->text = content;
-
-    if (center_pos) {
-        text->pos.x = pos.x - MeasureText(content, size) /2;
-        text->pos.y = pos.y;
-    } else {
-        text->pos = pos;
-    }
-
-    text->fontSize = size;
-    text->color = color;
-
-    return text;
-}
-
-void destroy_text(TextInfo text) {
-    free(text);
-}
-
-TextureInfo create_texture_info(Vector2 pos, bool center_pos, Rectangle rect, Color color) {
+TextureInfo textureInfo_create(Vector2 pos, bool center_pos, Rectangle rect, Color color) {
     TextureInfo texture_info = malloc(sizeof(*texture_info));
 
-    if (center_pos) {
+    // Coordinates
+    if (center_pos) {   //if we want the center of the texture to be on pos
         texture_info->pos.x = pos.x - rect.width / 2;
         texture_info->pos.y = pos.y;
     } else {
         texture_info->pos = pos;
     }
 
+    // Rectangle & Color
     texture_info->rect = rect;
     texture_info->color = WHITE;
 
     return texture_info;
 }
 
-void destroy_texture_info(TextureInfo texture_info) {
+void textureInfo_destroy(TextureInfo texture_info) {
     free(texture_info);
 }
 
-Animation create_animation(Texture texture, Vector2 pos, int frames) {
+Animation animation_create(Texture texture, int frames) {
 	Animation anim = malloc(sizeof(*anim));
 
-	anim->texture = texture;
+	anim->texture = texture;    //texture that contains animation's frames
 
-    AnimationInfo anim_info = malloc(sizeof(*anim_info));
-    anim_info->pos = pos;
-    anim_info->frameWidth = (float)(texture.width / frames);
-    anim_info->maxFrames = (int)(texture.width / (int)anim_info->frameWidth);
-    anim_info->timer = 0.0;
-    anim_info->curr_frame = 0;
-
-    anim->info = anim_info;
+    anim->frameWidth = (float)(texture.width / frames); // width of each frame
+    anim->maxFrames = (int)(texture.width / (int)anim->frameWidth); // number of frames
+    anim->timer = 0.0;  // counts time till frame needs to change
+    anim->curr_frame = 0;   // what frame is currently drawn
 
 	return anim;
 }
 
-void animation_reset(Animation anim) {
-    anim->info->curr_frame = 0;
-    anim->info->timer = 0.0;
-}
+bool animation_animate(Animation anim, Vector2 pos, float change_frame_t, Color color, bool loop) {
 
-void destroy_animation(Animation anim) {
-    UnloadTexture(anim->texture);
-    free(anim->info);
-
-    free(anim);
-}
-
-bool animate(Animation anim, Vector2 pos, float change_frame_t, bool loop) {
-    if (!loop && anim->info->curr_frame == anim->info->maxFrames - 1) {
+    // if all frames of the animation have been drawn, don't draw the animation again (dont loop)
+    if (!loop && anim->curr_frame == anim->maxFrames - 1 && change_frame_t < anim->timer) {
         return false;
     }
 
-	anim->info->timer += GetFrameTime();
-
-	if (anim->info->timer >= change_frame_t) {
-		anim->info->timer = 0.0;
-		anim->info->curr_frame++;
+    // updates the frame of the animation
+    // depending on the animation's speed
+	if (anim->timer >= change_frame_t) {
+		anim->timer = 0.0;
+		anim->curr_frame++;
 	}
 
-	anim->info->curr_frame = anim->info->curr_frame % anim->info->maxFrames;
+    // if all frames have been drawn go back
+    // to the first frame and start over
+	anim->curr_frame = anim->curr_frame % anim->maxFrames;
 
+    // find coordinates & dimensions of current frame
 	Rectangle texture_rec = {
-			(anim->info->frameWidth * anim->info->curr_frame),
-			0,
-			anim->info->frameWidth,
-			anim->texture.height
-		};
+		anim->frameWidth * anim->curr_frame,
+		0,
+		anim->frameWidth,
+		anim->texture.height
+	};
 	
+    // draw current frame
 	DrawTextureRec(
         anim->texture,
         texture_rec,
         pos,
-        RAYWHITE
+        color
     );
 
+	anim->timer += GetFrameTime();  // update time till next frame is drawn
     return true;
+}
+
+bool animation_finished(Animation anim, float change_frame_t) {
+    if (anim->curr_frame == anim->maxFrames - 1
+        && change_frame_t < anim->timer)
+        return true;
+
+    return false;
+}
+
+void animation_reset(Animation anim) {
+    anim->curr_frame = 0;   // go to first frame
+    anim->timer = 0.0;      // reinitialize timer
+}
+
+void animation_destroy(Animation anim) {
+    UnloadTexture(anim->texture);
+
+    free(anim);
 }

@@ -1,88 +1,80 @@
-#include "ADTSet.h"
 #include "raylib.h"
-#include "draw_related_funcs.h"
 #include "state.h"
 #include "beams.h"
+#include "ADTSet.h"
+#include "draw_related_funcs.h"
 
 #include <stdlib.h>
 
 void beam_create(Set beams, float camera_y) {
     Beam beam = malloc(sizeof(*beam));
 
-    beam->effect = GetRandomValue(DRUGS, NO_MISSILE);
-
+    // Beam comes from the right/left (random)
     if (GetRandomValue(0,1))
         beam->move_right = true;
     else
         beam->move_right = false;
 
-    int pos_y = camera_y + SCREEN_HEIGHT * ((float)GetRandomValue(1,3) / 4.0f);
-    // int pos_x = beam->move_right ? -100 : SCREEN_W_G + 100;
-    int pos_x = beam->move_right ? -0 : SCREEN_W_G;
+    // Spawn beam off screen, pos_y random
+    int pos_y = camera_y + SCREEN_HEIGHT * ((float)GetRandomValue(3,8) / 10.0f);
+    int pos_x = beam->move_right ? -500 : SCREEN_W_G + 585;
 
     beam->rect = (Rectangle) {
-        pos_x,
-        pos_y,
-        85,
-        20
+        pos_x, pos_y,
+        85, 20
     };
-
-    Texture texture = LoadTexture("assets/rays2.png");
-
-    // Vector2 vec;
-    pos_x = beam->rect.x;
-    beam->ring1_pos = (Vector2) {
-        pos_x + 17 * 0 , pos_y
-    };
-    beam->ring1 = create_animation(texture, beam->ring1_pos, 10);
-
-    beam->ring2_pos = (Vector2) {
-        pos_x + 17 * 1 , pos_y
-    };
-    beam->ring2 = create_animation(texture, beam->ring2_pos, 10);
-
-    beam->ring3_pos = (Vector2) {
-        pos_x + 17 * 2 , pos_y
-    };
-    beam->ring3 = create_animation(texture, beam->ring3_pos, 10);
-
-    beam->ring4_pos = (Vector2) {
-        pos_x + 17 * 3 , pos_y
-    };
-    beam->ring4 = create_animation(texture, beam->ring4_pos, 10);
-
-    beam->ring5_pos = (Vector2) {
-        pos_x + 17 * 4 , pos_y
-    };
-    beam->ring5 = create_animation(texture, beam->ring5_pos, 10);
     
     set_insert(beams, beam);
 }
 
-void beam_movement(Beam beam) {
-    int pixels = beam->move_right ? +8 : -8;
+// Update beam coordinates
 
-    beam->ring1_pos.y -= 3;
-    beam->ring2_pos.y -= 3;
-    beam->ring3_pos.y -= 3;
-    beam->ring4_pos.y -= 3;
-    beam->ring5_pos.y -= 3;
+static void beam_movement(Beam beam, float speed) {
+    int pixels = beam->move_right ? +7 : -7;
 
-    beam->ring1_pos.x += pixels;
-    beam->ring2_pos.x += pixels;
-    beam->ring3_pos.x += pixels;
-    beam->ring4_pos.x += pixels;
-    beam->ring5_pos.x += pixels;
+    beam->rect.y -= 3 * speed;  // beam appears to move parallel to x axis
+    beam->rect.x += pixels * speed;
 }
 
-void beam_update(Set beams) {
+
+// Destroy beam if it went from one side of the screen to the other
+
+static bool beam_despawn(Set beams, Beam beam) {
+    if (beam->move_right && beam->rect.x > SCREEN_W_G) {
+        set_remove(beams, beam);
+        return true;
+    } else if (!beam->move_right && beam->rect.x + beam->rect.width < 0) {
+        set_remove(beams, beam);
+        return true;
+    }
+
+    return false;
+}
+
+void beam_update(Set beams, float speed) {
     for(SetNode node = set_first(beams);
 		node != SET_EOF;
 		node = set_next(beams, node)) {
 
         Beam beam = set_node_value(beams, node);
 
-        beam_movement(beam);
+        beam_movement(beam, speed);
+    }
+    
+    // If a beam is removed from set iterate set from the start
+    // because the set arragment has changed
+    for(SetNode node = set_first(beams);
+		node != SET_EOF;
+		node = set_next(beams, node)) {
+
+        Beam beam = set_node_value(beams, node);
+
+        if (beam_despawn(beams, beam)) {
+            if (set_size(beams) != 0)
+                node = set_first(beams);
+            else
+                break;
+        }
     }
 }
 

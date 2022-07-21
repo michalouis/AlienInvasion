@@ -1,218 +1,241 @@
+#include "game_screen.h"
+#include "draw_related_funcs.h"
 #include "raylib.h"
 #include "state.h"
-#include "draw_related_funcs.h"
-#include "game_screen.h"
 #include "missile.h"
 #include "enemies.h"
 #include "beams.h"
 #include "jet.h"
-#include "game_screen_draw.h"
-#include "ADTList.h"
 #include "ADTSet.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 
-Game create_game() {
-    // Allocate memory for game struct in GameScreen
+extern Music music;
+
+// Create game struct
+
+static Game create_game() {
+    // Allocate memory for game struct
     Game game = malloc(sizeof(*game));
 
+    // Initialize game status
     game->playing = true;
     game->paused = false;
-    game->speed_factor = 1;
     game->score = 0;
-    // game->hearts = 3;
+    game->speed_factor = 1;
+    game->difficulty = 1;
+
+    // create jet
+    game->jet = jet_create(SCREEN_W_G/2 - (35/2),  200, 42, 42);
+
+    // create missile set
     game->missiles = set_create(missile_comparefunc, free);
+    
+    // create enemies set
+	game->enemies = set_create(enemies_comparefunc, free);
+	add_enemies(game, 0); // add enemies
 
-    // game->hit = false;
-    // game->invis_t_start = 0;
+    // create beams set
+    game->beams = set_create(missile_comparefunc, free);
+    game->beam_cooldown = 30;    // beams wont appear in the game immediately
 
-    game->jet = jet_create(SCREEN_W_G/2 - (35/2),  0, 50, 50);
-
-    game->camera_x = SCREEN_W_G / 2;
+    // starting camera position
     game->camera_y = -(SCREEN_HEIGHT / 2);
 
-    // Δημιουργούμε τo σετ των αντικειμένων, και προσθέτουμε αντικείμενα
-	// ξεκινώντας από start_y = 0.
-	game->objects = set_create(enemies_comparefunc, free);
-	add_objects(game, 0);
-
-    game->beams = set_create(missile_comparefunc, free);
+    // Play music
+    PlayMusicStream(music);
 
     return game;
 }
 
-GameTextures create_game_textures() {
-    GameTextures textures = malloc(sizeof(*textures));
+// Load assets
 
-    textures->jet = LoadTexture(
-		"assets/jet.png"
-	);
+static GameAssets create_game_assets() {
+    GameAssets assets = malloc(sizeof(*assets));
 
-	int width = (textures->jet.width / 3) * 0.75;
-	int height = textures->jet.height * 0.75;
+    ///// TEXTURES /////
+    assets->jet = LoadTexture("assets/game_assets/jet.png");
+    assets->shield = LoadTexture("assets/game_assets/shield.png");
+    assets->mothership = LoadTexture("assets/game_assets/mothership.png");
+    assets->mothership_defender = LoadTexture("assets/game_assets/mothership_defender.png");
+    assets->p_missile = LoadTexture("assets/game_assets/p_missile.png");
+    assets->e_missile = LoadTexture("assets/game_assets/e_missile.png");
 
-    textures->jet_neutral_info = create_texture_info(
-        (Vector2) {0, 0}, false,
-        (Rectangle) {width * 1, 0, width, height},
-        WHITE
-    );
+    ///// TEXTURE INFO /////
+	int width = (assets->jet.width / 3);
+	int height = assets->jet.height;
 
-    textures->jet_left_info = create_texture_info(
+    // jet neutral
+    assets->jet_neutral_info = textureInfo_create(
         (Vector2) {0, 0}, false,
         (Rectangle) {width * 0, 0, width, height},
         WHITE
     );
 
-    textures->jet_right_info = create_texture_info(
+    // jet left
+    assets->jet_left_info = textureInfo_create(
         (Vector2) {0, 0}, false,
         (Rectangle) {width * 2, 0, width, height},
         WHITE
     );
 
-    return textures;
+    // jet right
+    assets->jet_right_info = textureInfo_create(
+        (Vector2) {0, 0}, false,
+        (Rectangle) {width * 1, 0, width, height},
+        WHITE
+    );
+
+    ///// ANIMATIONS /////
+    Texture anim;
+
+    // crab
+    anim = LoadTexture("assets/game_assets/animation_crab.png");
+    assets->anim_crab = animation_create(anim, 2);
+
+    // longhorn
+    anim = LoadTexture("assets/game_assets/animation_longhorn.png");
+    assets->anim_longhorn = animation_create(anim, 2);
+
+    // beam
+    anim = LoadTexture("assets/game_assets/animation_beam.png");
+    assets->anim_beam = animation_create(anim, 4);
+
+    // warning sign
+    anim = LoadTexture("assets/game_assets/animation_warning.png");
+    assets->anim_warning_sign = animation_create(anim, 2);
+
+    // pause text
+    anim = LoadTexture("assets/game_assets/animation_paused_text.png");
+    assets->anim_pause_text = animation_create(anim, 4);
+    
+    // explosion
+    anim = LoadTexture("assets/game_assets/animation_explosion.png");
+    assets->anim_explosion = animation_create(anim, 3);
+
+    // gameover text
+    anim = LoadTexture("assets/game_assets/animation_gameover_text.png");
+    assets->anim_gameover_text = animation_create(anim, 4);
+    
+
+    ///// SOUNDS /////
+
+    // player missile
+    assets->sound_p_missile = LoadSound("assets/game_assets/player_missile.mp3");
+    SetSoundVolume(assets->sound_p_missile, 0.6);
+
+    // warning
+    assets->sound_warning = LoadSound("assets/game_assets/warning.mp3");
+
+    // score reward
+    assets->sound_score_reward = LoadSound("assets/game_assets/score_reward.mp3");
+
+    // hit sounds
+    assets->sound_hit_player = LoadSound("assets/game_assets/player_hit.mp3");
+    SetSoundVolume(assets->sound_hit_player, 0.8);
+
+    assets->sound_hit_beam = LoadSound("assets/game_assets/beam_hit.mp3");
+
+    assets->sound_hit_enemy = LoadSound("assets/game_assets/enemy_hit.mp3");
+    SetSoundVolume(assets->sound_hit_enemy, 0.6);
+    
+    // explosion
+    assets->sound_explosion = LoadSound("assets/game_assets/explosion.mp3");
+
+    return assets;
 }
 
-Heart create_heart(Vector2 pos, Texture texture) {
+// Creates heart struct to store heart assets/animations related to the heart
+
+static Heart create_heart(Vector2 pos, Texture texture) {
     Heart heart = malloc(sizeof(*heart));
     Rectangle rect;
 
-    rect = (Rectangle){320, 0, 199, 199};
-    heart->filled_heart = create_texture_info(pos, true, rect, WHITE);
-    rect = (Rectangle){320, 199, 199, 199};
-    heart->empty_heart = create_texture_info(pos, true, rect, WHITE);
+    // filled heart texture
+    rect = (Rectangle){0, 0, 199, 199};
+    heart->filled_heart = textureInfo_create(pos, true, rect, WHITE);
 
-
-    heart->heart_explode_anim = create_animation(texture, pos, 13);
+    // empty heart texture
+    rect = (Rectangle){0, 199, 199, 199};
+    heart->empty_heart = textureInfo_create(pos, true, rect, WHITE);
+    
+    // heart explosion animation
+    heart->anim_heart_explosion = animation_create(texture, 13);
 
     return heart;
 }
 
-void reset_heart(Heart heart) {
-    Animation anim = heart->heart_explode_anim;
+static void destroy_heart(Heart heart) {
+    textureInfo_destroy(heart->empty_heart);
+    textureInfo_destroy(heart->filled_heart);
+    animation_destroy(heart->anim_heart_explosion);
+
+    free(heart);
+}
+
+// Resets heart animation
+
+static void reset_heart_animation(Heart heart) {
+    Animation anim = heart->anim_heart_explosion;
     animation_reset(anim);
 }
 
-Tab create_tab() {
-    // Allocate memory for tab struct in GameScreen
+// Create tab struct
+
+static Tab create_tab() {
+    // Allocate memory for tab struct
     Tab tab = malloc(sizeof(*tab));
 
-    // Load file with the tab assets
-    tab->asset_sheet = LoadTexture(
-		"assets/tabinfo_asset_sheet.png"
-	);
-    
-    Vector2 position;   // used for position on screen
-    Rectangle rect;     // used for asset position in asset_sheet
+    ///// TEXTURES /////
+    tab->tab_texture = LoadTexture("assets/tab/tab.png");
+    tab->score = LoadTexture("assets/tab/score_tab.png");
+    tab->missile = LoadTexture("assets/tab/missile_tab.png");
+    tab->shield = LoadTexture("assets/tab/shield_tab.png");
+    tab->heart_sprites = LoadTexture("assets/tab/hearts.png");
 
-    // Create tab
-    rect = (Rectangle){0, 0, 304, 576};
-    position = (Vector2){SCREEN_W_G, 0};
-
-    tab->tab_texture = create_texture_info(
-        position, false,
-        rect,
-        WHITE
-    );
-
-    //-----Create Speed text-----//
-    
-    // Normal Speed
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T / 2),
-        SCREEN_HEIGHT * 0.7 - 30
-    };
-
-    tab->speed_normal_text =
-        create_text(
-            "SPEED: NORMAL",
-            position, true,
-            30,
-            LIGHTGRAY
-        );
-    
-    // Slow Speed
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T / 2),
-        SCREEN_HEIGHT * 0.7 - 30
-    };
-
-    tab->speed_slow_text =
-        create_text(
-            "SPEED: SLOW",
-            position, true,
-            30,
-            RED
-        );
-    
-    // Fast Speed
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T / 2),
-        SCREEN_HEIGHT * 0.7 - 30
-    };
-
-    tab->speed_fast_text =
-        create_text(
-            "SPEED: FAST",
-            position, true,
-            30,
-            DARKGREEN
-        );
-
+    ///// ANIMATIONS /////
     Texture anim_texture;
 
-    //-----Create hearts-----// - 199 / 2
-    // Create heart_animation
-    anim_texture = LoadTexture(
-        "assets/heart_anim.png"
-    );
-    
-    // Heart1
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T * 0.25),
-        SCREEN_HEIGHT * 0.53 - 199 / 2
-    };
-    tab->heart1 = create_heart(position, anim_texture);
-
-    // Heart2
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T * 0.5),
-        SCREEN_HEIGHT * 0.53 - 199 / 2
-    };
-    tab->heart2 = create_heart(position, anim_texture);
-
-    // Heart3
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T * 0.75),
-        SCREEN_HEIGHT * 0.53 - 199 / 2
-    };
-    tab->heart3 = create_heart(position, anim_texture);
-
     //-----Create Emote animations-----//
-    // Emote Neutral
-    anim_texture = LoadTexture(
-        "assets/emote_neutral.png"
-    );
 
-    // all emotes have the same on-screen position
-    position = (Vector2){
-        SCREEN_W_G + (SCREEN_W_T/2) - (anim_texture.width/3) / 2,
-        0
-    };
+    // Emote neutral
+    anim_texture = LoadTexture("assets/tab/emote_neutral.png");
+    tab->emote_neutral = animation_create(anim_texture, 3);
+    
+    // Emote hit
+    anim_texture = LoadTexture("assets/tab/emote_hit.png");
+    tab->emote_hit = animation_create(anim_texture, 6);
+    
+    // Emote gameover
+    anim_texture = LoadTexture("assets/tab/emote_gameover.png");
+    tab->emote_gameover = animation_create(anim_texture, 3);
+    
+    //-----Create Gameover animation-----//
 
-    tab->emote_neutral_anim = create_animation(anim_texture, position, 3);
+    anim_texture = LoadTexture("assets/tab/animation_tv_static.png");
+    tab->anim_tv_static = animation_create(anim_texture, 6);
+
+    ///// SOUNDS /////
+    tab->sound_tv_static = LoadSound("assets/tab/tv_static.mp3");
+
+    ///// ETC /////
     
-    // Emote Fast
-    anim_texture = LoadTexture(
-        "assets/emote_fast.png"
-    );
-    tab->emote_fast_anim = create_animation(anim_texture, position, 3);
-    
-    // Emote Slow
-    anim_texture = LoadTexture(
-        "assets/emote_slow.png"
-    );
-    tab->emote_slow_anim = create_animation(anim_texture, position, 3);
+    //-----Create hearts-----//
+    anim_texture = LoadTexture("assets/tab/animation_heart_explosion.png");
+
+    float j = 0.25, k = 0.61;   // used for heart position
+    for(int i = 0; i < 6; i++) {
+        if (j > 0.75) j = 0.25;
+        if (i > 2) k = 0.7;
+
+        Vector2 position = (Vector2){
+            SCREEN_W_G + (SCREEN_W_T * j),
+            SCREEN_HEIGHT * k - 199 / 2
+        };
+        tab->hearts[i] = create_heart(position, anim_texture);
+
+        j += 0.25;
+    }
 
     return tab;
 }
@@ -223,7 +246,7 @@ GameScreen create_game_screen() {
 
     startgame->game = create_game();
     startgame->tab = create_tab();
-    startgame->game_textures = create_game_textures();
+    startgame->game_assets = create_game_assets();
 
 
     return startgame;
@@ -232,44 +255,44 @@ GameScreen create_game_screen() {
 void restart_game(GameScreen game_screen) {
     Game game = game_screen->game;
 
-	// Destroy and create new list for missiles
-	set_destroy(game->missiles);	// free its memory
-
 	// Reinitialize state information
 	game->playing = true;
 	game->paused = false;
-	game->score = 0;
-	game->missiles = set_create(missile_comparefunc, free);
+    game->score = 0;
 	game->speed_factor = 1;
+    game->difficulty = 1;
+	
+    // reset jet position
+	game->jet = jet_reset(game->jet, SCREEN_W_G/2 - (35/2), 200);
 
-	game->jet = jet_reset(game->jet, SCREEN_W_G/2 - (35/2), 0);
+    // Destroy and create new set for missiles
+	set_destroy(game->missiles);
+	game->missiles = set_create(missile_comparefunc, free);
+	// Destroy and create new set for enemies
+	set_destroy(game->enemies);
+	game->enemies = set_create(enemies_comparefunc, free);
+    add_enemies(game, 0);
+	// Destroy and create new set for beams
+	set_destroy(game->beams);
+    game->beams = set_create(missile_comparefunc, free);
+    game->beam_cooldown = 30; 
 
-	game->camera_x = SCREEN_W_G / 2;
+    //reset camera position
 	game->camera_y = -(SCREEN_HEIGHT / 2);
 
-	// Destroy and create new set for objects
-	set_destroy(game->objects);
-	game->objects = set_create(enemies_comparefunc, free);
-	add_objects(game, 0);
+    // Reset animations
+    animation_reset(game_screen->game_assets->anim_explosion);
 
     Tab tab = game_screen->tab;
-    reset_heart(tab->heart1);
-    reset_heart(tab->heart2);
-    reset_heart(tab->heart3);
+    for(int i = 0; i < 6; i++)
+        reset_heart_animation(tab->hearts[i]);
+
+
+    // Replay music from the start
+    PlayMusicStream(music);
 }
 
-
-// Finds the last bridge of the current state and returns it
-
-Object find_last_bridge(Set set) {
-	Object bridge;
-	SetNode node = set_last(set);	// recover last node of set
-	bridge = set_node_value(set, node);	// recover last bridge
-
-	return bridge;
-}
-
-void game_screen_update(GameScreen game_screen, KeyState keys) {
+static void game_screen_update(GameScreen game_screen, KeyState keys) {
 	Game game = game_screen->game;
 
     //////// GAME OVER & PAUSED MODES ////////
@@ -292,65 +315,101 @@ void game_screen_update(GameScreen game_screen, KeyState keys) {
 	// If the game is paused don't go deeper in the function to
 	// prevent state from updating till the player unpauses the game
 
-	// Debug mode (can only be accessed if game is paused)
-	// The game will only move while the n key is pressed (1 frame)
-
-	if (game->paused && !keys->n)
+	if (game->paused)
 		return;
 
+    // Score Reward
+    if(game->score > 0 && game->score % 500 == 0 && game->score_reward) {
+        if (game->jet->hearts != 6) {
+            reset_heart_animation(
+                game_screen->tab->hearts[game->jet->hearts]
+            );
+            game->jet->hearts++;
+        } else {
+            game->score += 200;
+        }
 
+        PlaySound(game_screen->game_assets->sound_score_reward);
+        game->score_reward = false;
+    } else if (game->score % 500 != 0) {
+        game->score_reward = true;
+    }
+
+    // Increase difficulty
+    if (game->score > 1500 && game->difficulty == 1) {
+        game->speed_factor = 1.25;
+		game->difficulty = 2;
+    } else if (game->score > 3000 && game->difficulty == 2) {
+        game->speed_factor = 1.5;
+		game->difficulty = 3;
+    } else if (game->score > 4000) {
+        game->speed_factor = 1.55;
+		game->difficulty = 4;
+    }
+
+    // Update camera position
     game->camera_y -= 3 * game->speed_factor;
 
-    if(IsKeyPressed(KEY_B)) {
+    // Spawn beam randomly only if cooldown reaches 0
+    game->beam_cooldown -= GetFrameTime();
+    int chances;
+    if (game->difficulty == 1)
+        chances = 350;
+    else if (game->difficulty == 2)
+        chances = 300;
+    else
+        chances = 250;
+
+    if(game->beam_cooldown <= 0 && !GetRandomValue(0, chances) && set_size(game->beams) <= 3) {
         beam_create(game->beams, game->camera_y);
+
+        if (game->difficulty == 1)
+            game->beam_cooldown = 6;
+        else if (game->difficulty == 4)
+            game->beam_cooldown = 3;
+        else
+            game->beam_cooldown = 4;
     }
 
+    // Update beams
     if(set_size(game->beams) != 0) {
-        beam_update(game->beams);
+        beam_update(game->beams, game->speed_factor);
     }
 
-    //////// MISSILE ////////
-
-	// The following functions handle everything that has to do with the missile
-
-	if(keys->space)
+    // create missile if space is pressed
+	if(keys->space && !game->jet->hit_by_beam && game->jet->missiles > 0) {
     	missile_create(game, game->jet->rect, P_MISSILE);
+        PlaySound(game_screen->game_assets->sound_p_missile);
+    }
 
-	missiles_update(game);
+    // update missiles
+	missiles_update(game, game_screen->game_assets);
 
-    //////// JET ////////
+    // enable/disable shield if X is pressed
+    if (keys->x && !game->jet->shield_cooldown)
+        game->jet->shield = !game->jet->shield;
 
-	// The functions jet_movement and jet_collision handle everything that has to do with the jet
-
+    // update jet
     jet_update(
         game->jet,
         game->camera_y,
         game->speed_factor,
         keys,
-        game->objects
+        game->enemies,
+        game->beams,
+        game_screen->game_assets->sound_hit_player,
+        game_screen->game_assets->sound_hit_beam
     );
 
+    // if game is over the make jet explode and stop the game
 	if (jet_gameover(game->jet)) {
 		game->playing = false;
+        PlaySound(game_screen->game_assets->sound_explosion);
 		return;
 	}
 
-
-	/////// ENEMIES ////////
-
-	// The functions enemy_movement and enemy_collision handle everything that has to do with the enemies
-	// More information about them above the state_update function (line 328 - 384)
-
+    // update enemies
 	enemies_update(game);
-    
-	Set set = game->objects;
-
-	Object last_bridge = find_last_bridge(set);
-	float last_bridge_y = last_bridge->rect.y;
-	if (abs(last_bridge_y - game->jet->rect.y) < SCREEN_HEIGHT) {
-		add_objects(game, last_bridge_y);
-		game->speed_factor += 0.3 * game->speed_factor;
-	}
 }
 
 void game_screen(State state, KeyState keys) {
@@ -358,9 +417,79 @@ void game_screen(State state, KeyState keys) {
             state->game_screen = create_game_screen();
 	else
         game_screen_update(state->game_screen, keys);
+
+        if ((state->game_screen->game->paused && keys->b) ||
+            (!state->game_screen->game->playing && keys->b)) {
+            destroy_game_screen(state);
+            state->name = TITLE_SCREEN;
+        }
 }
 
-void game_screen_draw(GameScreen game_screen, KeyState keys) {
-	draw_game(game_screen, keys);
-	draw_tab(game_screen, keys);
+void destroy_game_screen(State state) {
+    GameScreen game_screen = state->game_screen;  
+
+    // Destroy game
+    Game game = game_screen->game;
+
+    jet_destroy(game->jet);
+    set_destroy(game->missiles);
+    set_destroy(game->enemies);
+    set_destroy(game->beams);
+
+    // Destroy game assets
+    GameAssets game_assets = game_screen->game_assets;
+
+    UnloadTexture(game_assets->jet);
+    UnloadTexture(game_assets->shield);
+    UnloadTexture(game_assets->mothership);
+    UnloadTexture(game_assets->mothership_defender);
+    UnloadTexture(game_assets->p_missile);
+    UnloadTexture(game_assets->e_missile);
+
+    textureInfo_destroy(game_assets->jet_neutral_info);
+    textureInfo_destroy(game_assets->jet_left_info);
+    textureInfo_destroy(game_assets->jet_right_info);
+
+    animation_destroy(game_assets->anim_crab);
+    animation_destroy(game_assets->anim_longhorn);
+    animation_destroy(game_assets->anim_beam);
+    animation_destroy(game_assets->anim_warning_sign);
+    animation_destroy(game_assets->anim_pause_text);
+    animation_destroy(game_assets->anim_explosion);
+    animation_destroy(game_assets->anim_gameover_text);
+
+    UnloadSound(game_assets->sound_p_missile);
+    UnloadSound(game_assets->sound_warning);
+    UnloadSound(game_assets->sound_score_reward);
+    UnloadSound(game_assets->sound_hit_player);
+    UnloadSound(game_assets->sound_hit_beam);
+    UnloadSound(game_assets->sound_hit_enemy);
+    UnloadSound(game_assets->sound_explosion);
+
+    // Destroy tab
+    Tab tab = game_screen->tab;
+
+    UnloadTexture(tab->tab_texture);
+    UnloadTexture(tab->score);
+    UnloadTexture(tab->missile);
+    UnloadTexture(tab->shield);
+    UnloadTexture(tab->heart_sprites);
+
+    animation_destroy(tab->emote_neutral);
+    animation_destroy(tab->emote_hit);
+    animation_destroy(tab->emote_gameover);
+    animation_destroy(tab->anim_tv_static);
+
+    UnloadSound(tab->sound_tv_static);
+
+    for(int i = 0; i < 6; i++) {
+        destroy_heart(tab->hearts[i]);
+    }
+
+
+    free(game_screen);
+
+    state->game_screen = NULL;
+
+    StopMusicStream(music);
 }

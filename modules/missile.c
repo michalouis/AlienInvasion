@@ -1,89 +1,126 @@
 #include "missile.h"
-#include "game_screen.h"
 #include "ADTList.h"
 #include "ADTSet.h"
+#include "game_screen.h"
 #include "enemies.h"
 #include "jet.h"
 
-#include <stdio.h>
+#include <stdlib.h>
 
-void missile_movement(Missile missile, float speed) {
+// Update missile's position
+
+static void missile_movement(Missile missile, float speed) {
 	if (missile->type == P_MISSILE) {
-		missile->rect.y -= 10 * speed;	// 10 pixels upwards multiplied by game's speed
-	} else if (missile->type == H_MISSILE) {
-		int pixels = missile->upwards ? -5 : 5;
+		missile->rect.y -= 8 * speed;	// 10 pixels upwards multiplied by game's speed
+	} else if (missile->type == LH_MISSILE) {
+		int pixels = missile->upwards ? -5 : 3;
 		missile->rect.y += pixels * speed;	// 10 pixels upwards multiplied by game's speed
-	} else if (missile->type == W_MISSILE) {
-		int pixels = 3;
+	} else if (missile->type == C_MISSILE || missile->type == M_MISSILE) {
+		int pixels = 2;	// 2 pixels diagonally multiplied by game's speed
 
 		if (missile->right && missile->upwards) {
-			missile->rect.x += pixels;
-			missile->rect.y -= pixels;
+			missile->rect.x += pixels * speed;
+			missile->rect.y -= pixels * speed;
 		} else if (!missile->right && missile->upwards) {
-			missile->rect.x -= pixels;
-			missile->rect.y -= pixels;
+			missile->rect.x -= pixels * speed;
+			missile->rect.y -= pixels * speed;
 		} else if (missile->right && !missile->upwards) {
-			missile->rect.x += pixels;
-			missile->rect.y += pixels;
+			missile->rect.x += pixels * speed;
+			missile->rect.y += pixels * speed;
 		} else {
-			missile->rect.x -= pixels;
-			missile->rect.y += pixels;
+			missile->rect.x -= pixels * speed;
+			missile->rect.y += pixels * speed;
 		}
 	}
 }
 
-bool missile_collision(Game game, Missile missile, List list) {
+// Check if missile comes in contact with enemy/player
+
+static bool missile_collision(Game game, Missile missile, GameAssets assets) {
 	bool missile_collided = false;
 	Rectangle missile_rect = missile->rect;	// recover missile dimensions
 	
 	if (missile->type == P_MISSILE) {
+
+		List list = state_enemies(	//create list of enemies missile can collide with
+			game->enemies,
+			missile->rect.y + missile->rect.height,
+			missile->rect.y - 5 * SPACING
+		);
 		
 		for	(ListNode node = list_first(list);	// iterate list
 			node != LIST_EOF;
 			node = list_next(list, node)) {
 				
-			Object enemy = list_node_value(list, node);	// recover object
-			Rectangle enemy_rect = enemy->rect;			// recover object dimensions
+			Enemy enemy = list_node_value(list, node);	// recover enemy
+			Rectangle enemy_rect = enemy->rect;			// recover enemy dimensions
 			
-			bool collision = CheckCollisionRecs(	// does the missile collide with this object?
+			bool collision = CheckCollisionRecs(	// does the missile collide with this enemy?
 				missile_rect, enemy_rect
 			);						
-				
-			if (collision) {	// if they collide, go in
-				game->score += 10;	// increase score
-				set_remove(game->objects, enemy);		// remove object
-				set_remove(game->missiles, missile);
-				missile_collided = true;
-				break;
+
+			if (collision) {
+				game->jet->missiles++;
+
+				if (game->jet->missiles > 5)	// just in case
+					game->jet->missiles = 5;
+					
+				if (enemy->type != MOTHERSHIP) {	// if they collide, go in
+					game->score += 10;						// increase score
+					set_remove(game->enemies, enemy);		// remove enemy
+					set_remove(game->missiles, missile);	// remove missile
+					missile_collided = true;
+					PlaySound(assets->sound_hit_enemy);			// play hit_enemy sound
+					break;
+				} else if (enemy->type == MOTHERSHIP){		// if missile collides with mothership
+					set_remove(game->missiles, missile);	// just remove missile
+					missile_collided = true;
+					break;
+				}
 			}
 		}
 		
 		list_destroy(list);	//free list memory
 	} else {
-		Jet jet = game->jet;	// recover object
-		Rectangle jet_rect = jet->rect;			// recover object dimensions
+		Jet jet = game->jet;	// recover enemy
+		Rectangle jet_rect = jet->rect;			// recover enemy dimensions
 
-		bool collision = CheckCollisionRecs(	// does the missile collide with this object?
+		bool collision = CheckCollisionRecs(	// does the missile collide with this player?
 			missile_rect, jet_rect
 		);
 
 		if(collision) {
-			set_remove(game->missiles, missile);	// remove object
+			set_remove(game->missiles, missile);	// remove missile
 			missile_collided = true;
-			game->jet->hit = true;
+			if (!game->jet->shield) {
+				if (!game->jet->hit)
+					PlaySound(assets->sound_hit_player);	// play hit_player sound
+
+				game->jet->hit = true;	// update player hit state to true
+			}
 		}
 	}
 
 	return missile_collided;
 }
 
-bool missile_distance(Game game, Missile missile){
+// If missile goes off screen, remove missile
+
+static bool missile_distance(Game game, Missile missile){
+	// Y AXIS //
 	if (missile->rect.y < game->camera_y - missile->rect.height) {
+		if(missile->type == P_MISSILE)	// if it is a player missile
+			game->jet->missiles++;		// increase player's available missiles
+
+		if (game->jet->missiles > 5)	// just in case
+			game->jet->missiles = 5;
+
 		set_remove(game->missiles, missile);
 		return true;
 	} else if (missile->rect.y > game->camera_y + SCREEN_HEIGHT) {
 		set_remove(game->missiles, missile);
 		return true;
+	// X AXIS //
 	} else if(missile->rect.x < 0 || missile->rect.x > SCREEN_W_G) {
 		set_remove(game->missiles, missile);
 		return true;
@@ -92,35 +129,26 @@ bool missile_distance(Game game, Missile missile){
 	return false;
 }
 
-void missiles_update(Game game) {
+void missiles_update(Game game, GameAssets assets) {	// assets needed for sounds
     Set missiles = game->missiles;
     float speed = game->speed_factor;
-    // List remove_missiles = list_create(free);
 
-
-	// SetNode prev_node = SET_BOF;
 	for(SetNode node = set_first(missiles);
 		node != SET_EOF;
 		node = set_next(missiles, node)) {
 
 		Missile missile = set_node_value(missiles, node);
 
-		List list = state_enemies(	//create list
-			game->objects,
-			missile->rect.y + missile->rect.height,
-			missile->rect.y - 4 * SPACING
-		);
-            
-        if (missile_collision(game, missile, list)) {
-			if (set_size(missiles) != 0) {
+        if (missile_collision(game, missile, assets)) { // if true, set arrangment changed, we have to iterate the list from the start
+			if (set_size(missiles) != 0) {	
 				node = set_first(missiles);
 			} else {
 				break;
 			}
 		}
 
-		if (missile_distance(game, missile)) {
-			if (set_size(missiles) != 0) {
+		if (missile_distance(game, missile)) { // if true, set arrangment changed, we have to iterate the list from the start
+			if (set_size(missiles) != 0) {	
 				node = set_first(missiles);
 			} else {
 				break;
@@ -128,6 +156,7 @@ void missiles_update(Game game) {
 		}
 	}
 
+	// separate iteration, every missile's position is only updated once
     for(SetNode node = set_first(missiles);
 		node != SET_EOF;
 		node = set_next(missiles, node)) {
@@ -136,7 +165,6 @@ void missiles_update(Game game) {
 		
         missile_movement(missile, speed);		
 	}
-
 }
 
 int missile_comparefunc(Pointer a, Pointer b) {
@@ -149,88 +177,147 @@ int missile_comparefunc(Pointer a, Pointer b) {
 		return 0;
 }
 
-void missile_create(Game game, Rectangle obj_rect, MissileType missile_type) {
-	if (missile_type != W_MISSILE) {
-		Missile missile = malloc(sizeof(*missile));
+static void p_missile_create(Game game, Rectangle obj_rect, MissileType missile_type) {
+	Missile missile = malloc(sizeof(*missile));
 
-		missile->type = missile_type;
+	missile->type = missile_type;
+	missile->rect = (Rectangle) {
+		obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+		obj_rect.y,							// is the center of the jet's position
+		4,
+		20
+	};
+	missile->upwards = true;
 
-		// Rectangle obj_rect = obj->rect;			// recover jet's coordinates
-		Rectangle missile_rect;
-		if(missile_type == P_MISSILE) {
+	game->jet->missiles--;
+	set_insert(game->missiles, missile);
+}
 
-			missile_rect = (Rectangle) {
-				obj_rect.x + (obj_rect.width)/2,	// missile's starting position
-				obj_rect.y,							// is the center of the jet's position
-				5,
-				15
-			};
+static void lh_missile_create(Game game, Rectangle obj_rect, MissileType missile_type) {
+	Missile missile = malloc(sizeof(*missile));
 
-			missile->upwards = true;
-		} else if (missile_type == H_MISSILE){
-			if (game->jet->rect.y < obj_rect.y) {
-				missile_rect = (Rectangle) {
-					obj_rect.x + (obj_rect.width)/2,	// missile's starting position
-					obj_rect.y,		// is the center of the jet's position
-					5,
-					15
-				};
+	missile->type = missile_type;
+	if (game->jet->rect.y < obj_rect.y) {
+		missile->rect = (Rectangle) {
+			obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+			obj_rect.y,							// is the center of the enemy's position
+			10,
+			10
+		};
 
-				missile->upwards = true;
-			} else {
-				missile_rect = (Rectangle) {
-					obj_rect.x + (obj_rect.width)/2,	// missile's starting position
-					obj_rect.y + obj_rect.height,		// is the center of the jet's position
-					8,
-					8
-				};
-
-				missile->upwards = false;
-			}
-		}
-
-		missile->rect = missile_rect;
-
-		set_insert(game->missiles, missile);
+		missile->upwards = true;
 	} else {
+		missile->rect = (Rectangle) {
+			obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+			obj_rect.y + obj_rect.height,		// is the center of the enemy's position
+			10,
+			10
+		};
+
+		missile->upwards = false;
+	}
+
+	set_insert(game->missiles, missile);
+}
+
+static void c_missile_create(Game game, Rectangle obj_rect, MissileType missile_type) {
+	Missile missile1 = malloc(sizeof(*missile1));
+	Missile missile2 = malloc(sizeof(*missile2));
+
+	missile1->type = missile_type;
+	missile2->type = missile_type;
+
+	Rectangle missile_rect;
+	if (game->jet->rect.y < obj_rect.y) {
+		missile_rect = (Rectangle) {
+			obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+			obj_rect.y,							// is the center of the enemy's position
+			10,
+			10
+		};
+
+		missile1->upwards = true;
+		missile2->upwards = true;
+	} else {
+		missile_rect = (Rectangle) {
+			obj_rect.x + (obj_rect.width)/2,	// missile's starting position
+			obj_rect.y + obj_rect.height,		// is the center of the enemy's position
+			10,
+			10
+		};
+
+		missile1->upwards = false;
+		missile2->upwards = false;
+	}
+
+	// same starting position, but one missile goes
+	// to the left and the other to the right
+	missile1->rect = missile_rect;
+	missile1->right = false;
+
+	missile2->rect = missile_rect;
+	missile2->right = true;
+
+	set_insert(game->missiles, missile1);
+	set_insert(game->missiles, missile2);
+}
+
+static void m_missile_create(Game game, Rectangle obj_rect, MissileType missile_type) {
+	for (int i = 0; i < 3; i++) {
 		Missile missile1 = malloc(sizeof(*missile1));
 		Missile missile2 = malloc(sizeof(*missile2));
 
 		missile1->type = missile_type;
 		missile2->type = missile_type;
 
-		// Rectangle obj_rect = obj->rect;			// recover jet's coordinates
 		Rectangle missile_rect;
-
-		if (game->jet->rect.y < obj_rect.y) {
+		// Is mothership on the left or right size of the screen?
+		if (obj_rect.x != 0) {
 			missile_rect = (Rectangle) {
-				obj_rect.x + (obj_rect.width)/2,	// missile's starting position
-				obj_rect.y,		// is the center of the jet's position
-				8,
-				8
+				obj_rect.x + 25,							// missile's starting position
+				obj_rect.y + (i+1) * obj_rect.height / 4,	// depends on the "for" loop
+				10,
+				10
 			};
 
-			missile1->upwards = true;
-			missile2->upwards = true;
+			missile1->right = false;
+			missile2->right = false;
 		} else {
 			missile_rect = (Rectangle) {
-				obj_rect.x + (obj_rect.width)/2,	// missile's starting position
-				obj_rect.y + obj_rect.height,		// is the center of the jet's position
-				8,
-				8
+				obj_rect.width - 25,						// missile's starting position
+				obj_rect.y + (i+1) * obj_rect.height / 4,	// depends on the "for" loop
+				10,
+				10
 			};
 
-			missile1->upwards = false;
-			missile2->upwards = false;
+			missile1->right = true;
+			missile2->right = true;
 		}
 
 		missile1->rect = missile_rect;
-		missile1->right = false;
+		missile1->upwards = true;
 
 		missile2->rect = missile_rect;
-		missile2->right = true;
+		missile2->upwards = false;
 
 		set_insert(game->missiles, missile1);
 		set_insert(game->missiles, missile2);
+	}
+}
+
+void missile_create(Game game, Rectangle obj_rect, MissileType missile_type) {
+	switch (missile_type) {
+		case P_MISSILE:
+			p_missile_create(game, obj_rect, missile_type);
+			break;
+		case LH_MISSILE:
+			lh_missile_create(game, obj_rect, missile_type);
+			break;
+		case C_MISSILE:
+			c_missile_create(game, obj_rect, missile_type);
+			break;
+		case M_MISSILE:
+			m_missile_create(game, obj_rect, missile_type);
+			break;
 	}
 }

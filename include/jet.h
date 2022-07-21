@@ -2,26 +2,37 @@
 
 #include "raylib.h"
 #include "ADTSet.h"
-#include "time.h"
 #include "state.h"
 
 typedef struct jet {
     Rectangle rect;
     int hearts;
+    int missiles;
     bool hit;
-    time_t invis_t_start;
+    bool hit_by_beam;
+    float invisibility_time;
+    float effect_time;
+    bool shield;
+    float shield_time;
+    float shield_cooldown;
 }* Jet;
+
+// Create jet
 
 Jet jet_create(float x, float y, float width, float height);
 
-void jet_update(Jet jet, float camera_y, float speed, KeyState keys, Set objects);
+// Update anything jet related
 
-// void jet_collision(Set, Jet jet);
+void jet_update(Jet jet, float camera_y, float speed, KeyState keys, Set objects, Set beams, Sound hit_player, Sound hit_beam);
 
-// void jet_hit(Jet jet);
+// if hearts reach zero game is over(return true)
 
 bool jet_gameover(Jet jet);
 
+// Reset jet before restarting game
+
 Jet jet_reset(Jet jet, float x, float y);
+
+// Free memory used by jet
 
 void jet_destroy(Jet jet);

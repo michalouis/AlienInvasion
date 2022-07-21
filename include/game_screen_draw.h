@@ -2,7 +2,7 @@
 
 #include "game_screen.h"
 
-void draw_game(GameScreen game_screen, KeyState keys);
+// Draw game & tab
 
-void draw_tab(GameScreen game_screen, KeyState);
+void game_screen_draw(GameScreen game_screen, KeyState keys);
 

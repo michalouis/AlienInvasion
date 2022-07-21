@@ -4,16 +4,16 @@
 #include "state.h"
 
 typedef struct {
-    float x,    //The stars coordinates
-          y,    //on the screen
-          z;    //The stars depth or distance from camera
+    float x;    // The stars coordinates
+    float y;    // on the screen
+    float speed;    // Star speed
 }Star;
 
 typedef struct {
     Rectangle rect;
-    float x,    //The stars coordinates
-          y,    //on the screen
-          z;    //The stars depth or distance from camera
+    float x;    // The meteorite coordinates
+    float y;    // on the screen
+    float speed;    // Meteorite speed
 }Meteorite;
 
 // Αρχικοποιεί το interface του παιχνιδιού
