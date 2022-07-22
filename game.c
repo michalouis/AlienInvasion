@@ -15,10 +15,11 @@ void update_and_draw() {
 		.left = IsKeyDown(KEY_LEFT),
 		.right = IsKeyDown(KEY_RIGHT),
 		.space = IsKeyPressed(KEY_SPACE),
+		.z = IsKeyDown(KEY_Z),
 		.x = IsKeyPressed(KEY_X),
 		.enter = IsKeyPressed(KEY_ENTER),
 		.p = IsKeyPressed(KEY_P),
-		.b = IsKeyPressed(KEY_B),
+		.b = IsKeyPressed(KEY_B)
 	};
 
 
