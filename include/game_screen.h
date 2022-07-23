@@ -42,6 +42,7 @@ typedef struct game_assets {
 	TextureInfo jet_right_info;
 
 	// Animations //
+	Animation anim_jetboost;
 	Animation anim_crab;
 	Animation anim_longhorn;
 	Animation anim_beam;
