@@ -89,10 +89,6 @@ static GameAssets create_game_assets() {
     ///// ANIMATIONS /////
     Texture anim;
 
-    // boost
-    anim = LoadTexture("assets/game_assets/jetboost.png");
-    assets->anim_jetboost = animation_create(anim, 2);
-
     // crab
     anim = LoadTexture("assets/game_assets/animation_crab.png");
     assets->anim_crab = animation_create(anim, 2);
@@ -454,7 +450,6 @@ void destroy_game_screen(State state) {
     textureInfo_destroy(game_assets->jet_left_info);
     textureInfo_destroy(game_assets->jet_right_info);
 
-    animation_destroy(game_assets->anim_jetboost);
     animation_destroy(game_assets->anim_crab);
     animation_destroy(game_assets->anim_longhorn);
     animation_destroy(game_assets->anim_beam);

@@ -31,7 +31,6 @@ typedef struct key_state {
 	bool left;
 	bool right;
 	bool space;
-	bool z;
 	bool x;
 	bool enter;
 	bool p;

@@ -83,12 +83,9 @@ void interface_close() {
 void interface_draw_frame(State state, KeyState keys) {
     UpdateMusicStream(music);
 
-	int boost;
-	boost = keys->z ? 2.8 : 1;
-
 	///// MOVE THE STARS /////
     for (int i = 0; i < STARS; i++) {
-        stars[i].y += SCROLL_SPEED_S * (stars[i].speed / 1) * boost;
+        stars[i].y += SCROLL_SPEED_S * (stars[i].speed / 1);
  
         if (stars[i].y >= SCREEN_HEIGHT) {  // Check if the star has gone off screen
             stars[i].y -= SCREEN_HEIGHT;
@@ -98,7 +95,7 @@ void interface_draw_frame(State state, KeyState keys) {
         
 	///// MOVE THE METEORITES /////
 	for (int i = 0; i < METEORITES; i++) {
-        meteorites[i].y += SCROLL_SPEED_M * (meteorites[i].speed / 1) * boost;
+        meteorites[i].y += SCROLL_SPEED_M * (meteorites[i].speed / 1);
  
         if (meteorites[i].y >= SCREEN_HEIGHT) {  // Check if the meteorite has gone off screen
             meteorites[i].y -= SCREEN_HEIGHT + meteorites[i].rect.height;
