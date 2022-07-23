@@ -134,7 +134,7 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 			Vector2 vec;
 			vec.x = game->jet->rect.x + 19;
 			vec.y = game->jet->rect.y + 28 - game->camera_y;
-			animation_animate(game_assets->anim_jetboost, vec, 0.5, color, true);
+			animation_animate(game_assets->anim_jetboost, vec, 0.2, color, true);
 		}
 
 		DrawTextureRec(
