@@ -52,6 +52,7 @@ typedef struct game_assets {
 
 	// Sounds //
 	Sound sound_p_missile;
+	Sound sound_shield;
 	Sound sound_warning;
 	Sound sound_score_reward;
 	Sound sound_hit_player;

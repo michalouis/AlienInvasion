@@ -124,6 +124,10 @@ static GameAssets create_game_assets() {
     assets->sound_p_missile = LoadSound("assets/game_assets/player_missile.mp3");
     SetSoundVolume(assets->sound_p_missile, 0.6);
 
+    // shield
+    assets->sound_p_missile = LoadSound("assets/game_assets/shield.mp3");
+    SetSoundVolume(assets->sound_shield, 0.6);
+
     // warning
     assets->sound_warning = LoadSound("assets/game_assets/warning.mp3");
 
@@ -386,8 +390,10 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 	missiles_update(game, game_screen->game_assets);
 
     // enable/disable shield if X is pressed
-    if (keys->x && !game->jet->shield_cooldown)
+    if (keys->x && !game->jet->shield_cooldown) {
         game->jet->shield = !game->jet->shield;
+        PlaySound(game_screen->game_assets->sound_shield);
+    }
 
     // update jet
     jet_update(
@@ -459,6 +465,7 @@ void destroy_game_screen(State state) {
     animation_destroy(game_assets->anim_gameover_text);
 
     UnloadSound(game_assets->sound_p_missile);
+    UnloadSound(game_assets->sound_shield);
     UnloadSound(game_assets->sound_warning);
     UnloadSound(game_assets->sound_score_reward);
     UnloadSound(game_assets->sound_hit_player);

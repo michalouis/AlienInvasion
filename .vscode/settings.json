@@ -8,6 +8,7 @@
         "adtlist.h": "c",
         "jet.h": "c",
         "stdlib.h": "c",
-        "game_screen.h": "c"
+        "game_screen.h": "c",
+        "game_screen_draw.h": "c"
     }
 }
