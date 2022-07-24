@@ -125,7 +125,7 @@ static GameAssets create_game_assets() {
     SetSoundVolume(assets->sound_p_missile, 0.6);
 
     // shield
-    assets->sound_p_missile = LoadSound("assets/game_assets/shield.mp3");
+    assets->sound_shield = LoadSound("assets/game_assets/shield.mp3");
     SetSoundVolume(assets->sound_shield, 0.6);
 
     // warning
