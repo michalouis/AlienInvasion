@@ -206,7 +206,7 @@ static Tab create_tab() {
     Texture anim_texture;
 
     anim_texture = LoadTexture("assets/tab/animation_bar.png");
-    tab->anim_bar = animation_create(anim_texture, 8);
+    tab->anim_bar = animation_create(anim_texture, 4);
 
     //-----Create Emote animations-----//
 
