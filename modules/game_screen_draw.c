@@ -342,10 +342,10 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 
 	// Draw Bar
 
-	float pos_xx = SCREEN_W_G + SCREEN_W_T/2 - 167;
+	float pos_xx = SCREEN_W_G + SCREEN_W_T/2 - 182;
 	DrawTextureRec(
 		tab->bar,
-		(Rectangle) {0, 0, 334, 24},
+		(Rectangle) {0, 0, 364, 24},
 		(Vector2) {pos_xx, SCREEN_HEIGHT * 0.962} , RAYWHITE
 	);
 
