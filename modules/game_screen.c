@@ -205,6 +205,7 @@ static Tab create_tab() {
     ///// ANIMATIONS /////
     Texture anim_texture;
 
+    // Bar animation
     anim_texture = LoadTexture("assets/tab/animation_bar.png");
     tab->anim_bar = animation_create(anim_texture, 4);
 
@@ -329,23 +330,6 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 
 	if (game->paused)
 		return;
-
-    // // Score Reward
-    // if(game->score > 0 && game->score % 500 == 0 && game->score_reward) {
-    //     if (game->jet->hearts != 6) {
-    //         reset_heart_animation(
-    //             game_screen->tab->hearts[game->jet->hearts]
-    //         );
-    //         game->jet->hearts++;
-    //     } else {
-    //         game->score += 200;
-    //     }
-
-    //     PlaySound(game_screen->game_assets->sound_score_reward);
-    //     game->score_reward = false;
-    // } else if (game->score % 500 != 0) {
-    //     game->score_reward = true;
-    // }
 
     // Increase difficulty
     if (game->score > 1500 && game->difficulty == 1) {

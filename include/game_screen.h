@@ -18,7 +18,6 @@ typedef struct game {
 
 	// Secondary game status
 	float beam_cooldown;
-	// bool score_reward;
 
 	//Objects
 	Jet jet;

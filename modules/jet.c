@@ -242,6 +242,7 @@ Jet jet_reset(Jet jet, float x, float y) {
 
 	// Reinitialize jet status
     jet->hearts = 6;
+	jet->bar = 0;
     jet->missiles = 5;
 	
 	// Reinitialize shield

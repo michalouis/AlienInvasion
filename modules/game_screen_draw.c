@@ -340,32 +340,6 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 		}
 	}
 
-	// Draw Bar
-
-	float pos_xx = SCREEN_W_G + SCREEN_W_T/2 - 182;
-	DrawTextureRec(
-		tab->bar,
-		(Rectangle) {0, 0, 364, 24},
-		(Vector2) {pos_xx, SCREEN_HEIGHT * 0.962} , RAYWHITE
-	);
-
-	// Draw bar animation
-
-	float pos_yy = SCREEN_HEIGHT * 0.962 + 3;
-	pos_xx = pos_xx + 2;
-	if (game->jet->bar > 0) {
-		for (int i = 0 ; i < game->jet->bar ; i++) {
-			animation_animate(
-				tab->anim_bar,
-				(Vector2) {
-					pos_xx, pos_yy
-				},
-				0.3, RAYWHITE, true
-			);
-			pos_xx += 12;
-		}
-	}
-
 	// Draw Hearts
 	TextureInfo heart_texture;
 	Heart *hearts = tab->hearts;
@@ -415,10 +389,11 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 
 	// Draw missile text
 	float pos_x = SCREEN_W_G + 29;
+	float pos_y = SCREEN_HEIGHT * 0.77;
 	DrawTextureRec(
 		tab->missile,
 		(Rectangle) {0, 0, 169, 33},
-		(Vector2) {pos_x, SCREEN_HEIGHT * 0.77} , RAYWHITE
+		(Vector2) {pos_x, pos_y} , RAYWHITE
 	);
 
 	// draw remaning missiles
@@ -427,7 +402,7 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 		DrawTextureRec(
 			tab->missile,
 			(Rectangle) {0, 33, 14, 32},
-			(Vector2) {pos_x, SCREEN_HEIGHT * 0.77} , RAYWHITE
+			(Vector2) {pos_x, pos_y} , RAYWHITE
 		);
 		pos_x += 30;
 	}
@@ -437,7 +412,7 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 		DrawTextureRec(
 			tab->missile,
 			(Rectangle) {14, 33, 14, 32},
-			(Vector2) {pos_x, SCREEN_HEIGHT * 0.77} , RAYWHITE
+			(Vector2) {pos_x, pos_y} , RAYWHITE
 		);
 		pos_x += 30;
 	}
@@ -446,10 +421,11 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 
 	// Draw shield text
 	pos_x = SCREEN_W_G + 29;
+	pos_y = SCREEN_HEIGHT * 0.83;
 	DrawTextureRec(
 		tab->shield,
 		(Rectangle) {0, 0, 169, 33},
-		(Vector2) {pos_x, SCREEN_HEIGHT * 0.83} , RAYWHITE
+		(Vector2) {pos_x, pos_y} , RAYWHITE
 	);
 
 	// Draw shield energy bar
@@ -457,13 +433,13 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 	DrawTextureRec(
 		tab->shield,
 		(Rectangle) {0, 33, 164, 32},
-		(Vector2) {pos_x, SCREEN_HEIGHT * 0.83} , RAYWHITE
+		(Vector2) {pos_x, pos_y} , RAYWHITE
 	);
 
 	// Draw how much shield energy is left
 	pos_x = SCREEN_W_G + 29 + 179 + 4;
 	DrawRectangle(
-		pos_x, SCREEN_HEIGHT * 0.83 + 4,
+		pos_x, pos_y + 4,
 		156 * (game->jet->shield_time / 5), 20,
 		game->jet->shield_cooldown ? RED : (Color) {91, 110, 225, 255}
 	);
@@ -472,10 +448,11 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 
 	// Draw score text
 	pos_x = SCREEN_W_G + 29;
+	pos_y = SCREEN_HEIGHT * 0.89;
 	DrawTextureRec(
 		tab->score,
 		(Rectangle) {0, 0, 169, 33},
-		(Vector2) {pos_x, SCREEN_HEIGHT * 0.89} , RAYWHITE
+		(Vector2) {pos_x, pos_y} , RAYWHITE
 	);
 
 	// Draw score from textures
@@ -489,12 +466,40 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 		DrawTextureRec(
 			tab->score,
 			(Rectangle) {n*28, 33, 28, 32},
-			(Vector2) {pos_x + 5*i, SCREEN_HEIGHT * 0.89} , RAYWHITE
+			(Vector2) {pos_x + 5*i, pos_y} , RAYWHITE
 		);
 
 		score = score % j;
 		pos_x += 28 + 1;
 	}
+
+	// Draw Bar
+
+	pos_x = SCREEN_W_G + SCREEN_W_T/2 - 182;
+	pos_y = SCREEN_HEIGHT * 0.962;
+	DrawTextureRec(
+		tab->bar,
+		(Rectangle) {0, 0, 364, 24},
+		(Vector2) {pos_x, pos_y} , RAYWHITE
+	);
+
+	// Draw bar animation
+
+	pos_x += 2;
+	pos_y += 3;
+	if (game->jet->bar > 0) {
+		for (int i = 0 ; i < game->jet->bar ; i++) {
+			animation_animate(
+				tab->anim_bar,
+				(Vector2) {
+					pos_x, pos_y
+				},
+				0.3, RAYWHITE, true
+			);
+			pos_x += 12;
+		}
+	}
+
 }
 
 void game_screen_draw(GameScreen game_screen, KeyState keys) {
