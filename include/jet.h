@@ -7,6 +7,7 @@
 typedef struct jet {
     Rectangle rect;
     int hearts;
+    int bar;
     int missiles;
     bool hit;
     bool hit_by_beam;

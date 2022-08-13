@@ -340,6 +340,32 @@ static void draw_tab(GameScreen game_screen, KeyState keys) {
 		}
 	}
 
+	// Draw Bar
+
+	float pos_xx = SCREEN_W_G + SCREEN_W_T/2 - 121;
+	DrawTextureRec(
+		tab->bar,
+		(Rectangle) {0, 0, 242, 16},
+		(Vector2) {pos_xx, SCREEN_HEIGHT * 0.745} , RAYWHITE
+	);
+
+	// Draw bar animation
+
+	float pos_yy = SCREEN_HEIGHT * 0.745 + 2;
+	pos_xx = pos_xx + 1;
+	if (game->jet->bar > 0) {
+		for (int i = 0 ; i < game->jet->bar ; i++) {
+			animation_animate(
+				tab->anim_bar,
+				(Vector2) {
+					pos_xx, pos_yy
+				},
+				0.3, RAYWHITE, true
+			);
+			pos_xx += 8;
+		}
+	}
+
 	// Draw Hearts
 	TextureInfo heart_texture;
 	Heart *hearts = tab->hearts;

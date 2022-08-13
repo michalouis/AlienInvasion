@@ -200,9 +200,13 @@ static Tab create_tab() {
     tab->missile = LoadTexture("assets/tab/missile_tab.png");
     tab->shield = LoadTexture("assets/tab/shield_tab.png");
     tab->heart_sprites = LoadTexture("assets/tab/hearts.png");
+    tab->bar = LoadTexture("assets/tab/bar.png");
 
     ///// ANIMATIONS /////
     Texture anim_texture;
+
+    anim_texture = LoadTexture("assets/tab/animation_bar.png");
+    tab->anim_bar = animation_create(anim_texture, 8);
 
     //-----Create Emote animations-----//
 
@@ -326,22 +330,22 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 	if (game->paused)
 		return;
 
-    // Score Reward
-    if(game->score > 0 && game->score % 500 == 0 && game->score_reward) {
-        if (game->jet->hearts != 6) {
-            reset_heart_animation(
-                game_screen->tab->hearts[game->jet->hearts]
-            );
-            game->jet->hearts++;
-        } else {
-            game->score += 200;
-        }
+    // // Score Reward
+    // if(game->score > 0 && game->score % 500 == 0 && game->score_reward) {
+    //     if (game->jet->hearts != 6) {
+    //         reset_heart_animation(
+    //             game_screen->tab->hearts[game->jet->hearts]
+    //         );
+    //         game->jet->hearts++;
+    //     } else {
+    //         game->score += 200;
+    //     }
 
-        PlaySound(game_screen->game_assets->sound_score_reward);
-        game->score_reward = false;
-    } else if (game->score % 500 != 0) {
-        game->score_reward = true;
-    }
+    //     PlaySound(game_screen->game_assets->sound_score_reward);
+    //     game->score_reward = false;
+    // } else if (game->score % 500 != 0) {
+    //     game->score_reward = true;
+    // }
 
     // Increase difficulty
     if (game->score > 1500 && game->difficulty == 1) {
@@ -412,6 +416,22 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
         game_screen->game_assets->sound_hit_player,
         game_screen->game_assets->sound_hit_beam
     );
+
+    // update bar
+
+    if (game->jet->bar == 30) {
+        if (game->jet->hearts != 6) {
+            reset_heart_animation(
+                game_screen->tab->hearts[game->jet->hearts]
+            );
+            game->jet->hearts++;
+        } else {
+            game->score += 200;
+        }
+
+        PlaySound(game_screen->game_assets->sound_score_reward);
+        game->jet->bar = 0;
+    }
 
     // if game is over the make jet explode and stop the game
 	if (jet_gameover(game->jet)) {
@@ -488,11 +508,13 @@ void destroy_game_screen(State state) {
     UnloadTexture(tab->missile);
     UnloadTexture(tab->shield);
     UnloadTexture(tab->heart_sprites);
+    UnloadTexture(tab->bar);
 
     animation_destroy(tab->emote_neutral);
     animation_destroy(tab->emote_hit);
     animation_destroy(tab->emote_gameover);
     animation_destroy(tab->anim_tv_static);
+    animation_destroy(tab->anim_bar);
 
     UnloadSound(tab->sound_tv_static);
 

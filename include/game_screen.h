@@ -18,7 +18,7 @@ typedef struct game {
 
 	// Secondary game status
 	float beam_cooldown;
-	bool score_reward;
+	// bool score_reward;
 
 	//Objects
 	Jet jet;
@@ -75,12 +75,14 @@ typedef struct tab {
 	Texture missile;
 	Texture shield;
 	Texture heart_sprites;
+	Texture bar;
 
 	// Animations //
 	Animation emote_neutral;
 	Animation emote_hit;
 	Animation emote_gameover;
 	Animation anim_tv_static;
+	Animation anim_bar;
 
 	// Sounds //
 	Sound sound_tv_static;

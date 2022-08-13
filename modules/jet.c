@@ -18,6 +18,7 @@ Jet jet_create(float x, float y, float width, float height) {
 
 	// Jet Status
     jet->hearts = 6;
+	jet->bar = 0;
     jet->missiles = 5;
 
 	// Initialize shield
@@ -176,6 +177,7 @@ static void jet_hit(Jet jet) {
 	// if jet hit
     if (jet->hit && jet->invisibility_time == 0) {
         jet->hearts--;	// reduce hearts by 1
+		jet->bar = 0;
         jet->invisibility_time = 3;	// make jet invisible for 3 seconds
         jet->effect_time = 0;	// if jet hit remove effects
 		jet->hit_by_beam = false;

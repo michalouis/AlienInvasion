@@ -67,6 +67,7 @@ static bool missile_collision(Game game, Missile missile, GameAssets assets) {
 					
 				if (enemy->type != MOTHERSHIP) {	// if they collide, go in
 					game->score += 10;						// increase score
+					game->jet->bar++;
 					set_remove(game->enemies, enemy);		// remove enemy
 					set_remove(game->missiles, missile);	// remove missile
 					missile_collided = true;
