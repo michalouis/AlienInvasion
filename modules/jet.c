@@ -266,3 +266,6 @@ void jet_destroy(Jet jet) {
     free(jet);
 }
 
+Vector2 jet_position(Jet jet) {
+	return (Vector2) {jet->rect.x, jet->rect.y};
+}

@@ -8,7 +8,7 @@ typedef struct beam{
 
 // Create beam
 
-void beam_create(Set, float);
+void beam_create(Set, Vector2);
 
 // Update anything beam related
 

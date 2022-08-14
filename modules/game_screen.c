@@ -37,7 +37,7 @@ static Game create_game() {
 
     // create beams set
     game->beams = set_create(missile_comparefunc, free);
-    game->beam_cooldown = 30;    // beams wont appear in the game immediately
+    game->beam_cooldown = 20;    // beams wont appear in the game immediately
 
     // starting camera position
     game->camera_y = -(SCREEN_HEIGHT / 2);
@@ -335,13 +335,13 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 		return;
 
     // Increase difficulty
-    if (game->score > 1500 && game->difficulty == 1) {
+    if (game->score > 1000 && game->difficulty == 1) {
         game->speed_factor = 1.25;
 		game->difficulty = 2;
-    } else if (game->score > 3000 && game->difficulty == 2) {
+    } else if (game->score > 2300 && game->difficulty == 2) {
         game->speed_factor = 1.5;
 		game->difficulty = 3;
-    } else if (game->score > 4000) {
+    } else if (game->score > 3500) {
         game->speed_factor = 1.55;
 		game->difficulty = 4;
     }
@@ -349,25 +349,17 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
     // Update camera position
     game->camera_y -= 3 * game->speed_factor;
 
-    // Spawn beam randomly only if cooldown reaches 0
+    // Spawn beam randomly when cooldown reaches 0
     game->beam_cooldown -= GetFrameTime();
-    int chances;
-    if (game->difficulty == 1)
-        chances = 350;
-    else if (game->difficulty == 2)
-        chances = 300;
-    else
-        chances = 250;
-
-    if(game->beam_cooldown <= 0 && !GetRandomValue(0, chances) && set_size(game->beams) <= 3) {
-        beam_create(game->beams, game->camera_y);
+    if(game->beam_cooldown <= 0 && set_size(game->beams) <= 3) {
+        beam_create(game->beams, jet_position(game->jet));
 
         if (game->difficulty == 1)
-            game->beam_cooldown = 6;
+            game->beam_cooldown = 10;
         else if (game->difficulty == 4)
-            game->beam_cooldown = 3;
+            game->beam_cooldown = 5;
         else
-            game->beam_cooldown = 4;
+            game->beam_cooldown = 7;
     }
 
     // Update beams

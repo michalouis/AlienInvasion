@@ -37,3 +37,7 @@ Jet jet_reset(Jet jet, float x, float y);
 // Free memory used by jet
 
 void jet_destroy(Jet jet);
+
+// returns jet position
+
+Vector2 jet_position(Jet jet);

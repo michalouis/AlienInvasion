@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 
-void beam_create(Set beams, float camera_y) {
+void beam_create(Set beams, Vector2 jet_pos) {
     Beam beam = malloc(sizeof(*beam));
 
     // Beam comes from the right/left (random)
@@ -16,7 +16,7 @@ void beam_create(Set beams, float camera_y) {
         beam->move_right = false;
 
     // Spawn beam off screen, pos_y random
-    int pos_y = camera_y + SCREEN_HEIGHT * ((float)GetRandomValue(3,8) / 10.0f);
+    int pos_y = jet_pos.y;
     int pos_x = beam->move_right ? -500 : SCREEN_W_G + 585;
 
     beam->rect = (Rectangle) {
