@@ -30,7 +30,6 @@ typedef struct game_assets {
 	// Textures //
 	Texture jet;
 	Texture shield;
-	Texture mothership;
 	Texture mothership_defender;
 	Texture p_missile;
 	Texture e_missile;
@@ -43,6 +42,7 @@ typedef struct game_assets {
 	// Animations //
 	Animation anim_crab;
 	Animation anim_longhorn;
+	Animation anim_mothership;
 	Animation anim_beam;
 	Animation anim_warning_sign;
 	Animation anim_pause_text;

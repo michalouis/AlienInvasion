@@ -63,11 +63,13 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 
 			switch (enemy->type) {
 				case MOTHERSHIP:
-					DrawTexture(
-						game_assets->mothership,
-						enemy->right ? enemy->rect.x - 21 : enemy->rect.x,
-						enemy->rect.y - game->camera_y - 55,
-						PURPLE
+					animation_animate(
+						game_assets->anim_mothership,
+						(Vector2) {
+							enemy->right ? enemy->rect.x - 21 : enemy->rect.x,
+							enemy->rect.y - game->camera_y - 55,
+						},
+						0.5, PURPLE, true
 					);
 					break;
 				case CRAB:

@@ -56,7 +56,6 @@ static GameAssets create_game_assets() {
     ///// TEXTURES /////
     assets->jet = LoadTexture("assets/game_assets/jet.png");
     assets->shield = LoadTexture("assets/game_assets/shield.png");
-    assets->mothership = LoadTexture("assets/game_assets/mothership.png");
     assets->mothership_defender = LoadTexture("assets/game_assets/mothership_defender.png");
     assets->p_missile = LoadTexture("assets/game_assets/p_missile.png");
     assets->e_missile = LoadTexture("assets/game_assets/e_missile.png");
@@ -96,6 +95,10 @@ static GameAssets create_game_assets() {
     // longhorn
     anim = LoadTexture("assets/game_assets/animation_longhorn.png");
     assets->anim_longhorn = animation_create(anim, 2);
+
+    // mothership
+    anim = LoadTexture("assets/game_assets/animation_mothership.png");
+    assets->anim_mothership = animation_create(anim, 6);
 
     // beam
     anim = LoadTexture("assets/game_assets/animation_beam.png");
@@ -457,7 +460,6 @@ void destroy_game_screen(State state) {
 
     UnloadTexture(game_assets->jet);
     UnloadTexture(game_assets->shield);
-    UnloadTexture(game_assets->mothership);
     UnloadTexture(game_assets->mothership_defender);
     UnloadTexture(game_assets->p_missile);
     UnloadTexture(game_assets->e_missile);
@@ -468,6 +470,7 @@ void destroy_game_screen(State state) {
 
     animation_destroy(game_assets->anim_crab);
     animation_destroy(game_assets->anim_longhorn);
+    animation_destroy(game_assets->anim_mothership);
     animation_destroy(game_assets->anim_beam);
     animation_destroy(game_assets->anim_warning_sign);
     animation_destroy(game_assets->anim_pause_text);
