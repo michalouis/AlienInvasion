@@ -291,7 +291,7 @@ void restart_game(GameScreen game_screen) {
 	// Destroy and create new set for beams
 	set_destroy(game->beams);
     game->beams = set_create(missile_comparefunc, free);
-    game->beam_cooldown = 30; 
+    game->beam_cooldown = 20; 
 
     //reset camera position
 	game->camera_y = -(SCREEN_HEIGHT / 2);
@@ -335,7 +335,7 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 		return;
 
     // Increase difficulty
-    if (game->score > 1000 && game->difficulty == 1) {
+    if (game->score > 1200 && game->difficulty == 1) {
         game->speed_factor = 1.25;
 		game->difficulty = 2;
     } else if (game->score > 2300 && game->difficulty == 2) {

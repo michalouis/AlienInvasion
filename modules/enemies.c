@@ -299,14 +299,6 @@ void enemies_update(Game game) {
 	Enemy last_enemy = find_last_enemy(set);
 	float last_enemy_y  = last_enemy->rect.y;
 	if (abs((int)(last_enemy_y - game->camera_y)) < SCREEN_HEIGHT) {
-		// when new enemies are added, game difficulty changes
-		if (game->difficulty == 1) {
-			game->speed_factor = 1.25;
-			game->difficulty = 2;
-		} else if (game->difficulty == 2) {
-			game->speed_factor = 1.5;
-			game->difficulty = 3;
-		} 
 		add_enemies(game, last_enemy_y);
 	}
 	
