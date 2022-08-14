@@ -93,18 +93,36 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 					);
 					break;
 				case MOTHERSHIP_DEFENDER:
-					DrawTextureRec(
-						game_assets->mothership_defender,
-						(Rectangle) {
-							enemy->right ? 0 : enemy->rect.width, 0,
-							enemy->rect.width, enemy->rect.height
-						},
-						(Vector2) {
-							enemy->rect.x,
-							enemy->rect.y - game->camera_y
-						},
-						SKYBLUE
-					);
+					if (enemy->right)
+						animation_animate(
+							game_assets->anim_mothership_defender_right,
+							(Vector2) {
+								enemy->rect.x,
+								enemy->rect.y - game->camera_y
+							},
+							0.6, SKYBLUE, true
+						);
+					else 
+						animation_animate(
+							game_assets->anim_mothership_defender_left,
+							(Vector2) {
+								enemy->rect.x,
+								enemy->rect.y - game->camera_y
+							},
+							0.6, SKYBLUE, true
+						);
+					// DrawTextureRec(
+					// 	game_assets->mothership_defender,
+					// 	(Rectangle) {
+					// 		enemy->right ? 0 : enemy->rect.width, 0,
+					// 		enemy->rect.width, enemy->rect.height
+					// 	},
+					// 	(Vector2) {
+					// 		enemy->rect.x,
+					// 		enemy->rect.y - game->camera_y
+					// 	},
+					// 	SKYBLUE
+					// );
 					break;
 			}			
 	}

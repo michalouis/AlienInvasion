@@ -43,6 +43,8 @@ typedef struct game_assets {
 	Animation anim_crab;
 	Animation anim_longhorn;
 	Animation anim_mothership;
+	Animation anim_mothership_defender_right;
+	Animation anim_mothership_defender_left;
 	Animation anim_beam;
 	Animation anim_warning_sign;
 	Animation anim_pause_text;
