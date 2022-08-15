@@ -7,10 +7,13 @@
 #include "jet.h"
 
 #include <math.h>
+//286.5
 
 float announceBarReveal_x = -150.0f;
 float announceBar_x = -1030.0f;
 float announceBarDisappear_x = -1180.0f;
+float speedup_x = -697.0f;
+float wait_time = -1;
 
 extern Music music;
 
@@ -232,9 +235,18 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 
 	// TEST
 	if (game->difficulty_changed) {
-		announceBar_x += 1330/75;
-		announceBarReveal_x += 1330/75;
-		announceBarDisappear_x += 1330/75;
+		if (wait_time < 0) {
+			announceBar_x += 1330/90;
+			announceBarReveal_x += 1330/90;
+			announceBarDisappear_x += 1330/90;
+			speedup_x += 1330/90;
+		} else {
+			wait_time -= GetFrameTime();
+		}
+
+		if (speedup_x >= 337) {
+			wait_time = 30;
+		}
 
 		animation_animate(
 			game_assets->anim_reaviling_bar,
@@ -253,11 +265,20 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 			},
 			0.2, RAYWHITE, true
 		);
+		animation_animate(
+			game_assets->anim_speedup,
+			(Vector2) {
+				speedup_x, 116
+			},
+			0.2, RAYWHITE, true
+		);
 
 		if (announceBarDisappear_x > 880.0f) {
 			announceBarReveal_x = -150.0f;
 			announceBar_x = -1030.0f;
 			announceBarDisappear_x = -1180.0f;
+			speedup_x = -594.0f;
+			wait_time = -1;
 			game->difficulty_changed = false;
 		}
 	}
