@@ -7,12 +7,12 @@
 #include "jet.h"
 
 #include <math.h>
-//286.5
 
+// for announce bar
 float announceBarReveal_x = -150.0f;
 float announceBar_x = -1030.0f;
 float announceBarDisappear_x = -1180.0f;
-float speedup_x = -697.0f;
+float speedup_x = -700.0f;
 float wait_time = -1;
 
 extern Music music;
@@ -233,19 +233,19 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 		}
 	}
 
-	// TEST
+	// announce bar (when difficulty changes)
 	if (game->difficulty_changed) {
-		if (wait_time < 0) {
-			announceBar_x += 1330/90;
-			announceBarReveal_x += 1330/90;
-			announceBarDisappear_x += 1330/90;
-			speedup_x += 1330/90;
+		if (wait_time <= 0) {
+			announceBar_x += 1330/75;
+			announceBarReveal_x += 1330/75;
+			announceBarDisappear_x += 1330/75;
+			speedup_x += 1330/75;
 		} else {
 			wait_time -= GetFrameTime();
 		}
 
-		if (speedup_x >= 337) {
-			wait_time = 30;
+		if (announceBar_x >= 0 && wait_time == -1) {
+			wait_time = 1.2f;
 		}
 
 		animation_animate(
@@ -270,14 +270,14 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 			(Vector2) {
 				speedup_x, 116
 			},
-			0.2, RAYWHITE, true
+			0.03, RAYWHITE, true
 		);
 
 		if (announceBarDisappear_x > 880.0f) {
 			announceBarReveal_x = -150.0f;
 			announceBar_x = -1030.0f;
 			announceBarDisappear_x = -1180.0f;
-			speedup_x = -594.0f;
+			speedup_x = -700.0f;
 			wait_time = -1;
 			game->difficulty_changed = false;
 		}
