@@ -233,7 +233,7 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 		}
 	}
 
-	// announce bar (when difficulty changes)
+	// speedup announcement
 	if (game->difficulty_changed) {
 		if (wait_time <= 0) {
 			announceBar_x += 1330/75;
