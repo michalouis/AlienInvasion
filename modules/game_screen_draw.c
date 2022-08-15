@@ -8,7 +8,10 @@
 
 #include <math.h>
 
-float announceBar_x = -150.0f;
+float announceBarReveal_x = -150.0f;
+float announceBar_x = -1030.0f;
+float announceBarDisappear_x = -1180.0f;
+
 extern Music music;
 
 static void draw_game(GameScreen game_screen, KeyState keys) {
@@ -229,13 +232,32 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 
 	// TEST
 	if (game->difficulty_changed) {
-		announceBar_x += 1180/120;
+		announceBar_x += 1330/75;
+		announceBarReveal_x += 1330/75;
+		announceBarDisappear_x += 1330/75;
+
+		animation_animate(
+			game_assets->anim_reaviling_bar,
+			(Vector2) {
+				announceBarReveal_x, 100
+			},
+			0.2, RAYWHITE, true
+		);
 		DrawRectangle (
-			announceBar_x, 100, 150, 80, (Color) {156, 156, 156, 190} 
+			announceBar_x, 100, 880, 80, (Color) {156, 156, 156, 190} 
+		);
+		animation_animate(
+			game_assets->anim_disappearing_bar,
+			(Vector2) {
+				announceBarDisappear_x, 100
+			},
+			0.2, RAYWHITE, true
 		);
 
-		if (announceBar_x > 1030.0f) {
-			announceBar_x = -150.0f;
+		if (announceBarDisappear_x > 880.0f) {
+			announceBarReveal_x = -150.0f;
+			announceBar_x = -1030.0f;
+			announceBarDisappear_x = -1180.0f;
 			game->difficulty_changed = false;
 		}
 	}

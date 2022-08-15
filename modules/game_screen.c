@@ -126,6 +126,13 @@ static GameAssets create_game_assets() {
     // gameover text
     anim = LoadTexture("assets/game_assets/animation_gameover_text.png");
     assets->anim_gameover_text = animation_create(anim, 4);
+
+    // revealing & disappearing bar
+    anim = LoadTexture("assets/game_assets/animation_revealing_bar.png");
+    assets->anim_reaviling_bar = animation_create(anim, 4);
+
+    anim = LoadTexture("assets/game_assets/animation_disappearing_bar.png");
+    assets->anim_disappearing_bar = animation_create(anim, 4);
     
 
     ///// SOUNDS /////
@@ -480,6 +487,8 @@ void destroy_game_screen(State state) {
     animation_destroy(game_assets->anim_pause_text);
     animation_destroy(game_assets->anim_explosion);
     animation_destroy(game_assets->anim_gameover_text);
+    animation_destroy(game_assets->anim_reaviling_bar);
+    animation_destroy(game_assets->anim_disappearing_bar);
 
     UnloadSound(game_assets->sound_p_missile);
     UnloadSound(game_assets->sound_shield);

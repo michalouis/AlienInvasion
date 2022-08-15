@@ -51,6 +51,8 @@ typedef struct game_assets {
 	Animation anim_pause_text;
 	Animation anim_explosion;
 	Animation anim_gameover_text;
+	Animation anim_reaviling_bar;
+	Animation anim_disappearing_bar;
 
 	// Sounds //
 	Sound sound_p_missile;
