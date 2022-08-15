@@ -65,6 +65,7 @@ typedef struct game_assets {
 	Sound sound_hit_beam;
 	Sound sound_hit_enemy;
 	Sound sound_explosion;
+	Sound sound_speedup;
 }* GameAssets;
 
 typedef struct heart {

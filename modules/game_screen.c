@@ -172,6 +172,9 @@ static GameAssets create_game_assets() {
     // explosion
     assets->sound_explosion = LoadSound("assets/game_assets/explosion.mp3");
 
+    // speedup sound
+    assets->sound_speedup = LoadSound("assets/game_assets/speedup.mp3");
+
     return assets;
 }
 
@@ -359,14 +362,17 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
         game->speed_factor = 1.25;
 		game->difficulty = 2;
         game->difficulty_changed = true;
+        PlaySound(game_screen->game_assets->sound_speedup);
     } else if (game->score > 2300 && game->difficulty == 2) {
         game->speed_factor = 1.5;
 		game->difficulty = 3;
         game->difficulty_changed = true;
+        PlaySound(game_screen->game_assets->sound_speedup);
     } else if (game->score > 3500 && game->difficulty == 3) {
         game->speed_factor = 1.55;
 		game->difficulty = 4;
         game->difficulty_changed = true;
+        PlaySound(game_screen->game_assets->sound_speedup);
     }
 
     // Update camera position
@@ -505,6 +511,7 @@ void destroy_game_screen(State state) {
     UnloadSound(game_assets->sound_hit_beam);
     UnloadSound(game_assets->sound_hit_enemy);
     UnloadSound(game_assets->sound_explosion);
+    UnloadSound(game_assets->sound_speedup);
 
     // Destroy tab
     Tab tab = game_screen->tab;
