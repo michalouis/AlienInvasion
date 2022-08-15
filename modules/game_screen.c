@@ -24,6 +24,7 @@ static Game create_game() {
     game->score = 0;
     game->speed_factor = 1;
     game->difficulty = 1;
+    game->difficulty_changed = false;
 
     // create jet
     game->jet = jet_create(SCREEN_W_G/2 - (35/2),  200, 42, 42);
@@ -283,6 +284,7 @@ void restart_game(GameScreen game_screen) {
     game->score = 0;
 	game->speed_factor = 1;
     game->difficulty = 1;
+    game->difficulty_changed = false;
 	
     // reset jet position
 	game->jet = jet_reset(game->jet, SCREEN_W_G/2 - (35/2), 200);
@@ -339,6 +341,9 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 
 	if (game->paused)
 		return;
+
+    if(keys->x)
+        game->difficulty_changed = true;
 
     // Increase difficulty
     if (game->score > 1200 && game->difficulty == 1) {

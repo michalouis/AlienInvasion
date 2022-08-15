@@ -8,6 +8,7 @@
 
 #include <math.h>
 
+float announceBar_x = -150.0f;
 extern Music music;
 
 static void draw_game(GameScreen game_screen, KeyState keys) {
@@ -111,18 +112,6 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 							},
 							0.6, SKYBLUE, true
 						);
-					// DrawTextureRec(
-					// 	game_assets->mothership_defender,
-					// 	(Rectangle) {
-					// 		enemy->right ? 0 : enemy->rect.width, 0,
-					// 		enemy->rect.width, enemy->rect.height
-					// 	},
-					// 	(Vector2) {
-					// 		enemy->rect.x,
-					// 		enemy->rect.y - game->camera_y
-					// 	},
-					// 	SKYBLUE
-					// );
 					break;
 			}			
 	}
@@ -235,6 +224,19 @@ static void draw_game(GameScreen game_screen, KeyState keys) {
 					},
 					0.13, RAYWHITE, true);
 			}
+		}
+	}
+
+	// TEST
+	if (game->difficulty_changed) {
+		announceBar_x += 1180/120;
+		DrawRectangle (
+			announceBar_x, 100, 150, 80, (Color) {156, 156, 156, 190} 
+		);
+
+		if (announceBar_x > 1030.0f) {
+			announceBar_x = -150.0f;
+			game->difficulty_changed = false;
 		}
 	}
 
