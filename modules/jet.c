@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 Jet jet_create(float x, float y, float width, float height) {
-    Jet jet = malloc(sizeof(*jet));	// Δυναμική δέσμευση μνήμης
+    Jet jet = malloc(sizeof(*jet));	// allocate memory
 
 	// Jet coordinates & dimensions
     jet->rect.x = x;
@@ -57,7 +57,7 @@ static void jet_movement(Jet jet, float speed, float camera_y, KeyState keys) {
 	else if (keys->right)
 		jet->rect.x += 4 * speed;	// 3 pixels right multiplied by game's speed
     
-	// Δεν επιτρέπει στο jet να βγει εκτός οθόνης
+	// prevents jet from getting off-screen
     if (jet->rect.y < camera_y + 10)
         jet->rect.y = camera_y + 10;
 
@@ -71,7 +71,7 @@ static void jet_movement(Jet jet, float speed, float camera_y, KeyState keys) {
         jet->rect.x = SCREEN_W_G - jet->rect.width - 10;
 }
 
-// Ενημερώνει τη κατάσταση της ασπίδας
+// updates shield status
 static void jet_shield_update(Jet jet) {
 	// If all of the shield energy is used, dont let player use it immediately
 	if(jet->shield_cooldown) {
