@@ -6,27 +6,21 @@ MODULES = ./modules
 # compiler
 CC = gcc
 
-# Compile options. Το -I<dir> λέει στον compiler να αναζητήσει εκεί include files
+# Compile options
 CFLAGS = -Wall -Werror -g -I$(INCLUDE)
-LDFLAGS = -lm
+LDFLAGS = -lm -ldl -lpthread -lGL
 
-# Αρχεία .o
-OBJS = game.o $(MODULES)/state.o $(MODULES)/beams.o $(MODULES)/draw_related_funcs.o $(MODULES)/set_utils.o $(MODULES)/title_screen.o $(MODULES)/game_screen.o $(MODULES)/jet.o $(MODULES)/missile.o $(MODULES)/game_screen_draw.o $(MODULES)/interface.o $(MODULES)/enemies.o
+# for WSL
+export DISPLAY ?= :0
 
-# Το εκτελέσιμο πρόγραμμα
+# Object files
+OBJS = game.o $(MODULES)/ADTList.o $(MODULES)/ADTSet.o $(MODULES)/ADTVector.o $(MODULES)/state.o $(MODULES)/beams.o $(MODULES)/draw_related_funcs.o $(MODULES)/set_utils.o $(MODULES)/title_screen.o $(MODULES)/game_screen.o $(MODULES)/jet.o $(MODULES)/missile.o $(MODULES)/game_screen_draw.o $(MODULES)/interface.o $(MODULES)/enemies.o
+
+# Executable file
 EXEC = AlienInvasion
-
-# # Παράμετροι της βιβλιοθήκης raylib
-# include $(LIB)/libraylib.mk
-
-LDFLAGS += -ldl -lpthread -lGL
 
 $(EXEC): $(OBJS)
 	$(CC) $(OBJS) $(LIB)/libraylib_linux.a -o $(EXEC) $(LDFLAGS)
-
-# # Για να φτιάξουμε τα k08.a/libraylib.a τρέχουμε το make στο lib directory.
-# $(LIB)/%.a:
-# 	$(MAKE) -C $(LIB) $*.a
 
 clean:
 	rm -f $(OBJS) $(EXEC)
