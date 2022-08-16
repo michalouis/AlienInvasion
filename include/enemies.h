@@ -1,15 +1,16 @@
 #include "game_screen.h"
 
+// enemy types
 typedef enum {
 	LONGHORN, CRAB, MOTHERSHIP, MOTHERSHIP_DEFENDER
 } EnemyType;
 
-// Πληροφορίες για κάθε αντικείμενο
+// enemy struct
 typedef struct enemy {
-	EnemyType type;				// Τύπος (Εδαφος / Ελικόπτερο / Πλοίο / Αεροσκάφος / Πύραυλος / Γέφυρα)
-	Rectangle rect;					// Θέση και μέγεθος του αντικειμένου. Το Rectangle ορίζεται στο include/raylib.h, line 213
+	EnemyType type;	
+	Rectangle rect;	
 	float bullet_cooldown;
-	bool right;					// true: το αντικείμενο κινείται προς τα δεξιά
+	bool right;					// true: enemy moves to the right
 }* Enemy;
 
 // Update everything enemy related

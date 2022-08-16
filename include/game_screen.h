@@ -4,8 +4,8 @@
 #include "jet.h"
 #include "ADTList.h"
 
-#define ENEMY_ROWS 20		// πόσες γέφυρες δημιουργούνται στην πίστα
-#define SPACING 150			// απόσταση ανάμεσα στα αντικείμενα της πίστας
+#define ENEMY_ROWS 20		// how many enemies are spawned every time
+#define SPACING 150			// distance between enemies
 
 typedef struct game {
 	// Primary game status

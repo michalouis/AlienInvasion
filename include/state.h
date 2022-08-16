@@ -8,9 +8,10 @@
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
-#define SCREEN_W_G 880
-#define SCREEN_W_T 400
+#define SCREEN_W_G 880	// width of game screen
+#define SCREEN_W_T 400	// width of tab screen
 
+// screen types
 typedef enum {
 	TITLE_SCREEN, GAME_SCREEN
 } StateName;
@@ -24,7 +25,7 @@ typedef struct state {
 	GameScreen game_screen;
 }* State;
 
-// Πληροφορίες για το ποια πλήκτρα είναι πατημένα
+// Struct for pressed keys
 typedef struct key_state {
 	bool up;
 	bool down;

@@ -17,8 +17,12 @@ typedef struct title_screen {
 	bool draw_text;
 }* TitleScreen;
 
+// Creates/Updates/Destroys title screen
+
 void title_screen(State state, KeyState keys);
 
 void title_screen_draw(TitleScreen title_screen);
+
+// Unload title screen
 
 void title_screen_destroy(State state);

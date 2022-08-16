@@ -16,13 +16,11 @@ typedef struct {
     float speed;    // Meteorite speed
 }Meteorite;
 
-// Αρχικοποιεί το interface του παιχνιδιού
+// initialize interface
 void interface_init();
 
-// Κλείνει το interface του παιχνιδιού
+// close interface
 void interface_close();
 
-// Σχεδιάζει ένα frame με την τωρινή κατάσταση του παιχνδιού
+// draws frame
 void interface_draw_frame(State state, KeyState keys);
-
-// Animation init_start_game();

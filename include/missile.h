@@ -1,5 +1,6 @@
 #include "game_screen.h"
 
+//missile types
 typedef enum {
     P_MISSILE, LH_MISSILE, C_MISSILE, M_MISSILE    // player, longhorn, crab, mothership
 } MissileType;

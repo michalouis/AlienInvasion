@@ -41,4 +41,6 @@ bool animation_finished(Animation anim, float change_frame_t);
 
 void animation_reset(Animation anim);
 
+// Unload animation
+
 void animation_destroy(Animation anim);
