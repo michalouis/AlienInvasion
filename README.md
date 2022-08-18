@@ -17,3 +17,8 @@ A simple shoot 'em up game made in C, using [raylib](https://www.raylib.com/)! S
 
 
 ### Click [here](https://mixalouis.itch.io/alien-invasion) to play to play the game on itch.io <img src="https://static.itch.io/images/badge-color.svg" alt="logo" width="150"/>
+
+## Compilation
+
+You can run the game either on Linux or Windows(using WSL & XLaunch) with the following command :
+>make run
