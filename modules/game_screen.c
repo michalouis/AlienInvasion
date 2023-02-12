@@ -358,17 +358,17 @@ static void game_screen_update(GameScreen game_screen, KeyState keys) {
 		return;
 
     // Increase difficulty
-    if (game->score > 1200 && game->difficulty == 1) {
+    if (game->score > 500 && game->difficulty == 1) {
         game->speed_factor = 1.25;
 		game->difficulty = 2;
         game->difficulty_changed = true;
         PlaySound(game_screen->game_assets->sound_speedup);
-    } else if (game->score > 2300 && game->difficulty == 2) {
+    } else if (game->score > 1000 && game->difficulty == 2) {
         game->speed_factor = 1.5;
 		game->difficulty = 3;
         game->difficulty_changed = true;
         PlaySound(game_screen->game_assets->sound_speedup);
-    } else if (game->score > 3500 && game->difficulty == 3) {
+    } else if (game->score > 1500 && game->difficulty == 3) {
         game->speed_factor = 1.55;
 		game->difficulty = 4;
         game->difficulty_changed = true;
