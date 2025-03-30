@@ -16,7 +16,7 @@ A simple shoot 'em up game made in C, using [raylib](https://www.raylib.com/)! S
 | Close game | Esc |
 
 
-### Click [here](https://michalouis.itch.io/alien-invasion) to play to play the game on itch.io <img src="https://static.itch.io/images/badge-color.svg" alt="logo" width="150"/>
+### Click [here](https://michalouis.itch.io/alien-invasion) to play the game on itch.io <img src="https://static.itch.io/images/badge-color.svg" alt="logo" width="150"/>
 
 ## Compilation
 
